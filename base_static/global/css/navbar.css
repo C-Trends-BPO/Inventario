@@ -92,7 +92,7 @@
 .column h4 {
   display: flex;
   align-items: center;
-  width: 100px;
+  width: 140px;
   border-bottom: 1px solid #c67e7e; 
   font-size: 14px;
   color: #000000; 
@@ -149,20 +149,6 @@
 
 .sub-submenu a:hover {
   background-color: #fbe5e5;
-}
-
-#transporte h5 {
-  pointer-events: auto;
-  opacity: 1;
-  cursor: pointer;
-  color: #b74d4d;
-}
-
-#logistica h5 {
-  pointer-events: auto;
-  opacity: 1;
-  cursor: pointer;
-  color: #b74d4d;
 }
 
 .submenu-toggle i {
