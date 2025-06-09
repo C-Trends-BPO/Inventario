@@ -1,0 +1,45 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.centraliza-tela {
+    min-height: 100vh; /* ocupa a tela inteira */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff4f4; /* opcional: fundo bem clarinho */
+}
+
+.container-novo-lote {
+    min-height: 300px;
+    max-width: 300px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ef9a9a;
+    border-radius: 18px;
+    box-shadow: 0 4px 18px #f29a9a33;
+}
+
+.btn-novo-lote {
+    padding: 18px 48px;
+    font-size: 1.25rem;
+    font-weight: 600;
+    background: #e95151;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px #f29a9a33;
+    cursor: pointer;
+    transition: none;
+}
+
+.btn-novo-lote:hover {
+    background: #e95151;
+    box-shadow: 0 2px 8px #f29a9a33;
+    transform: scale(1.05);
+    transition: all 0.3s ease-in-out;
+}

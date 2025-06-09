@@ -5,14 +5,12 @@
     {% include 'global/partials/_head.html' %}
 </head>
 <body>
-    <div class="forma">
+    {% include 'global/partials/_header.html' %}
     
-        {% include 'global/partials/_header.html' %}
+    {% block content %}
 
-        <main class="container">
-            {% block content %}{% endblock %}
-        </main>
+    {% endblock content %}
+    
 
-    </div>
 </body>
 </html>

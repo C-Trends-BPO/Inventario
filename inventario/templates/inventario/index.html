@@ -1,0 +1,29 @@
+{% extends 'global/base.html' %}
+
+    {% block content %}
+    <div class="container-index-lotes">
+        <h2>Lotes de Bipagem</h2>
+        {% if lotes %}
+        <table class="tabela-lotes">
+            <thead>
+                <tr>
+                    <th>ID do Lote</th>
+                    <th>Criado em</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for lote in lotes %}
+                <tr>
+                    <td>#{{ lote.id }}</td>
+                    <td>{{ lote.criado_em|date:"d/m/Y H:i" }}</td>
+                    <td>{{ lote.get_status_display }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p style="text-align:center;color:#888;margin-top:40px;">Nenhum lote criado ainda.</p>
+        {% endif %}
+    </div>
+    {% endblock %}
