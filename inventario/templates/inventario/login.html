@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+
+    {% include 'global/partials/_head.html' %}
+</head>
+
+<body>
+    <div class="abstract-left">
+        <div class="info-content">
+            <h2>C-Trends</h2>
+            <p>O que nós faz aqui na empresa hein ?</p>
+            <ul>
+                <li>Alguma coisa legal que fazemos</li>
+                <li>Outra coisa legal</li>
+                <li>Mais uma coisa bacana</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="container-login">
+        <form class="form-login" method="post">
+            {% csrf_token %}
+            <h2 class="form-title">Login</h2>
+            {% csrf_token %}
+
+            {% for campo in form %}
+            <div class="form-group">
+                {{ campo.label_tag }}
+                {{ campo }}
+                {% if campo.errors %}
+                <div class="error">{{ campo.errors }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+            <button class="login-button" type="submit">Entrar</button>
+            <p>Não tem cadastro? <a href="#">Crie sua conta</a></p>
+        </form>
+    </div>
+</body>
+</html>
