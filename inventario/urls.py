@@ -1,7 +1,8 @@
 from .views import UserLoginView
 from .views import RegisterView
 from django.urls import path
-from .views import index, logout_confirm_view, logout_view
+from .views import index, logout_confirm_view, logout_view, criar_torre \
+
 
 app_name = 'inventario'
 
