@@ -1,0 +1,170 @@
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to bottom, #f12929, #aa2d2d);
+  padding: 10px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(179, 62, 62, 0.08);
+  z-index: 1000;
+}
+
+.nav-logo {
+  width: 150px;
+  height: 75px;
+  cursor: pointer;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  margin-right: 40px;
+}
+
+.nav-links>a,
+.nav-links>.dropdown>.dropbtn {
+  color: #ffffff;
+  font-weight: bold;
+  text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 12px 18px;
+  font-size: 18px;
+  letter-spacing: 1px;
+  transition: background-color 0.3s;
+}
+
+.nav-links>a:hover,
+.nav-links>.dropdown>.dropbtn:hover,
+.nav-links>.dropdown>.dropbtn.hover-active {
+  background-color: #ef9a9a; 
+  border-radius: 4px;
+}
+
+.dropdown {
+  position: relative;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #fceaea;
+  padding: 15px;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(179, 62, 62, 0.18);
+  z-index: 999;
+  min-width: 200px;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.dropdown-content {
+  width: max-content;
+  min-width: 200px;
+}
+
+.dropdown.open .dropdown-content {
+  display: flex;
+}
+
+.top-columns {
+  display: flex;
+  flex-direction: column;
+}
+
+.column {
+  margin-bottom: 20px;
+}
+
+.column i {
+  margin-right: 5px;
+}
+
+.column h4 {
+  display: flex;
+  align-items: center;
+  width: 100px;
+  border-bottom: 1px solid #c67e7e; 
+  font-size: 14px;
+  color: #000000; 
+  margin-bottom: 15px;
+}
+
+.submenu {
+  display: none;
+  flex-direction: column;
+  margin-top: 5px;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+.submenu a {
+  padding: 5px 0;
+  text-decoration: none;
+  color: #b74d4d;
+}
+
+.submenu a:hover {
+  background-color: #fbe5e5;
+}
+
+.column h4 {
+  cursor: pointer;
+  user-select: none;
+}
+
+.sub-submenu {
+  display: none;
+  margin-left: 10px;
+  border-left: 2px solid #e57373;
+  padding-left: 10px;
+  margin-top: 5px;
+}
+
+.submenu-toggle {
+  cursor: pointer;
+  margin: 5px 0;
+  font-weight: bold;
+}
+
+.submenu-toggle:hover {
+  color: #b74d4d;
+}
+
+.sub-submenu a {
+  display: block;
+  padding: 4px 0;
+  text-decoration: none;
+  color: #b74d4d;
+}
+
+.sub-submenu a:hover {
+  background-color: #fbe5e5;
+}
+
+#transporte h5 {
+  pointer-events: auto;
+  opacity: 1;
+  cursor: pointer;
+  color: #b74d4d;
+}
+
+#logistica h5 {
+  pointer-events: auto;
+  opacity: 1;
+  cursor: pointer;
+  color: #b74d4d;
+}
+
+.submenu-toggle i {
+  margin-left: 5px;
+}
