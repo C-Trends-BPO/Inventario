@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from ..models import LoteBipagem
+from ..models import LoteBipagem, Caixa
 from ..forms import CaixaForm
 
 def lote(request, lote_id):
@@ -10,9 +10,18 @@ def lote(request, lote_id):
         if form.is_valid():
             caixa = form.save(commit=False)
             caixa.lote = lote
+            caixa.nr_caixa = lote.caixas.count() + 1
             caixa.save()
-            return redirect('home')
+            return redirect('inventario:lote', lote_id=lote.id)
     else:
         form = CaixaForm()
 
-    return render(request, 'inventario/criar_caixa.html', {'form': form, 'lote': lote})
+    caixas = Caixa.objects.filter(lote=lote).order_by('-id')
+
+    context = {
+        'form': form,
+        'caixas': caixas,
+        'lote': lote
+    }
+
+    return render(request, 'inventario/lote.html', context)

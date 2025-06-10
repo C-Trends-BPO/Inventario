@@ -11,9 +11,10 @@ class LoteBipagem(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='aberto')
     user_created = models.ForeignKey('auth.User', on_delete=models.CASCADE,null=True)
     group_user = models.CharField(max_length=100, default='grupo_padrao')
-    
+
 class Caixa(models.Model):
     id=models.AutoField(primary_key=True)
+    nr_caixa = models.CharField(max_length=100,null=True)
     lote = models.ForeignKey(LoteBipagem, on_delete=models.CASCADE, related_name='caixas')
     identificador = models.CharField(max_length=100)
     descricao = models.TextField(blank=True)

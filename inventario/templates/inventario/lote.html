@@ -4,18 +4,18 @@
 <div class="centraliza-tela">
     <div class="container-nova-caixa">
         <h2>Nova Caixa para Lote #{{ lote.id }}</h2>
-        <form method="post">
+        <form method="post" action="{% url 'inventario:iniciar_caixa' lote.id %}">
             {% csrf_token %}
             <button type="submit" class="btn-nova-caixa">Iniciar nova caixa</button>
         </form>
     </div>
 
-    <div class="scroll-tabela-lotes">
-        <table class="tabela-lotes">
+    <div class="scroll-tabela-caixas">
+        <table class="tabela-caixas">
             <thead>
                 <tr>
-                    <th>ID do Lote</th>
-                    <th>Criado em</th>
+                    <th>Numero da Caixa</th>
+                    <th>Criada em</th>
                     <th>Status</th>
                     <th>Usuário</th>
                     <th>Ações</th>
@@ -24,12 +24,12 @@
             <tbody>
                 {% for caixa in caixas %}
                 <tr>
-                    <td>#{{ lote.id }}</td>
-                    <td>{{ lote.criado_em|date:"d/m/Y H:i" }}</td>
+                    <td>#{{ caixa.nr_caixa }}</td>
+                    <td>{{ caixa.criado_em|date:"d/m/Y H:i" }}</td>
                     <td>{{ lote.get_status_display }}</td>
                     <td>{{ lote.user_created }}</td>
                     <td>
-                        <a href="#" class="edit-icon" title="Editar lote">
+                        <a href="#" class="edit-icon" title="Editar caixa">
                             <i class="fa-solid fa-pen"></i>
                         </a>
                     </td>

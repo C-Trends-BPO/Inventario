@@ -1,7 +1,8 @@
 from .views import UserLoginView
 from .views import RegisterView
 from django.urls import path
-from .views import index, logout_confirm_view, logout_view, criar_lote_view, lote
+from .views import index, logout_confirm_view, logout_view, criar_lote_view, lote, \
+iniciar_caixa_redirect
 
 
 app_name = 'inventario'
@@ -14,4 +15,5 @@ urlpatterns = [
     path('logout/confirm/', logout_view, name='logout'),
     path('lote/criar/', criar_lote_view, name='criar_lote'),
     path('lote/<int:lote_id>/', lote, name='lote'),
+    path('lote/<int:lote_id>/caixas/', iniciar_caixa_redirect, name='iniciar_caixa'),
 ]

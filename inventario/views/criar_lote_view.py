@@ -10,4 +10,3 @@ def criar_lote_view(request):
         lote_id  = lote.id
         return redirect('inventario:lote', lote_id) 
     return render(request, 'inventario/criar_lote.html')
-

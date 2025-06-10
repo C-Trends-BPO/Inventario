@@ -31,14 +31,15 @@ body, html {
     text-align: center;
 }
 
-.scroll-tabela-lotes {
+.scroll-tabela-caixas {
     width: 90%;
     max-width: 900px;
-    overflow-x: auto;
+    max-height: 400px;  
+    overflow-y: auto; 
     background: #fff4f4;
 }
 
-.tabela-lotes {
+.tabela-caixas {
     width: 100%;
     border-collapse: collapse;
     background: #fff4f4;
@@ -61,18 +62,18 @@ body, html {
     background: #aa2d2d;
 }
 
-.tabela-lotes th, .tabela-lotes td {
+.tabela-caixas th, .tabela-caixas td {
     padding: 12px;
     text-align: center;
     border-bottom: 1px solid #ef9a9a77;
 }
 
-.tabela-lotes th {
+.tabela-caixas th {
     background: #ef9a9a;
     color: #aa2d2d;
 }
 
-.tabela-lotes td {
+.tabela-caixas td {
     color: #b74d4d;
 }
 
