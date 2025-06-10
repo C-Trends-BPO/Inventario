@@ -1,29 +1,50 @@
 {% extends 'global/base.html' %}
 
-    {% block content %}
+{% block content %}
+<div class="wrapper-central">
     <div class="container-index-lotes">
-        <h2>Lotes de Bipagem</h2>
+        <div class="titulo-com-botao">
+            <h2>Lotes de Bipagem</h2>
+            <form method="post" action="{% url 'inventario:criar_lote' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn-novo-lote">Criar novo lote</button>
+            </form>
+        </div>
+
         {% if lotes %}
-        <table class="tabela-lotes">
-            <thead>
-                <tr>
-                    <th>ID do Lote</th>
-                    <th>Criado em</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for lote in lotes %}
-                <tr>
-                    <td>#{{ lote.id }}</td>
-                    <td>{{ lote.criado_em|date:"d/m/Y H:i" }}</td>
-                    <td>{{ lote.get_status_display }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+            <div class="scroll-tabela-lotes">
+                <table class="tabela-lotes">
+                    <thead>
+                        <tr>
+                            <th>ID do Lote</th>
+                            <th>Criado em</th>
+                            <th>Status</th>
+                            <th>PA</th>
+                            <th>Usuário</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for lote in lotes %}
+                        <tr>
+                            <td>#{{ lote.id }}</td>
+                            <td>{{ lote.criado_em|date:"d/m/Y H:i" }}</td>
+                            <td>{{ lote.get_status_display }}</td>
+                            <td>{{ lote.group_user }}</td>
+                            <td>{{ lote.user_created }}</td>
+                            <td>
+                                <a href="#" class="edit-icon" title="Editar lote">
+                                    <i class="fa-solid fa-pen"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         {% else %}
         <p style="text-align:center;color:#888;margin-top:40px;">Nenhum lote criado ainda.</p>
         {% endif %}
     </div>
-    {% endblock %}
+</div>
+{% endblock %}

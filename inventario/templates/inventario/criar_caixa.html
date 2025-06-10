@@ -1,0 +1,42 @@
+{% extends 'global/base.html' %}
+
+{% block content %}
+<div class="centraliza-tela">
+    <div class="container-nova-caixa">
+        <h2>Nova Caixa para Lote #{{ lote.id }}</h2>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn-nova-caixa">Iniciar nova caixa</button>
+        </form>
+    </div>
+
+    <div class="scroll-tabela-lotes">
+        <table class="tabela-lotes">
+            <thead>
+                <tr>
+                    <th>ID do Lote</th>
+                    <th>Criado em</th>
+                    <th>Status</th>
+                    <th>Usuário</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for caixa in caixas %}
+                <tr>
+                    <td>#{{ lote.id }}</td>
+                    <td>{{ lote.criado_em|date:"d/m/Y H:i" }}</td>
+                    <td>{{ lote.get_status_display }}</td>
+                    <td>{{ lote.user_created }}</td>
+                    <td>
+                        <a href="#" class="edit-icon" title="Editar lote">
+                            <i class="fa-solid fa-pen"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

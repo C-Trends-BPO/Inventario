@@ -1,0 +1,88 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.centraliza-tela {
+    min-height: 100vh;
+    padding-top: 150px; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    background: #fff4f4;
+    gap: 40px;
+}
+
+.container-nova-caixa {
+    width: 100%;
+    max-width: 350px;
+    background: #ef9a9a;
+    border-radius: 18px;
+    box-shadow: 0 4px 18px #f29a9a33;
+    padding: 24px;
+}
+
+.container-nova-caixa h2{
+    color: #ffffff;
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+.scroll-tabela-lotes {
+    width: 90%;
+    max-width: 900px;
+    overflow-x: auto;
+    background: #fff4f4;
+}
+
+.tabela-lotes {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff4f4;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.btn-nova-caixa{
+    background: #d64d4d;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.3s ease-in-out;
+}
+
+.btn-nova-caixa:hover {
+    background: #aa2d2d;
+}
+
+.tabela-lotes th, .tabela-lotes td {
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid #ef9a9a77;
+}
+
+.tabela-lotes th {
+    background: #ef9a9a;
+    color: #aa2d2d;
+}
+
+.tabela-lotes td {
+    color: #b74d4d;
+}
+
+.edit-icon {
+    color: #b74d4d;
+    font-size: 1rem;
+    opacity: 0.3;
+    transition: opacity 0.2s ease-in-out;
+}
+
+tr:hover .edit-icon {
+    opacity: 1;
+}
