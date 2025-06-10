@@ -1,0 +1,12 @@
+{% extends 'global/base.html' %}
+
+{% block content %}
+
+<div class="form-container">
+    <form method="post" class="form-1col">
+        {% csrf_token %}
+        {% include 'global/partials/_form_1col.html' %}
+    </form>
+</div>
+
+{% endblock %}

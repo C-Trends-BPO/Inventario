@@ -4,13 +4,15 @@ from ..forms import CaixaForm
 
 def lote(request, lote_id):
     lote = get_object_or_404(LoteBipagem, id=lote_id)
-
+    
     if request.method == 'POST':
+        print("*"*100)
         form = CaixaForm(request.POST)
         if form.is_valid():
             caixa = form.save(commit=False)
             caixa.lote = lote
             caixa.nr_caixa = lote.caixas.count() + 1
+            print(lote.caixas.count())
             caixa.save()
             return redirect('inventario:lote', lote_id=lote.id)
     else:

@@ -2,7 +2,7 @@ from .views import UserLoginView
 from .views import RegisterView
 from django.urls import path
 from .views import index, logout_confirm_view, logout_view, criar_lote_view, lote, \
-iniciar_caixa_redirect
+iniciar_caixa_redirect, bipagem
 
 
 app_name = 'inventario'
@@ -16,4 +16,5 @@ urlpatterns = [
     path('lote/criar/', criar_lote_view, name='criar_lote'),
     path('lote/<int:lote_id>/', lote, name='lote'),
     path('lote/<int:lote_id>/caixas/', iniciar_caixa_redirect, name='iniciar_caixa'),
+    path('lote/<int:lote_id>/caixas/<int:caixa_id>/', bipagem, name='caixa'),
 ]

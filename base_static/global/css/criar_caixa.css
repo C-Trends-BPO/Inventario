@@ -37,6 +37,9 @@ body, html {
     max-height: 400px;  
     overflow-y: auto; 
     background: #fff4f4;
+    border: 1.5px solid #ef9a9a;
+    border-radius: 18px;
+    box-shadow: 0 4px 24px #f29a9a33;
 }
 
 .tabela-caixas {
