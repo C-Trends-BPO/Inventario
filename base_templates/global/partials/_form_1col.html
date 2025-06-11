@@ -1,8 +1,13 @@
 <h2 class="form-title">{{ form.nome_formulario }}</h2>
 {% csrf_token %}
 
+<div class="form-group-1col">
+  <label for="serial-input">Número Serial:</label>
+  <input type="text" id="serial-input" name="serial" class="form-control" autocomplete="off" />
+</div>
+
 {% for campo in form %}
-<div class="form-group">
+<div class="form-group-1col">
   {{ campo.label_tag }}
   {{ campo }}
   {% if campo.errors %}
@@ -10,6 +15,9 @@
   {% endif %}
 </div>
 {% endfor %}
-<div class="form-group">
+<div class="form-group-1col">
   <button type="submit" class="submit-button">Consultar</button>
+</div>
+<div class="form-group-1col">
+  <button type="button" id="clear-button" class="submit-button limpar">Limpar</button>
 </div>

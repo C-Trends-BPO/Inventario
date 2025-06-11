@@ -7,42 +7,42 @@
 }
 
 .form-1col {
-    background-color: #ef9a9a; /* vermelho claro */
     padding: 2rem;
     border-radius: 18px;
-    box-shadow: 0 4px 18px #f29a9a33;
+    box-shadow: 0 4px 24px #f29a9a33;
     width: 350px;
-    border: 1px solid #e57373; /* borda sutil */
+    border: 1.5px solid #ef9a9a;
+    background: #fceaea;
 }
 
 .form-title {
     text-align: center;
     font-size: 1.5rem;
     margin-bottom: 1.5rem;
-    color: #ffffff;
+    color: #b74d4d;
     font-weight: bold;
 }
 
-.form-group {
+.form-group-1col {
     display: flex;
     flex-direction: column;
     margin-bottom: 1rem;
 }
 
-.form-group label {
+.form-group-1col label {
     margin-bottom: 0.3rem;
     font-weight: 600;
-    color: #ffffff;
+    color: #b74d4d;
 }
 
-.form-group input,
-.form-group select,
-.form-group textarea {
+.form-group-1col input,
+.form-group-1col select,
+.form-group-1col textarea {
     padding: 0.5rem;
     border-radius: 5px;
     border: 1px solid #e57373;
     font-size: 1rem;
-    background-color: #fff4f4;
+    background-color: #fceaea;
     color: #b74d4d;
 }
 
