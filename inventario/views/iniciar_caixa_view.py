@@ -10,7 +10,6 @@ def iniciar_caixa_redirect(request, lote_id):
         lote=lote,
         nr_caixa=str(lote.caixas.count() + 1),
         identificador=f"Caixa {lote.caixas.count() + 1}",
-        descricao=''
     )
 
     return redirect('inventario:caixa', lote_id=lote.id, caixa_id=nova_caixa.id)
