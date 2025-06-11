@@ -9,80 +9,107 @@
     </form>
 </div>
 
-<div class="scroll-tabela-bipagem">
-    <table class="tabela-bipagem">
-        <thead>
-            <tr>
-                <th>Numero da Caixa</th>
-                <th>Serial</th>
-                <th>Modelo</th>
-                <th>Patrimonio</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for caixa in caixas %}
-            <tr>
-                <td>#{{ caixa.nr_caixa }}</td>
-                <td>{{ serial }}</td>
-                <td>{{ modelo }}</td>
-                <td>{{ patrimonio }}</td>
-                <td>
-                    <a href="#" class="edit-icon" title="Editar caixa">
-                        <i class="fa-solid fa-pen"></i>
-                    </a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<div class="centraliza-bipagem">
+    <div class="scroll-tabela-bipagem">
+        <table class="tabela-bipagem">
+            <thead>
+                <tr>
+                    <th>Número da caixa</th>
+                    <th>Unidades na caixa</th>
+                    <th>Serial</th>
+                    <th>Modelo</th>
+                    <th>Patrimonio</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in caixas %}
+                <tr>
+                    <td>#{{ item.id_caixa.nr_caixa }}</td>
+                    <td>#{{ item.unidade }}</td>
+                    <td>{{ item.nrserie }}</td>
+                    <td>{{ item.modelo }}</td>
+                    <td>{{ item.patrimonio }}</td>
+                    <td>
+                        <a href="#" class="edit-icon" title="Editar caixa">
+                            <i class="fa-solid fa-pen"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="encerrar-bipagem">
+        <h2>Deseja encerrar caixa #{{ caixa.nr_caixa }}</h2>
+        <form method="post" class="encerrar" action="{% url 'inventario:lote' lote.id %}">
+            {% csrf_token %}
+            <button type="submit" 
+            name="encerrar-caixa" 
+            class="finalizar-bipagem">
+            Encerrar Caixa</button>
+        </form>    
+    </div>
 </div>
-
+    
 <script>
-  const serialInput = document.getElementById('serial-input');
-  let buffer = '';
-  let lastTime = Date.now();
+    const serialInput = document.getElementById('serial-input');
+    let buffer = '';
+    let lastTime = Date.now();
 
-  serialInput.addEventListener('keydown', (e) => {
-    const now = Date.now();
-    const timeDiff = now - lastTime;
-    lastTime = now;
+    serialInput.addEventListener('keydown', (e) => {
+        const now = Date.now();
+        const timeDiff = now - lastTime;
+        lastTime = now;
 
-    if (timeDiff < 50) {
-      if (e.key.length === 1) {
-        buffer += e.key;
-      }
-    } else {
-      buffer = e.key.length === 1 ? e.key : '';
+        if (timeDiff < 50) {
+            if (e.key.length === 1) {
+                buffer += e.key;
+            }
+        } else {
+            buffer = e.key.length === 1 ? e.key : '';
+        }
+
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            serialInput.value = buffer.trim();
+            buffer = '';
+
+            focusNextField(serialInput);
+        }
+
+        if (e.key !== 'Enter') {
+            e.preventDefault();
+        }
+    });
+
+    ['paste', 'drop', 'contextmenu'].forEach(evt =>
+        serialInput.addEventListener(evt, (e) => e.preventDefault())
+    );
+
+    function focusNextField(currentField) {
+        const focusables = Array.from(document.querySelectorAll('input:not([type="hidden"]):not([disabled]), textarea:not([disabled]), select:not([disabled])'));
+        const index = focusables.indexOf(currentField);
+        if (index !== -1 && index < focusables.length - 1) {
+            focusables[index + 1].focus();
+        }
     }
 
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      serialInput.value = buffer.trim();
-      buffer = '';
+    const clearButton = document.getElementById('clear-button');
 
-      // Foca o próximo campo automaticamente
-      focusNextField(serialInput);
-    }
+    clearButton.addEventListener('click', () => {
+        const form = document.querySelector('form');
 
-    // Bloqueia digitação manual
-    if (e.key !== 'Enter') {
-      e.preventDefault();
-    }
-  });
+        // Limpa todos os campos que não estão desativados ou ocultos
+        form.querySelectorAll('input:not([type="hidden"]):not([disabled]), textarea:not([disabled]), select:not([disabled])')
+            .forEach(field => {
+                field.value = '';
+            });
 
-  ['paste', 'drop', 'contextmenu'].forEach(evt =>
-    serialInput.addEventListener(evt, (e) => e.preventDefault())
-  );
+        buffer = ''; // limpa o buffer da bipagem também
+    });
 
-  // Função para focar o próximo input, textarea ou select visível e habilitado
-  function focusNextField(currentField) {
-    const focusables = Array.from(document.querySelectorAll('input:not([type="hidden"]):not([disabled]), textarea:not([disabled]), select:not([disabled])'));
-    const index = focusables.indexOf(currentField);
-    if (index !== -1 && index < focusables.length - 1) {
-      focusables[index + 1].focus();
-    }
-  }
 </script>
 
 

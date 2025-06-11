@@ -1,0 +1,152 @@
+body{
+    overflow-y: auto;
+}
+
+.centraliza-bipagem {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+    padding-top: 50px;
+    min-height: 100vh;
+    background: #fff4f4;
+}
+
+.form-container {
+    margin-top: 120px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: auto;
+}
+
+.form-1col {
+    padding: 2rem;
+    border-radius: 18px;
+    box-shadow: 0 4px 24px #f29a9a33;
+    width: 350px;
+    border: 1.5px solid #ef9a9a;
+    background: #fceaea;
+}
+
+.form-title {
+    text-align: center;
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    color: #b74d4d;
+    font-weight: bold;
+}
+
+.form-group-1col {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem;
+}
+
+.form-group-1col label {
+    margin-bottom: 0.3rem;
+    font-weight: 600;
+    color: #b74d4d;
+}
+
+.form-group-1col input,
+.form-group-1col select,
+.form-group-1col textarea {
+    padding: 0.5rem;
+    border-radius: 5px;
+    border: 1px solid #e57373;
+    font-size: 1rem;
+    background-color: #fceaea;
+    color: #b74d4d;
+}
+
+.scroll-tabela-bipagem {
+    width: 90%;
+    max-width: 900px;
+    max-height: 300px;
+    overflow-y: auto;
+    background: #fff4f4;
+    border: 1.5px solid #ef9a9a;
+    border-radius: 18px;
+    box-shadow: 0 4px 24px #f29a9a33;
+}
+
+.tabela-bipagem {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff4f4;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.tabela-bipagem th,
+.tabela-bipagem td {
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid #ef9a9a77;
+}
+
+.tabela-bipagem th {
+    background: #ef9a9a;
+    color: #aa2d2d;
+}
+
+.tabela-bipagem td {
+    color: #b74d4d;
+}
+
+.button-group {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+.bipagem-button {
+    background: #d64d4d;
+    color: #fff;
+    padding: 0.5rem 1.2rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.bipagem-button:hover {
+    background: #aa2d2d;
+}
+
+.bipagem-button-clear {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.bipagem-button-clear:hover {
+    background-color: #f5c6cb;
+}
+
+.encerrar-bipagem {
+  flex-shrink: 0;
+  background-color: #f8f9fa;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  max-width: 250px;
+}
+
+.finalizar-bipagem {
+  background-color: #b30000;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  width: 100%;
+}
+
+.finalizar-bipagem:hover {
+  background-color: #8c0000;
+}
