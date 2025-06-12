@@ -19,7 +19,6 @@
                     <th>Serial</th>
                     <th>Modelo</th>
                     <th>Patrimonio</th>
-                    <th>Ações</th>
                 </tr>
             </thead>
             <tbody>
@@ -30,29 +29,22 @@
                     <td>{{ item.nrserie }}</td>
                     <td>{{ item.modelo }}</td>
                     <td>{{ item.patrimonio }}</td>
-                    <td>
-                        <a href="#" class="edit-icon" title="Editar caixa">
-                            <i class="fa-solid fa-pen"></i>
-                        </a>
-                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
-    
+
     <div class="encerrar-bipagem">
         <h2>Deseja encerrar caixa #{{ caixa.nr_caixa }}</h2>
         <form method="post" class="encerrar" action="{% url 'inventario:lote' lote.id %}">
             {% csrf_token %}
-            <button type="submit" 
-            name="encerrar_caixa" 
-            class="finalizar-bipagem">
-            Encerrar Caixa</button>
-        </form>    
+            <button type="submit" name="encerrar_caixa" class="finalizar-bipagem">
+                Encerrar Caixa</button>
+        </form>
     </div>
 </div>
-    
+
 <script>
     const serialInput = document.getElementById('serial-input');
     let buffer = '';

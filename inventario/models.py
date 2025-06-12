@@ -6,9 +6,9 @@ class LoteBipagem(models.Model):
     STATUS_CHOICES = [
         ('aberto', 'Aberto'),
         ('fechado', 'Fechado'),
-        ('processando', 'Processando'),
+        ('aguardando validação', 'Aguardando Validação'),
     ]
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='aberto')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Aberto')
     user_created = models.ForeignKey('auth.User', on_delete=models.CASCADE,null=True)
     group_user = models.CharField(max_length=100, default='grupo_padrao')
 
@@ -21,10 +21,10 @@ class Caixa(models.Model):
     criado_em = models.DateTimeField(auto_now_add=True)
 
     STATUS_CHOICES = [
-        ('aberta', 'Aberta'),
-        ('fechada', 'Fechada'),
+        ('iniciada', 'Iniciada'),
+        ('finalizada', 'Finalizada'),
     ]
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='aberta')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Iniciada')
 
     def __str__(self):
         return f"Caixa {self.identificador} (Lote #{self.lote.id})"

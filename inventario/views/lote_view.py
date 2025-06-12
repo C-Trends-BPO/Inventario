@@ -8,9 +8,9 @@ def lote(request, lote_id):
     
     if request.method == 'POST':
         if 'encerrar_caixa' in request.POST:
-            caixa_aberta = lote.caixas.filter(status='aberta').last()
+            caixa_aberta = lote.caixas.filter(status='Iniciada').last()
             if caixa_aberta:
-                caixa_aberta.status = 'fechada'
+                caixa_aberta.status = 'Finalizada'
                 caixa_aberta.save()
             return redirect('inventario:lote', lote_id=lote.id)
         
