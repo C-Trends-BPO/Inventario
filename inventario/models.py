@@ -20,6 +20,12 @@ class Caixa(models.Model):
     descricao = models.TextField(blank=True)
     criado_em = models.DateTimeField(auto_now_add=True)
 
+    STATUS_CHOICES = [
+        ('aberta', 'Aberta'),
+        ('fechada', 'Fechada'),
+    ]
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='aberta')
+
     def __str__(self):
         return f"Caixa {self.identificador} (Lote #{self.lote.id})"
     

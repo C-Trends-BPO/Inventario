@@ -44,7 +44,7 @@
                 <tr>
                     <td>#{{ caixa.nr_caixa }}</td>
                     <td>{{ caixa.criado_em|date:"d/m/Y H:i" }}</td>
-                    <td>{{ lote.get_status_display }}</td>
+                    <td>{{ caixa.get_status_display }}</td>
                     <td>{{ lote.user_created }}</td>
                     <td>
                         <a href="#" class="edit-icon" title="Editar caixa">

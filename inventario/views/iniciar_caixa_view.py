@@ -5,7 +5,6 @@ from ..models import LoteBipagem, Caixa
 
 def iniciar_caixa_redirect(request, lote_id):
     lote = get_object_or_404(LoteBipagem, id=lote_id)
-
     nova_caixa = Caixa.objects.create(
         lote=lote,
         nr_caixa=str(lote.caixas.count() + 1),

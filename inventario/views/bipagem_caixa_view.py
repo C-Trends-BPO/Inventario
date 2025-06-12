@@ -8,9 +8,6 @@ def bipagem(request, lote_id, caixa_id):
     caixa = get_object_or_404(Caixa, id=caixa_id, lote=lote)
 
     if request.method == 'POST':
-        if 'encerrar_caixa' in request.POST:
-            return redirect(reverse('inventario:iniciar_caixa', args=[lote.id]))
-
         form = BipagemForm(request.POST)
         serial = request.POST.get('serial', '').strip()
             
