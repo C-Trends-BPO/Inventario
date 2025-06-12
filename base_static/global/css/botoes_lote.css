@@ -1,0 +1,98 @@
+.botoes-lote-flex {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 2rem;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+}
+
+.container-nova-caixa {
+    max-width: 300px;
+    background: #ef9a9a;
+    border-radius: 18px;
+    box-shadow: 0 4px 18px #f29a9a33;
+    padding: 24px;
+}
+
+.container-nova-caixa h2{
+    color: #ffffff;
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+.btn-nova-caixa{
+    background: #d64d4d;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.3s ease-in-out;
+}
+
+.btn-nova-caixa:hover {
+    background: #aa2d2d;
+}
+
+.container-fechar-lote {
+    max-width: 300px;
+    background: #ef9a9a;
+    border-radius: 18px;
+    box-shadow: 0 4px 18px #f29a9a33;
+    padding: 24px;
+}
+
+.container-fechar-lote h2{
+    color: #ffffff;
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+.btn-fechar-lote{
+    background: #d64d4d;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.3s ease-in-out;
+}
+
+.btn-fechar-lote:hover {
+    background: #aa2d2d;
+}
+
+.container-validar-lote {
+    max-width: 300px;
+    background: #ef9a9a;
+    border-radius: 18px;
+    box-shadow: 0 4px 18px #f29a9a33;
+    padding: 24px;
+}
+
+.container-validar-lote h2{
+    color: #ffffff;
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+.btn-validar-lote{
+    background: #d64d4d;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.3s ease-in-out;
+}
+
+.btn-validar-lote:hover {
+    background: #aa2d2d;
+}

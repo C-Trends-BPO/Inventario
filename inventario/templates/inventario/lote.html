@@ -2,12 +2,30 @@
 
 {% block content %}
 <div class="centraliza-tela">
-    <div class="container-nova-caixa">
-        <h2>Nova Caixa para Lote #{{ lote.id }}</h2>
-        <form method="post" action="{% url 'inventario:iniciar_caixa' lote.id %}">
-            {% csrf_token %}
-            <button type="submit" class="btn-nova-caixa">Iniciar nova caixa</button>
-        </form>
+    <div class="botoes-lote-flex">
+        <div class="container-nova-caixa">
+            <h2>Nova Caixa para Lote #{{ lote.id }}</h2>
+            <form method="post" action="{% url 'inventario:iniciar_caixa' lote.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn-nova-caixa">Iniciar nova caixa</button>
+            </form>
+        </div>
+
+        <div class="container-fechar-lote">
+            <h2>Finalizar lote #{{ lote.id }}</h2>
+            <form method="post" action="{% url 'inventario:index' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn-fechar-lote">Finalizar lote</button>
+            </form>
+        </div>
+
+        <div class="container-validar-lote">
+            <h2>Validar lote finalizado</h2>
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn-validar-lote">Validar lote</button>
+            </form>
+        </div>
     </div>
 
     <div class="scroll-tabela-caixas">

@@ -4,6 +4,7 @@
 @import url(navbar.css);
 @import url(criar_caixa.css);
 @import url(bipagem.css);
+@import url(botoes_lote.css);
 
 * {
     margin: 0;
