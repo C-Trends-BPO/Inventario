@@ -37,6 +37,10 @@
     background: #aa2d2d;
 }
 
+fechar_lote_id {
+    display: none;
+}
+
 .container-fechar-lote {
     max-width: 300px;
     background: #ef9a9a;
