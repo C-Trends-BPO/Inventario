@@ -12,36 +12,51 @@
         </div>
 
         {% if lotes %}
-            <div class="scroll-tabela-lotes">
-                <table class="tabela-lotes">
-                    <thead>
-                        <tr>
-                            <th>ID do Lote</th>
-                            <th>Criado em</th>
-                            <th>Status</th>
-                            <th>PA</th>
-                            <th>Usuário</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for lote in lotes %}
-                        <tr>
-                            <td>#{{ lote.id }}</td>
-                            <td>{{ lote.criado_em|date:"d/m/Y H:i" }}</td>
-                            <td>{{ lote.get_status_display }}</td>
-                            <td>{{ lote.group_user }}</td>
-                            <td>{{ lote.user_created }}</td>
-                            <td>
-                                <a href="#" class="edit-icon" title="Editar lote">
-                                    <i class="fa-solid fa-pen"></i>
-                                </a>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+        <div class="scroll-tabela-lotes">
+            <table class="tabela-lotes">
+                <thead>
+                    <tr>
+                        <th>ID do Lote</th>
+                        <th>Criado em</th>
+                        <th>Status</th>
+                        <th>PA</th>
+                        <th>Usuário</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for lote in lotes %}
+                    <tr>
+                        <td>#{{ lote.id }}</td>
+                        <td>{{ lote.criado_em|date:"d/m/Y H:i" }}</td>
+                        <td>{{ lote.get_status_display }}</td>
+                        <td>{{ lote.group_user }}</td>
+                        <td>{{ lote.user_created }}</td>
+                        <td>
+                            {% if lote.get_status_display == "Aberto" %}
+                            <a href="{% url 'inventario:lote' lote.id %}" class="edit-icon"
+                                title="Editar caixa">
+                                <i class="fa-solid fa-pen"></i>
+                            </a>
+
+                            {% elif lote.get_status_display == "Aguardando Validação" %}
+                            <a href="#" class="edit-icon"
+                                title="Validar lote">
+                                <i class="fa-solid fa-pen text-warning"></i>
+                            </a>
+
+                            {% else %}
+                            <a class="edit-icon text-muted" title="Caixa fechada - não editável"
+                                style="pointer-events: none; cursor: not-allowed;">
+                                <i class="fa-solid fa-pen"></i>
+                            </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
         {% else %}
         <p style="text-align:center;color:#888;margin-top:40px;">Nenhum lote criado ainda.</p>
         {% endif %}
