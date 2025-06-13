@@ -48,9 +48,16 @@
                     <td>{{ caixa.get_status_display }}</td>
                     <td>{{ lote.user_created }}</td>
                     <td>
-                        <a href="{% url 'inventario:editar_caixa' lote.id caixa.id %}" class="edit-icon" title="Editar caixa">
+                        {% if caixa.get_status_display == "Iniciada" %}
+                        <a href="{% url 'inventario:caixa' lote.id caixa.id %}" class="edit-icon" title="Editar caixa">
                             <i class="fa-solid fa-pen"></i>
                         </a>
+                        {% else %}
+                        <a class="edit-icon text-muted" title="Caixa fechada - não editável"
+                            style="pointer-events: none; cursor: not-allowed;">
+                            <i class="fa-solid fa-pen"></i>
+                        </a>
+                        {% endif %}
                     </td>
                 </tr>
                 {% endfor %}

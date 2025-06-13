@@ -7,4 +7,3 @@ from .criar_lote_view import criar_lote_view
 from .lote_view import lote
 from .iniciar_caixa_view import iniciar_caixa_redirect
 from .bipagem_caixa_view import bipagem
-from .editar_caixa_view import editar_caixa
