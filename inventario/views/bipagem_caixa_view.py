@@ -27,12 +27,14 @@ def bipagem(request, lote_id, caixa_id):
         form = BipagemForm()
 
     bipagens_da_caixa = Bipagem.objects.filter(id_caixa=caixa).order_by('-id')
+    caixa_bloqueada = caixa.status in ['Finalizada']
 
     context = {
         'lote': lote,
         'caixa': caixa,
         'form': form,
         'caixas': bipagens_da_caixa, 
+        'caixa_bloqueada': caixa_bloqueada
     }
 
     return render(request, 'inventario/bipagem.html', context)

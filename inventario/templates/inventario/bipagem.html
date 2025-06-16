@@ -5,9 +5,13 @@
 <div class="form-container">
     <form method="post" class="form-1col">
         {% csrf_token %}
-        {% include 'global/partials/_form_1col.html' %}
-    </form>
-</div>
+            {% if not caixa_bloqueada %}
+            {% include 'global/partials/_form_1col.html' %}
+            {%else%}
+            <h2 class="mensagem>">Caixa bloqueada, não é possível realizar a bipagem.</h2>
+            {% endif %}
+        </form>
+    </div>
 
 <div class="centraliza-bipagem">
     <div class="scroll-tabela-bipagem">
@@ -35,14 +39,24 @@
         </table>
     </div>
 
-    <div class="encerrar-bipagem">
+    {% if not caixa_bloqueada %}
+        <div class="encerrar-bipagem">
         <h2>Deseja encerrar caixa #{{ caixa.nr_caixa }}</h2>
         <form method="post" class="encerrar" action="{% url 'inventario:lote' lote.id %}">
             {% csrf_token %}
             <button type="submit" name="encerrar_caixa" class="finalizar-bipagem">
                 Encerrar Caixa</button>
+            </form>
+        </div>
+    {% else %}
+    <div class="encerrar-bipagem">
+        <form class="encerrar" action="{% url 'inventario:lote' lote.id %}">
+            {% csrf_token %}
+            <button type="submit" name="encerrar_caixa" class="finalizar-bipagem">
+                Voltar</button>
         </form>
     </div>
+    {% endif %}
 </div>
 
 <script>

@@ -26,12 +26,14 @@ def lote(request, lote_id):
 
     caixas = Caixa.objects.filter(lote=lote).order_by('-id')
     caixas_abertas = lote.caixas.filter(status='Iniciada').exists()
+    lote_bloqueado = lote.status in ['fechado', 'cancelado']
 
     context = {
         'form': form,
         'caixas': caixas,
         'lote': lote,
-        'caixas_abertas': caixas_abertas
+        'caixas_abertas': caixas_abertas,
+        'lote_bloqueado': lote_bloqueado
     }
 
     return render(request, 'inventario/lote.html', context)

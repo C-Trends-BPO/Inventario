@@ -3,6 +3,7 @@
 {% block content %}
 <div class="centraliza-tela">
     <div class="botoes-lote-flex">
+        {% if not lote_bloqueado %}
         <div class="container-nova-caixa">
             <h2>Nova Caixa para Lote #{{ lote.id }}</h2>
             <form method="post" action="{% url 'inventario:iniciar_caixa' lote.id %}">
@@ -21,7 +22,7 @@
                 </button>
             </form>
         </div>
-
+        {% endif %}
     </div>
 
     <div class="scroll-tabela-caixas">
@@ -43,16 +44,9 @@
                     <td>{{ caixa.get_status_display }}</td>
                     <td>{{ lote.user_created }}</td>
                     <td>
-                        {% if caixa.get_status_display == "Iniciada" %}
                         <a href="{% url 'inventario:caixa' lote.id caixa.id %}" class="edit-icon" title="Editar caixa">
                             <i class="fa-solid fa-pen"></i>
                         </a>
-                        {% else %}
-                        <a class="edit-icon text-muted" title="Caixa fechada - não editável"
-                            style="pointer-events: none; cursor: not-allowed;">
-                            <i class="fa-solid fa-pen"></i>
-                        </a>
-                        {% endif %}
                     </td>
                 </tr>
                 {% endfor %}

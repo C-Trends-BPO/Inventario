@@ -39,6 +39,12 @@
                                 <i class="fa-solid fa-pen"></i>
                             </a>
 
+                            {% elif lote.get_status_display == "Fechado" %}
+
+                            <a href="{% url 'inventario:lote' lote.id %}" class="edit-icon" title="Editar caixa">
+                                <i class="fa-solid fa-pen"></i>
+                            </a>
+
                             {% elif lote.get_status_display == "Aguardando Validação" %}
                             
                             <a href="{% url 'inventario:validar_lote' lote.id %}" class="edit-icon" title="Validar lote">
