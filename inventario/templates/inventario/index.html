@@ -46,8 +46,9 @@
                             </a>
 
                             {% elif lote.get_status_display == "Aguardando Validação" %}
-                            
-                            <a href="{% url 'inventario:validar_lote' lote.id %}" class="edit-icon" title="Validar lote">
+
+                            <a href="{% url 'inventario:validar_lote' lote.id %}" class="edit-icon"
+                                title="Validar lote">
                                 <i class="fa-solid fa-pen text-warning"></i>
                             </a>
 
@@ -68,6 +69,30 @@
         {% else %}
         <p style="text-align:center;color:#888;margin-top:40px;">Nenhum lote criado ainda.</p>
         {% endif %}
+
+        <div class="paginacao-lotes">
+            {% if page_obj.has_other_pages %}
+            <div class="pagination-wrapper">
+                {% if page_obj.has_previous %}
+                <a href="?page=1" class="pagination-link">« Primeira</a>
+                <a href="?page={{ page_obj.previous_page_number }}" class="pagination-link">‹</a>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                {% if num == page_obj.number %}
+                <span class="pagination-link active">{{ num }}</span>
+                {% elif num >= page_obj.number|add:-2 and num <= page_obj.number|add:2 %} <a href="?page={{ num }}"
+                    class="pagination-link">{{ num }}</a>
+                    {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}" class="pagination-link">›</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}" class="pagination-link">Última »</a>
+                    {% endif %}
+            </div>
+            {% endif %}
+        </div>
     </div>
 </div>
 {% endblock %}
