@@ -14,7 +14,6 @@ def lote(request, lote_id):
                 caixa_aberta.save()
             return redirect('inventario:lote', lote_id=lote.id)
         
-
         form = CaixaForm(request.POST)
         if form.is_valid():
             caixa = form.save(commit=False)
@@ -26,11 +25,13 @@ def lote(request, lote_id):
         form = CaixaForm()
 
     caixas = Caixa.objects.filter(lote=lote).order_by('-id')
+    caixas_abertas = lote.caixas.filter(status='Iniciada').exists()
 
     context = {
         'form': form,
         'caixas': caixas,
-        'lote': lote
+        'lote': lote,
+        'caixas_abertas': caixas_abertas
     }
 
     return render(request, 'inventario/lote.html', context)

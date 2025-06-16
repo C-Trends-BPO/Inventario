@@ -13,10 +13,12 @@
 
         <div class="container-fechar-lote">
             <h2>Finalizar lote #{{ lote.id }}</h2>
-            <form method="post" action="{% url 'inventario:index' %}">
+            <form id="form-finalizar-lote" method="post" action="{% url 'inventario:index' %}">
                 {% csrf_token %}
                 <input type="hidden" name="fechar_lote_id" value="{{ lote.id }}">
-                <button type="submit" class="btn-fechar-lote">Finalizar lote</button>
+                <button type="submit" class="btn-fechar-lote" id="btn-finalizar-lote">
+                    Finalizar lote
+                </button>
             </form>
         </div>
 
@@ -58,4 +60,21 @@
         </table>
     </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const btnFinalizar = document.getElementById("btn-finalizar-lote");
+        const formFinalizar = document.getElementById("form-finalizar-lote");
+
+        const caixasAbertas = "{{ caixas_abertas|yesno:'true,false' }}" === "true";
+
+        if (caixasAbertas) {
+            btnFinalizar.addEventListener("click", function (e) {
+                e.preventDefault();
+                alert("❌ Este lote possui caixas abertas. Finalize todas antes de concluir o lote.");
+            });
+        }
+    });
+</script>
+
 {% endblock %}

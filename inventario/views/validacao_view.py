@@ -42,6 +42,17 @@ def validar_serial(request, lote_id):
 @csrf_exempt
 def finalizar_lote_view(request, lote_id):
     lote = get_object_or_404(LoteBipagem, id=lote_id)
-    lote.status = 'fechado' 
+
+    if lote.caixas.filter(status='Iniciada').exists():
+        return JsonResponse({
+            "status": "erro",
+            "mensagem": "❌ O lote possui caixas abertas. Finalize todas as caixas antes de concluir o lote."
+        })
+
+    lote.status = 'fechado'
     lote.save()
-    return JsonResponse({"status": "ok", "mensagem": "Lote fechado com sucesso!"})
+
+    return JsonResponse({
+        "status": "ok",
+        "mensagem": "✅ Lote fechado com sucesso."
+    })

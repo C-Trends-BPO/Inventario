@@ -1,12 +1,20 @@
+.validacao-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #fff4f4;
+}
+
 .validacao-container {
     max-width: 600px;
+    height: 350px;
     margin: 80px auto;
     padding: 30px;
     border-radius: 20px;
     background: #fff4f4;
     border: 1.5px solid #ef9a9a;
     box-shadow: 0 4px 20px rgba(242, 154, 154, 0.2);
-    font-family: Arial, sans-serif;
 }
 
 .validacao-container h2 {

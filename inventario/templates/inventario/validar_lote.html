@@ -1,88 +1,117 @@
 {% extends 'global/base.html' %}
 
 {% block content %}
-<div class="validacao-container">
-    <h2>Validação do Lote #{{ lote.id }}</h2>
+<div class="validacao-wrapper">
+    <div class="validacao-container">
+        <h2>Validação do Lote #{{ lote.id }}</h2>
 
-    <p><strong>Total de Seriais:</strong> {{ total_seriais }}</p>
-    <p><strong>5% para validação:</strong> {{ amostra_necessaria }}</p>
+        <p><strong>Total de Seriais:</strong> {{ total_seriais }}</p>
+        <p><strong>5% para validação:</strong> {{ amostra_necessaria }}</p>
 
-    <div id="contador">
-        <p><strong>Seriais validados:</strong> <span id="validados">0</span> / {{ amostra_necessaria }}</p>
-    </div>
+        <div id="contador">
+            <p><strong>Seriais validados:</strong> <span id="validados">0</span> / {{ amostra_necessaria }}</p>
+        </div>
 
-    <div class="form-group" style="margin-top: 30px; text-align: center; justify-content: center;">
-        <label for="codigo" style="font-weight: bold; color: #b74d4d;">Bipe o código aqui:</label><br>
-        <input type="text" id="codigo" autofocus
-            style="padding: 10px; font-size: 1.2rem; width: 100%; border: 2px solid #ef9a9a; border-radius: 8px; text-align: center;" />
-    </div>
+        <div class="form-group" style="margin-top: 30px; text-align: center; justify-content: center;">
+            <label for="codigo" style="font-weight: bold; color: #b74d4d;">Bipe o código aqui:</label><br>
+            <input type="text" id="codigo" autofocus
+                style="padding: 10px; font-size: 1.2rem; width: 100%; border: 2px solid #ef9a9a; border-radius: 8px; text-align: center;" />
+        </div>
 
-    {{ amostra_necessaria|json_script:"amostra-data" }}
-    {{ lote.id|json_script:"lote-id" }}
+        {{ amostra_necessaria|json_script:"amostra-data" }}
+        {{ lote.id|json_script:"lote-id" }}
 
-    <script>
-        let validados = 0;
-        const amostra = JSON.parse(document.getElementById("amostra-data").textContent);
-        const loteId = JSON.parse(document.getElementById("lote-id").textContent);
-        const validadosSet = new Set();
+        <script>
+            let validados = 0;
+            const amostra = JSON.parse(document.getElementById("amostra-data").textContent);
+            const loteId = JSON.parse(document.getElementById("lote-id").textContent);
+            const validadosSet = new Set();
 
-        document.addEventListener("DOMContentLoaded", () => {
-            const input = document.getElementById("codigo");
-            input.focus();
+            let buffer = '';
+            let lastTime = Date.now();
 
-            input.addEventListener("keydown", (e) => {
-                if (e.key === "Enter") {
-                    const codigo = input.value.trim().toUpperCase();
-                    if (codigo === "" || validadosSet.has(codigo)) {
-                        input.value = "";
-                        return;
+            document.addEventListener("DOMContentLoaded", () => {
+                const input = document.getElementById("codigo");
+                input.focus();
+
+                input.addEventListener("keydown", (e) => {
+                    const now = Date.now();
+                    const timeDiff = now - lastTime;
+                    lastTime = now;
+
+                    if (timeDiff < 50) {
+                        if (e.key.length === 1) {
+                            buffer += e.key;
+                        }
+                    } else {
+                        buffer = e.key.length === 1 ? e.key : '';
                     }
 
-                    fetch(`/lote/${loteId}/validar/serial/`, {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/x-www-form-urlencoded",
-                            "X-CSRFToken": "{{ csrf_token }}"
-                        },
-                        body: `codigo=${encodeURIComponent(codigo)}`
-                    })
-                        .then(res => res.json())
-                        .then(data => {
-                            if (data.status === "erro") {
-                                alert("❌ " + data.mensagem);
-                                window.location.href = "/";
-                            } else {
-                                validadosSet.add(codigo);
-                                validados += 1;
-                                document.getElementById("validados").innerText = validados;
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        const codigo = buffer.trim().toUpperCase();
+                        buffer = '';
 
-                                if (validados >= amostra) {
-                                    fetch(`/lote/${loteId}/fechar/`, {
-                                        method: "POST",
-                                        headers: {
-                                            "X-CSRFToken": "{{ csrf_token }}"
-                                        }
-                                    })
-                                        .then(() => {
-                                            alert("✅ Lote validado e fechado com sucesso!");
-                                            window.location.href = "/";
-                                        });
+                        if (codigo === "" || validadosSet.has(codigo)) {
+                            input.value = "";
+                            return;
+                        }
+
+                        fetch(`/lote/${loteId}/validar/serial/`, {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/x-www-form-urlencoded",
+                                "X-CSRFToken": "{{ csrf_token }}"
+                            },
+                            body: `codigo=${encodeURIComponent(codigo)}`
+                        })
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.status === "erro") {
+                                    alert("❌ " + data.mensagem);
+                                    window.location.href = "/";
+                                } else {
+                                    validadosSet.add(codigo);
+                                    validados += 1;
+                                    document.getElementById("validados").innerText = validados;
+
+                                    if (validados >= amostra) {
+                                        fetch(`/lote/${loteId}/fechar/`, {
+                                            method: "POST",
+                                            headers: {
+                                                "X-CSRFToken": "{{ csrf_token }}"
+                                            }
+                                        })
+                                            .then(res => res.json())
+                                            .then(data => {
+                                                alert(data.mensagem);  // sempre usa o que vem do backend
+                                                if (data.status === "ok") {
+                                                    window.location.href = "/";
+                                                }
+                                            });
+                                    }
                                 }
-                            }
-                        });
+                            });
 
-                    input.value = "";
-                }
+                        input.value = "";
+                    }
+
+                    if (e.key !== 'Enter') {
+                        e.preventDefault();
+                    }
+                });
+
+                setInterval(() => {
+                    if (document.activeElement !== input) {
+                        input.focus();
+                    }
+                }, 1000);
+
+                ['paste', 'drop', 'contextmenu'].forEach(evt =>
+                    input.addEventListener(evt, (e) => e.preventDefault())
+                );
             });
-
-            setInterval(() => {
-                if (document.activeElement !== input) {
-                    input.focus();
-                }
-            }, 1000);
-        });
-    </script>
-
-
+        </script>
+    </div>
 </div>
 {% endblock %}
