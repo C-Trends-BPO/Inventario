@@ -7,7 +7,7 @@ def index(request):
     if request.method == 'POST' and 'fechar_lote_id' in request.POST:
         lote_id = request.POST.get('fechar_lote_id')
         lote = get_object_or_404(LoteBipagem, id=lote_id)
-        lote.status = 'Aguardando validação' 
+        lote.status = 'Aguardando Validação' 
         lote.save()
         return redirect('inventario:index')
 

@@ -7,6 +7,7 @@ class LoteBipagem(models.Model):
         ('aberto', 'Aberto'),
         ('fechado', 'Fechado'),
         ('aguardando validação', 'Aguardando Validação'),
+        ('cancelado', 'Cancelado'),
     ]
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Aberto')
     user_created = models.ForeignKey('auth.User', on_delete=models.CASCADE,null=True)
@@ -38,3 +39,10 @@ class Bipagem(models.Model):
     criado_em = models.DateTimeField(auto_now_add=True)
     modelo = models.CharField(max_length=100, null=True)
     patrimonio = models.CharField(max_length=100, null=True)
+
+class Serial(models.Model):
+    codigo = models.CharField(max_length=100, unique=True)
+    lote = models.ForeignKey(LoteBipagem, on_delete=models.CASCADE, related_name='seriais')
+
+    def __str__(self):
+        return self.codigo

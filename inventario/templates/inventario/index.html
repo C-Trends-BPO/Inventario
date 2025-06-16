@@ -35,15 +35,13 @@
                         <td>
                             {% if lote.get_status_display == "Aberto" %}
 
-                            <a href="{% url 'inventario:lote' lote.id %}" class="edit-icon"
-                                title="Editar caixa">
+                            <a href="{% url 'inventario:lote' lote.id %}" class="edit-icon" title="Editar caixa">
                                 <i class="fa-solid fa-pen"></i>
                             </a>
 
                             {% elif lote.get_status_display == "Aguardando Validação" %}
-
-                            <a href="{% url 'inventario:caixa' lote.id caixa.id %}" class="edit-icon"
-                                title="Validar lote">
+                            
+                            <a href="{% url 'inventario:validar_lote' lote.id %}" class="edit-icon" title="Validar lote">
                                 <i class="fa-solid fa-pen text-warning"></i>
                             </a>
 
@@ -53,7 +51,7 @@
                                 style="pointer-events: none; cursor: not-allowed;">
                                 <i class="fa-solid fa-pen"></i>
                             </a>
-                            
+
                             {% endif %}
                         </td>
                     </tr>
