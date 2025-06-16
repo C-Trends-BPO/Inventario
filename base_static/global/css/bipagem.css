@@ -1,4 +1,4 @@
-body{
+body {
     overflow-y: auto;
 }
 
@@ -9,17 +9,16 @@ body{
     justify-content: center;
     gap: 40px;
     flex-wrap: wrap;
-    padding-top: 50px;
+    padding-top: 20px;
     min-height: 100vh;
     background: #fff4f4;
 }
 
 .form-container {
-    margin-top: 120px;
+    margin-top: 110px;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: auto;
 }
 
 .form-1col {
@@ -31,7 +30,7 @@ body{
     background: #fceaea;
 }
 
-.form-1col h2{
+.form-1col h2 {
     text-align: center;
     font-size: 1rem;
     color: #b74d4d;
@@ -72,7 +71,7 @@ body{
 .scroll-tabela-bipagem {
     width: 90%;
     max-width: 900px;
-    max-height: 300px;
+    min-height: 320px;
     overflow-y: auto;
     background: #fff4f4;
     border: 1.5px solid #ef9a9a;
@@ -135,25 +134,62 @@ body{
 }
 
 .encerrar-bipagem {
-  flex-shrink: 0;
-  background-color: #f8f9fa;
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-  max-width: 250px;
+    flex-shrink: 0;
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    max-width: 250px;
 }
 
 .finalizar-bipagem {
-  background-color: #b30000;
-  color: white;
-  padding: 0.6rem 1.2rem;
-  border: none;
-  border-radius: 5px;
-  font-weight: bold;
-  cursor: pointer;
-  width: 100%;
+    background-color: #b30000;
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
 }
 
 .finalizar-bipagem:hover {
-  background-color: #8c0000;
+    background-color: #8c0000;
+}
+
+.paginacao-lotes {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.pagination-wrapper {
+    display: inline-block;
+    padding: 12px 20px;
+    background: #fff4f4;
+    border: 1.5px solid #ef9a9a;
+    border-radius: 14px;
+    box-shadow: 0 2px 8px rgba(239, 154, 154, 0.2);
+}
+
+.pagination-link {
+    display: inline-block;
+    padding: 8px 14px;
+    background-color: #fbe6e6;
+    color: #aa2d2d;
+    font-weight: bold;
+    border-radius: 8px;
+    text-decoration: none;
+    margin: 0 2px;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.pagination-link:hover {
+    background-color: #ef9a9a;
+    color: white;
+}
+
+.pagination-link.active {
+    background-color: #aa2d2d;
+    color: white;
+    pointer-events: none;
 }

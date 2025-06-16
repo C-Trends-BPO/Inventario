@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from ..models import LoteBipagem, Caixa, Bipagem
 from ..forms import BipagemForm
+from django.core.paginator import Paginator
 
 def bipagem(request, lote_id, caixa_id):
     lote = get_object_or_404(LoteBipagem, id=lote_id)
@@ -27,6 +28,9 @@ def bipagem(request, lote_id, caixa_id):
         form = BipagemForm()
 
     bipagens_da_caixa = Bipagem.objects.filter(id_caixa=caixa).order_by('-id')
+    paginator = Paginator(bipagens_da_caixa, 5)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
     caixa_bloqueada = caixa.status in ['Finalizada']
 
     context = {
@@ -34,7 +38,8 @@ def bipagem(request, lote_id, caixa_id):
         'caixa': caixa,
         'form': form,
         'caixas': bipagens_da_caixa, 
-        'caixa_bloqueada': caixa_bloqueada
+        'caixa_bloqueada': caixa_bloqueada,
+        'page_obj': page_obj,
     }
 
     return render(request, 'inventario/bipagem.html', context)

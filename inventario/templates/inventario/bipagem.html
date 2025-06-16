@@ -5,13 +5,13 @@
 <div class="form-container">
     <form method="post" class="form-1col">
         {% csrf_token %}
-            {% if not caixa_bloqueada %}
-            {% include 'global/partials/_form_1col.html' %}
-            {%else%}
-            <h2 class="mensagem>">Caixa bloqueada, não é possível realizar a bipagem.</h2>
-            {% endif %}
-        </form>
-    </div>
+        {% if not caixa_bloqueada %}
+        {% include 'global/partials/_form_1col.html' %}
+        {%else%}
+        <h2 class="mensagem>">Caixa bloqueada, não é possível realizar a bipagem.</h2>
+        {% endif %}
+    </form>
+</div>
 
 <div class="centraliza-bipagem">
     <div class="scroll-tabela-bipagem">
@@ -26,7 +26,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for item in caixas %}
+                {% for item in page_obj %}
                 <tr>
                     <td>#{{ item.id_caixa.nr_caixa }}</td>
                     <td>#{{ item.unidade }}</td>
@@ -37,17 +37,40 @@
                 {% endfor %}
             </tbody>
         </table>
+        <div class="paginacao-lotes">
+            {% if page_obj.has_other_pages %}
+            <div class="pagination-wrapper">
+                {% if page_obj.has_previous %}
+                <a href="?page=1" class="pagination-link">« Primeira</a>
+                <a href="?page={{ page_obj.previous_page_number }}" class="pagination-link">‹</a>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                {% if num == page_obj.number %}
+                <span class="pagination-link active">{{ num }}</span>
+                {% elif num >= page_obj.number|add:-2 and num <= page_obj.number|add:2 %} <a href="?page={{ num }}"
+                    class="pagination-link">{{ num }}</a>
+                    {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}" class="pagination-link">›</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}" class="pagination-link">Última »</a>
+                    {% endif %}
+            </div>
+            {% endif %}
+        </div>
     </div>
 
     {% if not caixa_bloqueada %}
-        <div class="encerrar-bipagem">
+    <div class="encerrar-bipagem">
         <h2>Deseja encerrar caixa #{{ caixa.nr_caixa }}</h2>
         <form method="post" class="encerrar" action="{% url 'inventario:lote' lote.id %}">
             {% csrf_token %}
             <button type="submit" name="encerrar_caixa" class="finalizar-bipagem">
                 Encerrar Caixa</button>
-            </form>
-        </div>
+        </form>
+    </div>
     {% else %}
     <div class="encerrar-bipagem">
         <form class="encerrar" action="{% url 'inventario:lote' lote.id %}">
