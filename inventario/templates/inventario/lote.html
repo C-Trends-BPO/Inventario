@@ -37,21 +37,45 @@
                 </tr>
             </thead>
             <tbody>
-                {% for caixa in caixas %}
-                <tr>
-                    <td>#{{ caixa.nr_caixa }}</td>
-                    <td>{{ caixa.criado_em|date:"d/m/Y H:i" }}</td>
-                    <td>{{ caixa.get_status_display }}</td>
-                    <td>{{ lote.user_created }}</td>
-                    <td>
-                        <a href="{% url 'inventario:caixa' lote.id caixa.id %}" class="edit-icon" title="Editar caixa">
-                            <i class="fa-solid fa-pen"></i>
-                        </a>
-                    </td>
-                </tr>
+                {% for caixa in page_obj %}
+                    <tr>
+                        <td>#{{ caixa.nr_caixa }}</td>
+                        <td>{{ caixa.criado_em|date:"d/m/Y H:i" }}</td>
+                        <td>{{ caixa.get_status_display }}</td>
+                        <td>{{ lote.user_created }}</td>
+                        <td>
+                            <a href="{% url 'inventario:caixa' lote.id caixa.id %}" class="edit-icon" title="Editar caixa">
+                                <i class="fa-solid fa-pen"></i>
+                            </a>
+                        </td>
+                    </tr>
                 {% endfor %}
             </tbody>
         </table>
+
+        <div class="paginacao-lotes">
+            {% if page_obj.has_other_pages %}
+            <div class="pagination-wrapper">
+                {% if page_obj.has_previous %}
+                <a href="?page=1" class="pagination-link">« Primeira</a>
+                <a href="?page={{ page_obj.previous_page_number }}" class="pagination-link">‹</a>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                {% if num == page_obj.number %}
+                <span class="pagination-link active">{{ num }}</span>
+                {% elif num >= page_obj.number|add:-2 and num <= page_obj.number|add:2 %} <a href="?page={{ num }}"
+                    class="pagination-link">{{ num }}</a>
+                    {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}" class="pagination-link">›</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}" class="pagination-link">Última »</a>
+                    {% endif %}
+            </div>
+            {% endif %}
+        </div>
     </div>
 </div>
 
