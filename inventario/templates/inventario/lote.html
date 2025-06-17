@@ -22,6 +22,16 @@
                 </button>
             </form>
         </div>
+
+        {% else %}
+        <div class="encerrar-bipagem">
+            <form class="encerrar" action="{% url 'inventario:index' %}">
+                {% csrf_token %}
+                <button type="submit" name="encerrar_caixa" class="finalizar-bipagem">
+                    Voltar</button>
+            </form>
+        </div>
+
         {% endif %}
     </div>
 
@@ -38,17 +48,17 @@
             </thead>
             <tbody>
                 {% for caixa in page_obj %}
-                    <tr>
-                        <td>#{{ caixa.nr_caixa }}</td>
-                        <td>{{ caixa.criado_em|date:"d/m/Y H:i" }}</td>
-                        <td>{{ caixa.get_status_display }}</td>
-                        <td>{{ lote.user_created }}</td>
-                        <td>
-                            <a href="{% url 'inventario:caixa' lote.id caixa.id %}" class="edit-icon" title="Editar caixa">
-                                <i class="fa-solid fa-pen"></i>
-                            </a>
-                        </td>
-                    </tr>
+                <tr>
+                    <td>#{{ caixa.nr_caixa }}</td>
+                    <td>{{ caixa.criado_em|date:"d/m/Y H:i" }}</td>
+                    <td>{{ caixa.get_status_display }}</td>
+                    <td>{{ lote.user_created }}</td>
+                    <td>
+                        <a href="{% url 'inventario:caixa' lote.id caixa.id %}" class="edit-icon" title="Editar caixa">
+                            <i class="fa-solid fa-pen"></i>
+                        </a>
+                    </td>
+                </tr>
                 {% endfor %}
             </tbody>
         </table>
