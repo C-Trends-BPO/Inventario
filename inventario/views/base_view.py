@@ -15,7 +15,9 @@ def index(request):
 
     busca = request.GET.get('q', '')
 
-    lotes_list = LoteBipagem.objects.all().order_by('-criado_em')
+    user_groups = request.user.groups.all()
+    lotes_list = LoteBipagem.objects.filter(group_user__in=user_groups).order_by('-criado_em')
+    
     if busca:
         lotes_list = lotes_list.filter(
             Q(id__icontains=busca) |

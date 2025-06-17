@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import Group
 
 class LoteBipagem(models.Model):
     id=models.AutoField(primary_key=True)
@@ -11,7 +12,7 @@ class LoteBipagem(models.Model):
     ]
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Aberto')
     user_created = models.ForeignKey('auth.User', on_delete=models.CASCADE,null=True)
-    group_user = models.CharField(max_length=100, default='grupo_padrao')
+    group_user = models.ForeignKey(Group, null=True, blank=True, on_delete=models.SET_NULL)
 
 class Caixa(models.Model):
     id=models.AutoField(primary_key=True)
