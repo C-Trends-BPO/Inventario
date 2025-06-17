@@ -4,7 +4,15 @@
 <div class="wrapper-central">
     <div class="container-index-lotes">
         <div class="titulo-com-botao">
-            <h2>Lotes de Bipagem</h2>
+            <div class="titulo-e-pesquisa">
+                <h2>Lotes de Bipagem</h2>
+
+                <form method="get" action="" class="form-pesquisa-lote">
+                    <input type="text" name="q" id="q" placeholder="Pesquisar lote..." value="{{ request.GET.q }}">
+                    <button type="submit">Buscar</button>
+                </form>
+            </div>
+
             <form method="post" action="{% url 'inventario:criar_lote' %}">
                 {% csrf_token %}
                 <button type="submit" class="btn-novo-lote">Criar novo lote</button>
