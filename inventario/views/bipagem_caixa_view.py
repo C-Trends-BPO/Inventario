@@ -3,7 +3,9 @@ from django.urls import reverse
 from ..models import LoteBipagem, Caixa, Bipagem
 from ..forms import BipagemForm
 from django.core.paginator import Paginator
+from django.contrib.auth.decorators import login_required
 
+@login_required(login_url='inventario:login')
 def bipagem(request, lote_id, caixa_id):
     lote = get_object_or_404(LoteBipagem, id=lote_id)
     caixa = get_object_or_404(Caixa, id=caixa_id, lote=lote)

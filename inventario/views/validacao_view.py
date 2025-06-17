@@ -4,7 +4,9 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from ..models import LoteBipagem, Bipagem
 import math
+from django.contrib.auth.decorators import login_required
 
+@login_required(login_url='inventario:login')
 def validar_lote_view(request, lote_id):
     lote = get_object_or_404(LoteBipagem, id=lote_id)
     
@@ -20,7 +22,7 @@ def validar_lote_view(request, lote_id):
 
     return render(request, "inventario/validar_lote.html", context)
 
-
+@login_required(login_url='inventario:login')
 @csrf_exempt
 def validar_serial(request, lote_id):
     if request.method == "POST":
@@ -38,6 +40,7 @@ def validar_serial(request, lote_id):
 
     return JsonResponse({"status": "erro", "mensagem": "Método não permitido"}, status=405)
 
+@login_required(login_url='inventario:login')
 @require_POST
 @csrf_exempt
 def finalizar_lote_view(request, lote_id):

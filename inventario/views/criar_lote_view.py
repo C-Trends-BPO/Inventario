@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
 from ..models import LoteBipagem
+from django.contrib.auth.decorators import login_required
 
+@login_required(login_url='inventario:login')
 def criar_lote_view(request):
     if request.method == 'POST':
         lote= LoteBipagem.objects.create(
