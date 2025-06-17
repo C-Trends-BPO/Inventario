@@ -8,7 +8,7 @@
 body {
     min-height: 100vh;
     margin: 0;
-    background: #f2fbf4; 
+    background: #f2fbf4;
 }
 
 .container-login {
@@ -27,8 +27,8 @@ body {
 }
 
 .form-login {
-    background-color: #d2f5e3; 
-    border: 1px solid #a6dbb5; 
+    background-color: #d2f5e3;
+    border: 1px solid #a6dbb5;
     border-radius: 10px;
     padding: 32px 28px 24px 28px;
     box-shadow: 0 4px 24px #0001;
@@ -40,7 +40,7 @@ body {
 
 .form-title-login {
     margin-bottom: 24px;
-    color: #205a3e; 
+    color: #205a3e;
 }
 
 .form-group {
@@ -50,7 +50,7 @@ body {
 
 .form-group label {
     font-size: 1rem;
-    color: #37644b; 
+    color: #37644b;
     display: block;
     margin-bottom: 4px;
 }
@@ -58,17 +58,17 @@ body {
 .form-group input {
     width: 100%;
     padding: 8px 10px;
-    border: 1px solid #a6dbb5; 
+    border: 1px solid #a6dbb5;
     border-radius: 5px;
     font-size: 1rem;
-    background: #f4fdfa; 
+    background: #f4fdfa;
 }
 
 .login-button {
     margin-top: 8px;
     width: 100%;
     padding: 10px;
-    background: #84c9a0; 
+    background: #84c9a0;
     color: #fff;
     font-size: 1.05rem;
     border: none;
@@ -91,7 +91,7 @@ body {
 }
 
 a {
-    color: #45976b; 
+    color: #45976b;
     text-decoration: none;
 }
 
@@ -102,7 +102,7 @@ a:hover {
 p {
     margin-top: 18px;
     font-size: 0.97rem;
-    color: #37644b; 
+    color: #37644b;
 }
 
 .abstract-left {
@@ -125,7 +125,7 @@ p {
     max-width: 70%;
     text-align: left;
     padding: 2.5rem 2rem;
-    background: rgba(255,255,255,0.28);
+    background: rgba(255, 255, 255, 0.28);
     border-radius: 22px;
     box-shadow: 0 2px 12px #0001;
     font-family: 'Roboto', sans-serif;
@@ -148,11 +148,12 @@ p {
     list-style: disc;
 }
 
-.login-button, button {
+.login-button,
+button {
     margin-top: 8px;
     width: 100%;
     padding: 10px;
-    background: #84c9a0; 
+    background: #84c9a0;
     color: #fff;
     font-size: 1.05rem;
     border: none;
@@ -164,7 +165,8 @@ p {
     text-decoration: none;
 }
 
-.login-button:hover, button:hover {
+.login-button:hover,
+button:hover {
     background: #6dbf90;
     transform: translateY(-2px) scale(1.03);
 }
@@ -179,6 +181,7 @@ p {
         clip-path: none;
         border-radius: 0 0 80% 0 / 0 0 100% 0;
     }
+
     .info-content {
         max-width: 95vw;
         padding: 1.2rem 0.8rem;

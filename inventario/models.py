@@ -15,7 +15,6 @@ class LoteBipagem(models.Model):
     group_user_txt = models.CharField(max_length=100, default='grupo_padrao')
     group_user = models.ForeignKey(Group, null=True, blank=True, on_delete=models.SET_NULL)
 
-
 class Caixa(models.Model):
     id=models.AutoField(primary_key=True)
     nr_caixa = models.CharField(max_length=100,null=True)

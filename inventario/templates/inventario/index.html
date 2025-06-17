@@ -103,4 +103,13 @@
         </div>
     </div>
 </div>
+
+<script>
+    window.addEventListener('DOMContentLoaded', function () {
+        const input = document.querySelector('input[name="q"]');
+        if (input) {
+            input.value = '';
+        }
+    });
+</script>
 {% endblock %}
