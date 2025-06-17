@@ -42,7 +42,7 @@ document.querySelectorAll('.column-toggle').forEach(toggle => {
       if (menu.id !== targetId) {
         menu.style.display = 'none';
       }
-    }); 
+    });
 
     targetMenu.style.display = (targetMenu.style.display === 'flex') ? 'none' : 'flex';
   });
@@ -56,6 +56,18 @@ document.querySelectorAll('.submenu-toggle').forEach(subToggle => {
     subMenu.style.display = (subMenu.style.display === 'block') ? 'none' : 'block';
   });
 });
+
+function toggleUsuarioMenu() {
+  const menu = document.getElementById("usuario-menu");
+  menu.style.display = menu.style.display === "block" ? "none" : "block";
+  // fecha se clicar fora
+  document.addEventListener('click', function handler(e) {
+    if (!menu.contains(e.target) && !e.target.classList.contains("usuario-logado")) {
+      menu.style.display = "none";
+      document.removeEventListener('click', handler);
+    }
+  });
+}
 
 // DATA E HORA ROMANEIOS
 

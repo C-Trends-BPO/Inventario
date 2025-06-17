@@ -16,6 +16,7 @@ def criar_lote_view(request):
             lote= LoteBipagem.objects.create(
                 user_created=request.user,
                 group_user=grupo,
+                group_user_txt=nome_exibicao
             )
 
         return redirect('inventario:lote', lote.id) 

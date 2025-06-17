@@ -44,7 +44,14 @@
             </div>
         </div>
 
-        <a href="{% url 'inventario:logout_confirm' %}">Sair</a>
+        <div class="usuario-dropdown">
+            <button class="usuario-logado" onclick="toggleUsuarioMenu()">
+                Olá, {{ request.user.first_name|default:request.user.username }} ▾
+            </button>
+            <div id="usuario-menu" class="usuario-dropdown-menu">
+                <a href="{% url 'inventario:logout_confirm' %}">Sair</a>
+            </div>
+        </div>
     </div>
 </div>
 
