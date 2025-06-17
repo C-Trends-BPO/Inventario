@@ -5,10 +5,11 @@
 <div class="form-container">
     <form method="post" class="form-1col">
         {% csrf_token %}
-        {% if not caixa_bloqueada %}
-        {% include 'global/partials/_form_1col.html' %}
-        {%else%}
-        <h2 class="mensagem>">Caixa bloqueada, não é possível realizar a bipagem.</h2>
+        {% if mensagem.mostrar == True %}
+            {% include 'global/partials/_form_1col.html' %}
+        {% else %}
+            <h2 class="mensagem">{{ mensagem.mensagem }}</h2>
+            <h2 class="mensagem">{{ mensagem.mensagem2 }}</h2>
         {% endif %}
     </form>
 </div>
@@ -62,7 +63,7 @@
         </div>
     </div>
 
-    {% if not caixa_bloqueada %}
+    {% if mensagem.encerrar == True %}
     <div class="encerrar-bipagem">
         <h2>Deseja encerrar caixa #{{ caixa.nr_caixa }}</h2>
         <form method="post" class="encerrar" action="{% url 'inventario:lote' lote.id %}">
@@ -130,18 +131,13 @@
     clearButton.addEventListener('click', () => {
         const form = document.querySelector('form');
 
-        // Limpa todos os campos que não estão desativados ou ocultos
         form.querySelectorAll('input:not([type="hidden"]):not([disabled]), textarea:not([disabled]), select:not([disabled])')
             .forEach(field => {
                 field.value = '';
             });
 
-        buffer = ''; // limpa o buffer da bipagem também
+        buffer = '';
     });
 
 </script>
-
-
-
-
 {% endblock %}

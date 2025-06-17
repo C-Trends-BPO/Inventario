@@ -193,3 +193,13 @@ body {
     color: white;
     pointer-events: none;
 }
+
+.form-errors {
+    background: #ffe0e0;
+    border: 1.5px solid #ef9a9a;
+    color: #b74d4d;
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-top: 10px;
+    font-weight: 500;
+}

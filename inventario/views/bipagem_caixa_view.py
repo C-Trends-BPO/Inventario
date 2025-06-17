@@ -13,8 +13,11 @@ def bipagem(request, lote_id, caixa_id):
     if request.method == 'POST':
         form = BipagemForm(request.POST)
         serial = request.POST.get('serial', '').strip()
-            
-        if form.is_valid() and serial:
+
+        #for i in range(1,40):
+        if Bipagem.objects.filter(id_caixa=caixa).count() >= 50:
+            form.add_error(None, "Esta caixa já possui o limite de 50 bipagens.")
+        elif form.is_valid() and serial:
             Bipagem.objects.create(
                 id_caixa=caixa,
                 id_lote=lote,
@@ -23,9 +26,7 @@ def bipagem(request, lote_id, caixa_id):
                 modelo=form.cleaned_data['modelo'],
                 patrimonio=form.cleaned_data['patrimonio']
             )
-
             return redirect(reverse('inventario:caixa', args=[lote.id, caixa.id]))
-
     else:
         form = BipagemForm()
 
@@ -33,15 +34,29 @@ def bipagem(request, lote_id, caixa_id):
     paginator = Paginator(bipagens_da_caixa, 5)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
+    mensagem = {'mostrar': True,
+                'encerrar': True}
+
     caixa_bloqueada = caixa.status in ['Finalizada']
+    if caixa_bloqueada:
+        mensagem = {'mensagem': 'Esta caixa está bloqueada e não pode ser editada.',
+                    'voltar': True}
+    
+    elif bipagens_da_caixa.count() >= 50:
+        mensagem = {'mensagem': 'Esta caixa já possui o limite de 50 bipagens.',
+                    'encerrar': True}
+
+    bipagens_da_caixa = Bipagem.objects.filter(id_caixa=caixa)
 
     context = {
         'lote': lote,
         'caixa': caixa,
         'form': form,
-        'caixas': bipagens_da_caixa, 
-        'caixa_bloqueada': caixa_bloqueada,
+        'caixas': bipagens_da_caixa,
+        #'caixa_bloqueada': caixa_bloqueada,
         'page_obj': page_obj,
+        #'limite_atingido': bipagens_da_caixa.count() >= 50,
+        'mensagem': mensagem
     }
 
     return render(request, 'inventario/bipagem.html', context)
