@@ -11,19 +11,12 @@
     <div class="nav-links">
         <a href="{% url 'inventario:index' %}">Home</a>
 
+        {% if is_visualizador_master %}
         <div class="dropdown">
             <button class="dropbtn">Operações</button>
             <div class="dropdown-content">
                 <h3>Getnet</h3>
                 <div class="top-columns">
-                    <!-- <div class="column">
-                        <h4 class="column-toggle" data-target="bipagem" title="Use para encontrar itens.">
-                            <i class="fa fa-search"></i><span> Bipagem</span>
-                        </h4>
-                        <div class="submenu" id="bipagem">
-                            <a href="#">Cadastrar Item</a>
-                        </div>
-                    </div> -->
                     <div class="column">
                         <h4 class="column-toggle" data-target="acompanhamento" title="Use para encontrar itens.">
                             <i class="fa fa-search"></i><span> Acompanhamento</span>
@@ -43,6 +36,7 @@
                 </div>
             </div>
         </div>
+        {% endif %}
 
         <div class="usuario-dropdown">
             <button class="usuario-logado" onclick="toggleUsuarioMenu()">

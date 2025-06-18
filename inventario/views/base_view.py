@@ -3,9 +3,15 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from ..models import LoteBipagem
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseForbidden
 
 @login_required(login_url='inventario:login')
 def index(request):
+    is_visualizador_master = request.user.groups.filter(name='INV_VISUALIZADOR_MASTER').exists()
+
+    if request.method == 'POST' and is_visualizador_master:
+        return HttpResponseForbidden("Você não tem permissão para bipar seriais.")
+    
     if request.method == 'POST' and 'fechar_lote_id' in request.POST:
         lote_id = request.POST.get('fechar_lote_id')
         lote = get_object_or_404(LoteBipagem, id=lote_id)
@@ -31,7 +37,8 @@ def index(request):
 
     return render(request, 'inventario/index.html', {
         'lotes': page_obj.object_list,
-        'page_obj': page_obj
+        'page_obj': page_obj,
+        'is_visualizador_master': is_visualizador_master, 
     })
 
 

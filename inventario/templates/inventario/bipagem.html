@@ -3,15 +3,17 @@
 {% block content %}
 
 <div class="form-container">
+    {% if not is_visualizador_master %}
     <form method="post" class="form-1col">
         {% csrf_token %}
         {% if mensagem.mostrar == True %}
-            {% include 'global/partials/_form_1col.html' %}
+        {% include 'global/partials/_form_1col.html' %}
         {% else %}
-            <h2 class="mensagem">{{ mensagem.mensagem }}</h2>
-            <h2 class="mensagem">{{ mensagem.mensagem2 }}</h2>
+        <h2 class="mensagem">{{ mensagem.mensagem }}</h2>
+        <h2 class="mensagem">{{ mensagem.mensagem2 }}</h2>
         {% endif %}
     </form>
+    {% endif %}
 </div>
 
 <div class="centraliza-bipagem">
@@ -63,7 +65,7 @@
         </div>
     </div>
 
-    {% if mensagem.encerrar == True %}
+    {% if mensagem.encerrar == True and not is_visualizador_master %}
     <div class="encerrar-bipagem">
         <h2>Deseja encerrar caixa #{{ caixa.nr_caixa }}</h2>
         <form method="post" class="encerrar" action="{% url 'inventario:lote' lote.id %}">

@@ -4,10 +4,15 @@ from ..models import LoteBipagem, Caixa
 from ..forms import CaixaForm
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseForbidden
 
 @login_required(login_url='inventario:login')
 def lote(request, lote_id):
     lote = get_object_or_404(LoteBipagem, id=lote_id)
+
+    # Impede ações POST para o grupo de visualização
+    if request.method == 'POST' and request.user.groups.filter(name='Visualizador Master').exists():
+        return HttpResponseForbidden("Você não tem permissão para modificar esse lote.")
 
     if request.method == 'POST':
         if 'encerrar_caixa' in request.POST:
@@ -33,6 +38,7 @@ def lote(request, lote_id):
     page_obj = paginator.get_page(page_number)
 
     caixas_abertas = lote.caixas.filter(status='Iniciada').exists()
+    is_visualizador_master = request.user.groups.filter(name='INV_VISUALIZADOR_MASTER').exists()
     lote_bloqueado = lote.status in ['fechado', 'cancelado']
 
     context = {
@@ -40,7 +46,8 @@ def lote(request, lote_id):
         'page_obj': page_obj,      
         'lote': lote,
         'caixas_abertas': caixas_abertas,
-        'lote_bloqueado': lote_bloqueado
+        'lote_bloqueado': lote_bloqueado,
+        'is_visualizador_master': is_visualizador_master,
     }
 
     return render(request, 'inventario/lote.html', context)

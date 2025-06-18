@@ -3,7 +3,7 @@
 {% block content %}
 <div class="centraliza-tela">
     <div class="botoes-lote-flex">
-        {% if not lote_bloqueado %}
+        {% if not lote_bloqueado and not is_visualizador_master %}
         <div class="container-nova-caixa">
             <h2>Nova Caixa para Lote #{{ lote.id }}</h2>
             <form method="post" action="{% url 'inventario:iniciar_caixa' lote.id %}">
@@ -22,9 +22,7 @@
                 </button>
             </form>
         </div>
-
         {% else %}
-        
         <div class="encerrar-bipagem">
             <form class="encerrar" action="{% url 'inventario:index' %}">
                 {% csrf_token %}
@@ -32,7 +30,6 @@
                     Voltar</button>
             </form>
         </div>
-
         {% endif %}
     </div>
 

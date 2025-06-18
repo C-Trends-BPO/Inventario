@@ -5,10 +5,15 @@ from django.views.decorators.http import require_POST
 from ..models import LoteBipagem, Bipagem
 import math
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseForbidden
 
 @login_required(login_url='inventario:login')
 def validar_lote_view(request, lote_id):
     lote = get_object_or_404(LoteBipagem, id=lote_id)
+
+    # Bloqueia validação para usuários visualizadores
+    if request.method == 'POST' and request.user.groups.filter(name='Visualizador Master').exists():
+        return HttpResponseForbidden("Você não tem permissão para validar lotes.")
     
     seriais = lote.bipagem.all()
     total_seriais = seriais.count()
@@ -26,6 +31,13 @@ def validar_lote_view(request, lote_id):
 @csrf_exempt
 def validar_serial(request, lote_id):
     if request.method == "POST":
+        # Bloqueia para o grupo de visualização
+        if request.user.groups.filter(name='Visualizador Master').exists():
+            return JsonResponse({
+                "status": "erro",
+                "mensagem": "❌ Você não tem permissão para validar seriais."
+            })
+
         lote = get_object_or_404(LoteBipagem, id=lote_id)
         codigo = request.POST.get("codigo", "").strip().upper()
 
@@ -44,6 +56,13 @@ def validar_serial(request, lote_id):
 @require_POST
 @csrf_exempt
 def finalizar_lote_view(request, lote_id):
+    # Bloqueia para o grupo de visualização
+    if request.user.groups.filter(name='INV_VISUALIZADOR_MASTER').exists():
+        return JsonResponse({
+            "status": "erro",
+            "mensagem": "❌ Você não tem permissão para finalizar lotes."
+        })
+
     lote = get_object_or_404(LoteBipagem, id=lote_id)
 
     if lote.caixas.filter(status='Iniciada').exists():

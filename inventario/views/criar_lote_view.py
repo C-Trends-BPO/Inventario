@@ -1,9 +1,14 @@
 from django.shortcuts import render, redirect
 from ..models import LoteBipagem
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseForbidden
 
 @login_required(login_url='inventario:login')
 def criar_lote_view(request):
+    # Bloqueia criação de lote para o grupo Visualizador Master
+    if request.method == 'POST' and request.user.groups.filter(name='INV_VISUALIZADOR_MASTER').exists():
+        return HttpResponseForbidden("Você não tem permissão para criar lotes.")
+
     if request.method == 'POST':
         grupo = request.user.groups.first()
         if grupo:
@@ -13,11 +18,12 @@ def criar_lote_view(request):
             else:
                 nome_exibicao = nome_grupo
 
-            lote= LoteBipagem.objects.create(
+            lote = LoteBipagem.objects.create(
                 user_created=request.user,
                 group_user=grupo,
                 group_user_txt=nome_exibicao
             )
 
-        return redirect('inventario:lote', lote.id) 
+            return redirect('inventario:lote', lote.id)
+
     return render(request, 'inventario/criar_lote.html')

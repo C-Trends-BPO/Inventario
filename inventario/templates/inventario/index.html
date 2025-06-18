@@ -13,10 +13,12 @@
                 </form>
             </div>
 
+            {% if not is_visualizador_master %}
             <form method="post" action="{% url 'inventario:criar_lote' %}">
                 {% csrf_token %}
                 <button type="submit" class="btn-novo-lote">Criar novo lote</button>
             </form>
+            {% endif %}
         </div>
 
         {% if lotes %}

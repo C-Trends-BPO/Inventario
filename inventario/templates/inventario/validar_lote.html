@@ -12,15 +12,23 @@
             <p><strong>Seriais validados:</strong> <span id="validados">0</span> / {{ amostra_necessaria }}</p>
         </div>
 
+        {% if not is_visualizador_master %}
         <div class="form-group" style="margin-top: 30px; text-align: center; justify-content: center;">
             <label for="codigo" style="font-weight: bold; color: #b74d4d;">Bipe o código aqui:</label><br>
             <input type="text" id="codigo" autofocus
                 style="padding: 10px; font-size: 1.2rem; width: 100%; border: 2px solid #ef9a9a; border-radius: 8px; text-align: center;" />
         </div>
+        {% else %}
+        <div class="form-group" style="margin-top: 30px; text-align: center;">
+            <p style="color: gray;"><strong>Usuário em modo visualização. Validação desabilitada.</strong></p>
+        </div>
+        {% endif %}
 
         {{ amostra_necessaria|json_script:"amostra-data" }}
         {{ lote.id|json_script:"lote-id" }}
 
+
+        {% if not is_visualizador_master %}
         <script>
             let validados = 0;
             const amostra = JSON.parse(document.getElementById("amostra-data").textContent);
@@ -112,6 +120,8 @@
                 );
             });
         </script>
+        {% endif %}
+
     </div>
 </div>
 {% endblock %}
