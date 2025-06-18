@@ -5,12 +5,12 @@ from ..forms import BipagemForm
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
+
 @login_required(login_url='inventario:login')
 def bipagem(request, lote_id, caixa_id):
     lote = get_object_or_404(LoteBipagem, id=lote_id)
     caixa = get_object_or_404(Caixa, id=caixa_id, lote=lote)
 
-    # Verifica se é usuário visualizador
     is_visualizador_master = request.user.groups.filter(name='INV_VISUALIZADOR_MASTER').exists()
 
     if request.method == 'POST' and is_visualizador_master:
@@ -31,9 +31,11 @@ def bipagem(request, lote_id, caixa_id):
                 modelo=form.cleaned_data['modelo'],
                 patrimonio=form.cleaned_data['patrimonio']
             )
+            request.session['modelo_bipagem'] = form.cleaned_data['modelo']
             return redirect(reverse('inventario:caixa', args=[lote.id, caixa.id]))
     else:
-        form = BipagemForm()
+        modelo_salvo = request.session.get('modelo_bipagem', '')
+        form = BipagemForm(initial={'modelo': modelo_salvo})
 
     bipagens_da_caixa = Bipagem.objects.filter(id_caixa=caixa).order_by('-id')
     paginator = Paginator(bipagens_da_caixa, 5)
@@ -54,7 +56,7 @@ def bipagem(request, lote_id, caixa_id):
         'caixas': bipagens_da_caixa,
         'page_obj': page_obj,
         'mensagem': mensagem,
-        'is_visualizador_master': is_visualizador_master,  # 👈 AQUI está a correção
+        'is_visualizador_master': is_visualizador_master, 
     }
 
     return render(request, 'inventario/bipagem.html', context)

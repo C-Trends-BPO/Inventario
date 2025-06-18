@@ -141,5 +141,12 @@
         buffer = '';
     });
 
+    document.addEventListener('DOMContentLoaded', function () {
+        const serialInput = document.getElementById('serial-input');
+        if (serialInput) {
+            serialInput.focus();
+        }
+    });
+
 </script>
 {% endblock %}

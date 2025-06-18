@@ -1,27 +1,35 @@
 <h2 class="form-title">{{ form.nome_formulario }}</h2>
 {% csrf_token %}
 
+{% for campo in form %}
+
+{% if campo.name == 'modelo' %}
+
+<div class="form-group-1col">
+  {{ campo.label_tag }}
+  {{ campo }}
+</div>
 <div class="form-group-1col">
   <label for="serial-input">Número Serial:</label>
-  <input 
-  type="text" 
-  id="serial-input" 
-  name="serial" 
-  class="form-control" 
-  autocomplete="off" 
-  required
-  />
+  <input type="text" id="serial-input" name="serial" class="form-control" autocomplete="off" required />
 </div>
 
-{% for campo in form %}
+{% else %}
+
 <div class="form-group-1col">
   {{ campo.label_tag }}
   {{ campo }}
   {% if campo.errors %}
-  <div class="error">{{ campo.errors }}</div>
+
+    <div class="error">{{ campo.errors }}</div>
+
   {% endif %}
 </div>
+
+{% endif %}
+
 {% endfor %}
+
 <div class="button-group">
   <button type="submit" class="bipagem-button">Inserir</button>
   <button type="button" id="clear-button" class="bipagem-button-clear">Limpar</button>
