@@ -5,7 +5,7 @@
     <div class="botoes-lote-flex">
         {% if not lote_bloqueado and not is_visualizador_master %}
         <div class="container-nova-caixa">
-            <h2>Nova Caixa para Lote #{{ lote.id }}</h2>
+            <h2>Nova Caixa para Lote #{{ lote.numero_lote }}</h2>
             <form method="post" action="{% url 'inventario:iniciar_caixa' lote.id %}">
                 {% csrf_token %}
                 <button type="submit" class="btn-nova-caixa">Iniciar nova caixa</button>
@@ -13,7 +13,7 @@
         </div>
 
         <div class="container-fechar-lote">
-            <h2>Finalizar lote #{{ lote.id }}</h2>
+            <h2>Finalizar lote #{{ lote.numero_lote }}</h2>
             <form id="form-finalizar-lote" method="post" action="{% url 'inventario:index' %}">
                 {% csrf_token %}
                 <input type="hidden" name="fechar_lote_id" value="{{ lote.id }}">

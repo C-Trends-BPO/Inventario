@@ -18,10 +18,13 @@ def criar_lote_view(request):
             else:
                 nome_exibicao = nome_grupo
 
+            total_lotes_grupo = LoteBipagem.objects.filter(group_user=grupo).count()
+
             lote = LoteBipagem.objects.create(
                 user_created=request.user,
                 group_user=grupo,
-                group_user_txt=nome_exibicao
+                group_user_txt=nome_exibicao,
+                numero_lote=total_lotes_grupo + 1
             )
 
             return redirect('inventario:lote', lote.id)
