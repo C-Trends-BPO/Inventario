@@ -20,6 +20,9 @@ def lote(request, lote_id):
             if caixa_aberta:
                 caixa_aberta.status = 'Finalizada'
                 caixa_aberta.save()
+
+            request.session.pop('modelo_bipagem', None)
+
             return redirect('inventario:lote', lote_id=lote.id)
 
         form = CaixaForm(request.POST)
