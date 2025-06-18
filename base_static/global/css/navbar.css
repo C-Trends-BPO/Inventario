@@ -120,6 +120,15 @@
   margin-bottom: 15px;
 }
 
+.column a{
+  display: flex;
+  align-items: center;
+  width: 140px;
+  font-size: 14px;
+  color: #000000;
+  text-decoration: none;
+}
+
 .submenu {
   display: none;
   flex-direction: column;
