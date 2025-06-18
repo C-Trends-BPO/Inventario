@@ -22,7 +22,12 @@ def index(request):
     busca = request.GET.get('q', '')
 
     user_groups = request.user.groups.all()
-    lotes_list = LoteBipagem.objects.filter(group_user__in=user_groups).order_by('-criado_em')
+    is_visualizador_master = request.user.groups.filter(name='INV_VISUALIZADOR_MASTER').exists()
+
+    if is_visualizador_master:
+        lotes_list = LoteBipagem.objects.all().order_by('-criado_em')
+    else:
+        lotes_list = LoteBipagem.objects.filter(group_user__in=user_groups).order_by('-criado_em')
     
     if busca:
         lotes_list = lotes_list.filter(
