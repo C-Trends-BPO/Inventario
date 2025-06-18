@@ -87,7 +87,7 @@
   border-radius: 6px;
   box-shadow: 0 4px 8px rgba(179, 62, 62, 0.18);
   z-index: 999;
-  min-width: 220px;
+  min-width: 240px;
   flex-direction: column;
   align-items: center;
   gap: 20px;
@@ -113,11 +113,15 @@
 .column h4 {
   display: flex;
   align-items: center;
-  width: 140px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 170px;
   border-bottom: 1px solid #c67e7e;
-  font-size: 14px;
+  font-size: 16px;
   color: #000000;
   margin-bottom: 15px;
+  padding-right: 8px;
 }
 
 .column a{
