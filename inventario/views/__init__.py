@@ -9,3 +9,4 @@ from .iniciar_caixa_view import iniciar_caixa_redirect
 from .bipagem_caixa_view import bipagem
 from .validacao_view import validar_lote_view, validar_serial, finalizar_lote_view
 from .acompanhamento_view import acompanhamento_dash
+from .download_extracao_pdf import download_extracao_pdf

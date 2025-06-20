@@ -3,7 +3,7 @@ from .views import RegisterView
 from django.urls import path
 from .views import index, logout_confirm_view, logout_view, criar_lote_view, lote, \
 iniciar_caixa_redirect, bipagem, validar_lote_view, validar_serial, finalizar_lote_view, \
-acompanhamento_dash
+acompanhamento_dash, download_extracao_pdf
 
 
 app_name = 'inventario'
@@ -22,4 +22,5 @@ urlpatterns = [
     path('lote/<int:lote_id>/validar/serial/', validar_serial, name='validar_serial'),
     path('lote/<int:lote_id>/fechar/', finalizar_lote_view, name='fechar_lote'),
     path('acompanhamento/', acompanhamento_dash, name='acompanhamento'),
+    path('download-extracao/', download_extracao_pdf, name='download_extracao'),
 ]
