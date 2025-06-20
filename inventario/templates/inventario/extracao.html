@@ -1,34 +1,125 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
-    <title>Extração de Dados</title>
+    <title>Laudo Simplificado de Inventário Patrimonial</title>
     <style>
-        body { font-family: Arial, sans-serif; padding: 30px; color: #333; }
-        h2 { color: #8B0000; }
-        p { margin-bottom: 10px; }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        h1,
+        h2,
+        h3 {
+            color: #7a2e2e;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+        }
+
+        th,
+        td {
+            border: 1px solid #aaa;
+            padding: 8px 12px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #ef9a9a;
+            color: #aa2d3d;
+        }
+
         .assinaturas {
             margin-top: 60px;
             display: flex;
             justify-content: space-between;
         }
+
         .assinatura {
             width: 30%;
             text-align: center;
+        }
+
+        .assinatura p {
+            margin-top: 60px;
             border-top: 1px solid #000;
             padding-top: 5px;
+            font-weight: bold;
         }
     </style>
 </head>
-<body>
-    <h2>EXTRAÇÃO DE DADOS</h2>
-    <p>Dados exportados em PDF conforme solicitação.</p>
-    <p>Exemplo de conteúdo fictício para visualização.</p>
 
+<body>
+
+    <h1>Laudo Simplificado de Inventário Patrimonial em Poder de Terceiros</h1>
+
+    <h3>Empresa Responsável: {{ empresa }}</h3>
+    <p><strong>Endereço:</strong> {{ endereco }}</p>
+    <p><strong>CNPJ:</strong> {{ cnpj }}</p>
+    <p><strong>Responsável Técnico:</strong> {{ responsavel }}</p>
+    <p><strong>Ponto de Atendimento (PA):</strong> {{ nome_pa|slice:"7:" }}</p>
+    <p><strong>Data de Emissão:</strong> {{ data_emissao }}</p>
+
+    <h2>1. Objetivo</h2>
+    <p>Registrar de forma simplificada os bens patrimoniais sob guarda de terceiros, com base em bipagem eletrônica
+        realizada por sistema automatizado.</p>
+
+    <h2>2. Estrutura do Inventário</h2>
+    <p>O inventário está estruturado em lotes, com caixas e seriais conforme tabela a seguir:</p>
+
+
+    <h2>3. Localização dos Bens</h2>
+    <p>Os equipamentos encontram-se atualmente sob a guarda de terceiros, conforme registros e acordos vigentes, estando
+        alocados nos pontos de atendimento (PAs) devidamente identificados no sistema.</p>
+
+    <h2>4. Conclusão</h2>
+    <p>Todos os itens listados neste laudo foram conferidos por bipagem e encontram-se regularizados conforme os dados
+        registrados no sistema. Nenhuma divergência foi constatada no momento da emissão deste documento.</p>
+
+    <h2>5. Resumo Quantitativo</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Lote</th>
+                <th>Nº de Caixas</th>
+                <th>Total de Seriais Bipados</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in resumo_pa %}
+            <tr>
+                <td>{{ item.lote }}</td>
+                <td>{{ item.caixas }}</td>
+                <td>{{ item.seriais }}</td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td><strong>Total Geral</strong></td>
+                <td><strong>{{ total_caixas }}</strong></td>
+                <td><strong>{{ total_seriais }}</strong></td>
+            </tr>
+        </tbody>
+    </table>
+    <h2>6. Assinaturas</h2>
     <div class="assinaturas">
-        <div class="assinatura">Responsável 1</div>
-        <div class="assinatura">Responsável 2</div>
-        <div class="assinatura">Responsável 3</div>
+        <div class="assinatura">
+            <p>Representante da PA</p>
+        </div>
+        <div class="assinatura">
+            <p>Representante do Contratante</p>
+        </div>
+        <div class="assinatura">
+            <p>Auditor Responsável</p>
+        </div>
     </div>
+
 </body>
+
 </html>

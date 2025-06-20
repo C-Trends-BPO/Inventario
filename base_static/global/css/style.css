@@ -130,6 +130,12 @@ body {
   color: #fff;
 }
 
+.botoes-lote {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
 .edit-icon {
   font-size: 1.1rem;
   text-decoration: none;
