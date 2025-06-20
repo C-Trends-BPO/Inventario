@@ -30,9 +30,15 @@ def index(request):
         lotes_list = LoteBipagem.objects.filter(group_user__in=user_groups).order_by('-criado_em')
     
     if busca:
+        try:
+            busca_id = int(busca)
+            filtro_id = Q(id=busca_id)
+        except ValueError:
+            filtro_id = Q()
+
         lotes_list = lotes_list.filter(
-            Q(id__icontains=busca) |
-            Q(status__icontains=busca) |  
+            filtro_id |
+            Q(status__icontains=busca) |
             Q(user_created__username__icontains=busca)
         )
 

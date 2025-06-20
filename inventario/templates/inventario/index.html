@@ -21,9 +21,9 @@
                 </form>
                 {% endif %}
 
-                <a href="{% url 'inventario:download_extracao' %}" class="btn-novo-lote" target="_blank" 
-                style="text-decoration: none;">
-                    📄 Extrair laudo PDF 
+                <a href="{% url 'inventario:download_extracao' %}" class="btn-novo-lote" target="_blank"
+                    style="text-decoration: none;">
+                    📄 Extrair laudo PDF
                 </a>
             </div>
         </div>
@@ -91,21 +91,22 @@
             {% if page_obj.has_other_pages %}
             <div class="pagination-wrapper">
                 {% if page_obj.has_previous %}
-                <a href="?page=1" class="pagination-link">« Primeira</a>
-                <a href="?page={{ page_obj.previous_page_number }}" class="pagination-link">‹</a>
+                <a href="?q={{ request.GET.q }}&page=1" class="pagination-link">« Primeira</a>
+                <a href="?q={{ request.GET.q }}&page={{ page_obj.previous_page_number }}" class="pagination-link">‹</a>
                 {% endif %}
 
                 {% for num in page_obj.paginator.page_range %}
                 {% if num == page_obj.number %}
                 <span class="pagination-link active">{{ num }}</span>
-                {% elif num >= page_obj.number|add:-2 and num <= page_obj.number|add:2 %} <a href="?page={{ num }}"
-                    class="pagination-link">{{ num }}</a>
+                {% elif num >= page_obj.number|add:-2 and num <= page_obj.number|add:2 %} <a
+                    href="?q={{ request.GET.q }}&page={{ num }}" class="pagination-link">{{ num }}</a>
                     {% endif %}
                     {% endfor %}
 
                     {% if page_obj.has_next %}
-                    <a href="?page={{ page_obj.next_page_number }}" class="pagination-link">›</a>
-                    <a href="?page={{ page_obj.paginator.num_pages }}" class="pagination-link">Última »</a>
+                    <a href="?q={{ request.GET.q }}&page={{ page_obj.next_page_number }}" class="pagination-link">›</a>
+                    <a href="?q={{ request.GET.q }}&page={{ page_obj.paginator.num_pages }}"
+                        class="pagination-link">Última »</a>
                     {% endif %}
             </div>
             {% endif %}

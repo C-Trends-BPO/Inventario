@@ -133,7 +133,6 @@ body {
 .botoes-lote {
   display: flex;
   flex-direction: column;
-  gap: 10px;
 }
 
 .edit-icon {
