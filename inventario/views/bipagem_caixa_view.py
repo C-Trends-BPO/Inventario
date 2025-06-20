@@ -11,7 +11,7 @@ def bipagem(request, lote_id, caixa_id):
     lote = get_object_or_404(LoteBipagem, id=lote_id)
     caixa = get_object_or_404(Caixa, id=caixa_id, lote=lote)
 
-    is_visualizador_master = request.user.groups.filter(name='INV_VISUALIZADOR_MASTER').exists()
+    is_visualizador_master = request.user.groups.filter(name='INV_PA_VISUALIZADOR_MASTER').exists()
 
     if request.method == 'POST' and is_visualizador_master:
         return HttpResponseForbidden("Você não tem permissão para bipar seriais.")

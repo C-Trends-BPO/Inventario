@@ -7,7 +7,7 @@ from django.http import HttpResponseForbidden
 
 @login_required(login_url='inventario:login')
 def index(request):
-    is_visualizador_master = request.user.groups.filter(name='INV_VISUALIZADOR_MASTER').exists()
+    is_visualizador_master = request.user.groups.filter(name='INV_PA_VISUALIZADOR_MASTER').exists()
 
     if request.method == 'POST' and is_visualizador_master:
         return HttpResponseForbidden("Você não tem permissão para bipar seriais.")
@@ -22,7 +22,7 @@ def index(request):
     busca = request.GET.get('q', '')
 
     user_groups = request.user.groups.all()
-    is_visualizador_master = request.user.groups.filter(name='INV_VISUALIZADOR_MASTER').exists()
+    is_visualizador_master = request.user.groups.filter(name='INV_PA_VISUALIZADOR_MASTER').exists()
 
     if is_visualizador_master:
         lotes_list = LoteBipagem.objects.all().order_by('-criado_em')

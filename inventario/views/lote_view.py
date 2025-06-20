@@ -41,7 +41,7 @@ def lote(request, lote_id):
     page_obj = paginator.get_page(page_number)
 
     caixas_abertas = lote.caixas.filter(status='Iniciada').exists()
-    is_visualizador_master = request.user.groups.filter(name='INV_VISUALIZADOR_MASTER').exists()
+    is_visualizador_master = request.user.groups.filter(name='INV_PA_VISUALIZADOR_MASTER').exists()
     lote_bloqueado = lote.status in ['fechado', 'cancelado']
 
     context = {

@@ -8,7 +8,7 @@ from django.http import HttpResponseForbidden
 @login_required(login_url='inventario:login')
 def iniciar_caixa_redirect(request, lote_id):
     # Bloqueia a criação da caixa para usuários do grupo de visualização
-    if request.user.groups.filter(name='INV_VISUALIZADOR_MASTER').exists():
+    if request.user.groups.filter(name='INV_PA_VISUALIZADOR_MASTER').exists():
         return HttpResponseForbidden("Você não tem permissão para iniciar caixas.")
 
     lote = get_object_or_404(LoteBipagem, id=lote_id)

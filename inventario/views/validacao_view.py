@@ -32,7 +32,7 @@ def validar_lote_view(request, lote_id):
 def validar_serial(request, lote_id):
     if request.method == "POST":
         # Bloqueia para o grupo de visualização
-        if request.user.groups.filter(name='Visualizador Master').exists():
+        if request.user.groups.filter(name='INV_PA_VISUALIZADOR_MASTER').exists():
             return JsonResponse({
                 "status": "erro",
                 "mensagem": "❌ Você não tem permissão para validar seriais."
@@ -57,7 +57,7 @@ def validar_serial(request, lote_id):
 @csrf_exempt
 def finalizar_lote_view(request, lote_id):
     # Bloqueia para o grupo de visualização
-    if request.user.groups.filter(name='INV_VISUALIZADOR_MASTER').exists():
+    if request.user.groups.filter(name='INV_PA_VISUALIZADOR_MASTER').exists():
         return JsonResponse({
             "status": "erro",
             "mensagem": "❌ Você não tem permissão para finalizar lotes."
