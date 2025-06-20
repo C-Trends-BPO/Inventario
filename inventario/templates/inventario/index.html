@@ -20,7 +20,7 @@
                     <button type="submit" class="btn-novo-lote">Criar novo lote</button>
                 </form>
                 {% endif %}
-                {% if is_visualizador_master %}
+                {% if not is_visualizador_master %}
                 <a href="{% url 'inventario:download_extracao' %}" class="btn-novo-lote" target="_blank"
                     style="text-decoration: none;">
                     📄 Extrair laudo PDF
