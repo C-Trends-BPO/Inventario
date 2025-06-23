@@ -10,6 +10,7 @@ from django.contrib.auth.decorators import login_required
 def download_extracao_pdf(request):
     user = request.user
     grupo = user.groups.first()
+    endereco_pa = getattr(grupo.informacoes, "endereco", "Não informado")
     responsavel = request.user.get_full_name() or request.user.username
 
     if not grupo:
@@ -44,6 +45,7 @@ def download_extracao_pdf(request):
         "cnpj": "12.345.678/0001-99",
         "responsavel": responsavel,
         "nome_pa": grupo.name,
+        "endereco_pa": endereco_pa,
         "data_emissao": datetime.now().strftime('%d/%m/%Y'),
         "resumo_pa": resumo_pa,
         "total_caixas": total_caixas,

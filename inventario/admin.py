@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import LoteBipagem
+from .models import LoteBipagem, PontoAtendimentoInfo
 
 @admin.register(LoteBipagem)
 class LoteBipagemAdmin(admin.ModelAdmin):
@@ -10,3 +10,9 @@ class LoteBipagemAdmin(admin.ModelAdmin):
         if request.user.is_superuser:
             return qs
         return qs.filter(group_user__in=request.user.groups.all())
+    
+
+@admin.register(PontoAtendimentoInfo)
+class PontoAtendimentoInfoAdmin(admin.ModelAdmin):
+    list_display = ('group', 'endereco')
+    search_fields = ('group__name', 'endereco')
