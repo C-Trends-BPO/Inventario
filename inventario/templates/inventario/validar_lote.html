@@ -92,9 +92,10 @@
                                         })
                                             .then(res => res.json())
                                             .then(data => {
-                                                alert(data.mensagem);  // sempre usa o que vem do backend
                                                 if (data.status === "ok") {
                                                     window.location.href = "/";
+                                                } else {
+                                                    alert(data.mensagem);
                                                 }
                                             });
                                     }

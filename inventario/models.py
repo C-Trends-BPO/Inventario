@@ -33,15 +33,34 @@ class Caixa(models.Model):
     def __str__(self):
         return f"Caixa {self.identificador} (Lote #{self.lote.id})"
     
+
 class Bipagem(models.Model):
-    id=models.AutoField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     id_caixa = models.ForeignKey(Caixa, on_delete=models.CASCADE, related_name='bipagem')
     id_lote = models.ForeignKey(LoteBipagem, on_delete=models.CASCADE, related_name='bipagem')
+    group_user = models.ForeignKey(Group, on_delete=models.CASCADE, null=True)  # ← redundância necessária
+
     unidade = models.IntegerField(null=True)
-    nrserie = models.CharField(max_length=50,null=False)
+    nrserie = models.CharField(max_length=50)
     criado_em = models.DateTimeField(auto_now_add=True)
     modelo = models.CharField(max_length=100, null=True)
     patrimonio = models.CharField(max_length=100, null=True)
+
+    ESTADO_CHOICES = [
+        ('Excelente', 'Excelente'),
+        ('Bom', 'Bom'),
+        ('Ruim', 'Ruim'),
+        ('Péssimo', 'Péssimo'),
+    ]
+    estado = models.CharField(max_length=100, choices=ESTADO_CHOICES, null=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['nrserie', 'group_user'],
+                name='unique_serial_por_pa'
+            )
+        ]
 
 class Serial(models.Model):
     codigo = models.CharField(max_length=100, unique=True)

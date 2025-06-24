@@ -5,6 +5,7 @@ from ..forms import BipagemForm
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
+from django.contrib import messages
 
 @login_required(login_url='inventario:login')
 def bipagem(request, lote_id, caixa_id):
@@ -22,16 +23,20 @@ def bipagem(request, lote_id, caixa_id):
 
         if Bipagem.objects.filter(id_caixa=caixa).count() >= 50:
             form.add_error(None, "Esta caixa já possui o limite de 50 bipagens.")
+            messages.warning(request, "⚠️ Limite de 50 bipagens atingido para esta caixa.")
         elif form.is_valid() and serial:
             Bipagem.objects.create(
                 id_caixa=caixa,
                 id_lote=lote,
+                group_user=lote.group_user,
                 nrserie=serial,
                 unidade=caixa.bipagem.count() + 1,
+                estado=form.cleaned_data['estado'],
                 modelo=form.cleaned_data['modelo'],
                 patrimonio=form.cleaned_data['patrimonio']
             )
             request.session['modelo_bipagem'] = form.cleaned_data['modelo']
+            messages.success(request, "✅ Serial bipado com sucesso!")
             return redirect(reverse('inventario:caixa', args=[lote.id, caixa.id]))
     else:
         modelo_salvo = request.session.get('modelo_bipagem', '')
@@ -46,8 +51,10 @@ def bipagem(request, lote_id, caixa_id):
     caixa_bloqueada = caixa.status in ['Finalizada']
     if caixa_bloqueada:
         mensagem = {'mensagem': 'Esta caixa está bloqueada e não pode ser editada.', 'voltar': True}
+        messages.error(request, "❌ Esta caixa está bloqueada.")
     elif bipagens_da_caixa.count() >= 50:
         mensagem = {'mensagem': 'Esta caixa já possui o limite de 50 bipagens.', 'encerrar': True}
+        messages.warning(request, "⚠️ Esta caixa já possui o limite de 50 bipagens.")
 
     context = {
         'lote': lote,
@@ -56,7 +63,7 @@ def bipagem(request, lote_id, caixa_id):
         'caixas': bipagens_da_caixa,
         'page_obj': page_obj,
         'mensagem': mensagem,
-        'is_visualizador_master': is_visualizador_master, 
+        'is_visualizador_master': is_visualizador_master,
     }
 
     return render(request, 'inventario/bipagem.html', context)

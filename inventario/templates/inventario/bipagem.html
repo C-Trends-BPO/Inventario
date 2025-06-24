@@ -14,6 +14,16 @@
         {% endif %}
     </form>
     {% endif %}
+
+    {% if messages %}
+    <div>
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
 </div>
 
 <div class="centraliza-bipagem">
@@ -25,6 +35,7 @@
                     <th>Quantidade</th>
                     <th>Serial</th>
                     <th>Modelo</th>
+                    <th>Estado</th>
                     <th>Patrimonio</th>
                 </tr>
             </thead>
@@ -35,6 +46,7 @@
                     <td>#{{ item.unidade }}</td>
                     <td>{{ item.nrserie }}</td>
                     <td>{{ item.modelo }}</td>
+                    <td>{{ item.estado }}</td>
                     <td>{{ item.patrimonio }}</td>
                 </tr>
                 {% endfor %}
