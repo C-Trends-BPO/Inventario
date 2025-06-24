@@ -14,8 +14,8 @@
 }
 
 .form-logout {
-    background: #d2f5e3;
-    border: 1.5px solid #a6dbb5;
+    background: #fff4f4;
+    border: 1.5px solid #ef9a9a;
     border-radius: 14px;
     box-shadow: 0 4px 24px #b7dfce30;
     padding: 36px 36px 32px 36px;
@@ -27,7 +27,7 @@
 }
 
 .form-logout h2 {
-    color: #205a3e;
+    color: #b74d4d;
     font-size: 1.45rem;
     font-weight: 600;
     margin-bottom: 18px;
@@ -63,14 +63,14 @@
 }
 
 .logout-confirm-button {
-    background: #84c9a0;
+    background: #d64d4d;
     color: #fff;
     border: none;
 }
 
 .logout-cancel-button {
-    background: #d2f5e3;
-    color: #205a3e;
-    border: 1.5px solid #a6dbb5;
+    background: #fceaea;
+    color: #aa2d2d;
+    border: 1.5px solid #e57373;
     text-decoration: none !important;
 }
