@@ -21,8 +21,8 @@
         <table class="tabela-bipagem">
             <thead>
                 <tr>
-                    <th>Número da caixa</th>
-                    <th>Unidades na caixa</th>
+                    <th>ID Bipagem</th>
+                    <th>Quantidade</th>
                     <th>Serial</th>
                     <th>Modelo</th>
                     <th>Patrimonio</th>
@@ -67,11 +67,11 @@
 
     {% if mensagem.encerrar == True and not is_visualizador_master %}
     <div class="encerrar-bipagem">
-        <h2>Deseja encerrar caixa #{{ caixa.nr_caixa }}</h2>
+        <h2>Finalização</h2>
         <form method="post" class="encerrar" action="{% url 'inventario:lote' lote.id %}">
             {% csrf_token %}
             <button type="submit" name="encerrar_caixa" class="finalizar-bipagem">
-                Encerrar Caixa</button>
+                Encerrar Bipagem</button>
         </form>
     </div>
     {% else %}
