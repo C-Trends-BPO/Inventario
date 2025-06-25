@@ -14,7 +14,7 @@
 
         <div class="container-fechar-lote">
             <h2>Finalizar lote #{{ lote.numero_lote }}</h2>
-            <form id="form-finalizar-lote" method="post" action="{% url 'inventario:index' %}">
+            <form id="form-finalizar-lote" method="post" action="{% url 'inventario:validar_lote' lote.id %}">
                 {% csrf_token %}
                 <input type="hidden" name="fechar_lote_id" value="{{ lote.id }}">
                 <button type="submit" class="btn-fechar-lote" id="btn-finalizar-lote">

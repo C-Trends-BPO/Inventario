@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
-from ..models import LoteBipagem, Caixa
+from ..models import LoteBipagem, Caixa, Bipagem
 from ..forms import CaixaForm
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
@@ -9,13 +9,16 @@ from django.http import HttpResponseForbidden
 @login_required(login_url='inventario:login')
 def lote(request, lote_id):
     lote = get_object_or_404(LoteBipagem, id=lote_id)
-
+    
     # Impede ações POST para o grupo de visualização
     if request.method == 'POST' and request.user.groups.filter(name='Visualizador Master').exists():
         return HttpResponseForbidden("Você não tem permissão para modificar esse lote.")
 
     if request.method == 'POST':
-        if 'encerrar_caixa' in request.POST:
+        form = CaixaForm(request.POST)
+        qtd_seriais = Bipagem.objects.filter(id_caixa=caixa).count()        
+        if 'encerrar_caixa' in request.POST and qtd_seriais != 0:
+            
             caixa_aberta = lote.caixas.filter(status='Iniciada').last()
             if caixa_aberta:
                 caixa_aberta.status = 'Finalizada'
@@ -24,9 +27,7 @@ def lote(request, lote_id):
             request.session.pop('modelo_bipagem', None)
 
             return redirect('inventario:lote', lote_id=lote.id)
-
-        form = CaixaForm(request.POST)
-        if form.is_valid():
+        elif 'encerrar_caixa' not in request.POST and form.is_valid():
             caixa = form.save(commit=False)
             caixa.lote = lote
             caixa.nr_caixa = lote.caixas.count() + 1

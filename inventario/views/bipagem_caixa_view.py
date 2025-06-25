@@ -22,10 +22,23 @@ def bipagem(request, lote_id, caixa_id):
     if request.method == 'POST':
         form = BipagemForm(request.POST)
         serial = request.POST.get('serial', '').strip()
-
-        if Bipagem.objects.filter(id_caixa=caixa).count() >= limite_por_pa:
+        qtd_seriais = Bipagem.objects.filter(id_caixa=caixa).count()
+        if qtd_seriais >= limite_por_pa and qtd_seriais != 0:
             form.add_error(None, f"Esta caixa já atingiu o limite de {limite_por_pa} bipagens definido para esta PA.")
             messages.warning(request, f"⚠️ Esta caixa já possui o limite de {limite_por_pa} bipagens.")
+        if 'encerrar_caixa' in request.POST and qtd_seriais != 0:
+            caixa_aberta = lote.caixas.filter(status='Iniciada').last()
+            if caixa_aberta:
+                caixa_aberta.status = 'Finalizada'
+                caixa_aberta.save()
+
+            request.session.pop('modelo_bipagem', None)
+
+            return redirect('inventario:lote', lote_id=lote.id)
+
+        elif 'encerrar_caixa' in request.POST and qtd_seriais == 0:
+            form.add_error(None, "Nenhum serial foi fornecido.")
+            messages.warning(request, "⚠️ Nenhum serial foi fornecido.")
         elif form.is_valid() and serial:
             if Bipagem.objects.filter(group_user=lote.group_user, nrserie=serial).exists():
                 messages.error(request, f"❌ O serial '{serial}' já foi bipado nesta PA.")
