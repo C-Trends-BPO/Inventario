@@ -12,6 +12,8 @@ def bipagem(request, lote_id, caixa_id):
     lote = get_object_or_404(LoteBipagem, id=lote_id)
     caixa = get_object_or_404(Caixa, id=caixa_id, lote=lote)
 
+    limite_por_pa = getattr(lote.group_user.informacoes, 'limite', 50)
+
     is_visualizador_master = request.user.groups.filter(name='INV_PA_VISUALIZADOR_MASTER').exists()
 
     if request.method == 'POST' and is_visualizador_master:
@@ -21,23 +23,26 @@ def bipagem(request, lote_id, caixa_id):
         form = BipagemForm(request.POST)
         serial = request.POST.get('serial', '').strip()
 
-        if Bipagem.objects.filter(id_caixa=caixa).count() >= 50:
-            form.add_error(None, "Esta caixa já possui o limite de 50 bipagens.")
-            messages.warning(request, "⚠️ Limite de 50 bipagens atingido para esta caixa.")
+        if Bipagem.objects.filter(id_caixa=caixa).count() >= limite_por_pa:
+            form.add_error(None, f"Esta caixa já atingiu o limite de {limite_por_pa} bipagens definido para esta PA.")
+            messages.warning(request, f"⚠️ Esta caixa já possui o limite de {limite_por_pa} bipagens.")
         elif form.is_valid() and serial:
-            Bipagem.objects.create(
-                id_caixa=caixa,
-                id_lote=lote,
-                group_user=lote.group_user,
-                nrserie=serial,
-                unidade=caixa.bipagem.count() + 1,
-                estado=form.cleaned_data['estado'],
-                modelo=form.cleaned_data['modelo'],
-                patrimonio=form.cleaned_data['patrimonio']
-            )
-            request.session['modelo_bipagem'] = form.cleaned_data['modelo']
-            messages.success(request, "✅ Serial bipado com sucesso!")
-            return redirect(reverse('inventario:caixa', args=[lote.id, caixa.id]))
+            if Bipagem.objects.filter(group_user=lote.group_user, nrserie=serial).exists():
+                messages.error(request, f"❌ O serial '{serial}' já foi bipado nesta PA.")
+            else:
+                Bipagem.objects.create(
+                    id_caixa=caixa,
+                    id_lote=lote,
+                    group_user=lote.group_user,
+                    nrserie=serial,
+                    unidade=caixa.bipagem.count() + 1,
+                    estado=form.cleaned_data['estado'],
+                    modelo=form.cleaned_data['modelo'],
+                    patrimonio=form.cleaned_data['patrimonio']
+                )
+                request.session['modelo_bipagem'] = form.cleaned_data['modelo']
+                messages.success(request, "✅ Serial bipado com sucesso!")
+                return redirect(reverse('inventario:caixa', args=[lote.id, caixa.id]))
     else:
         modelo_salvo = request.session.get('modelo_bipagem', '')
         form = BipagemForm(initial={'modelo': modelo_salvo})
@@ -52,9 +57,9 @@ def bipagem(request, lote_id, caixa_id):
     if caixa_bloqueada:
         mensagem = {'mensagem': 'Esta caixa está bloqueada e não pode ser editada.', 'voltar': True}
         messages.error(request, "❌ Esta caixa está bloqueada.")
-    elif bipagens_da_caixa.count() >= 50:
-        mensagem = {'mensagem': 'Esta caixa já possui o limite de 50 bipagens.', 'encerrar': True}
-        messages.warning(request, "⚠️ Esta caixa já possui o limite de 50 bipagens.")
+    elif bipagens_da_caixa.count() >= limite_por_pa:
+        mensagem = {'mensagem': f'Esta caixa já possui o limite de {limite_por_pa} bipagens.', 'encerrar': True}
+        messages.warning(request, f"⚠️ Esta caixa já possui o limite de {limite_por_pa} bipagens.")
 
     context = {
         'lote': lote,
