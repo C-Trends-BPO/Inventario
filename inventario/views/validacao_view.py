@@ -8,14 +8,25 @@ from django.urls import reverse
 from django.db import models
 from django.db.models import Count
 import math
+from django.contrib import messages
 
 @login_required(login_url='inventario:login')
 def validar_lote_view(request, lote_id):
     lote = get_object_or_404(LoteBipagem, id=lote_id)
+    qtd_caixas = Caixa.objects.filter(lote_id=lote_id).count()  
 
     if request.method == 'POST' and request.user.groups.filter(name='Visualizador Master').exists():
         return HttpResponseForbidden("Você não tem permissão para validar lotes.")
     
+    if request.method == 'POST':
+        qtd_caixas = Caixa.objects.filter(lote_id=lote_id).count()
+        if qtd_caixas == 0:
+            messages.warning(request, "⚠️ Não é possivel finalizar um lote sem bipagens.")
+            return redirect('inventario:lote', lote_id=lote_id)
+    else:
+        return redirect('inventario:lote', lote_id=lote_id)
+
+
     seriais = lote.bipagem.all()
     total_seriais = seriais.count()
     amostra_necessaria = math.ceil(total_seriais * 0.05)

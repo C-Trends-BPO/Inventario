@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator
 from django.db.models import Q
-from ..models import LoteBipagem
+from ..models import LoteBipagem, Bipagem, Caixa
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
+from django.contrib import messages
 
 @login_required(login_url='inventario:login')
 def index(request):
@@ -15,9 +16,14 @@ def index(request):
     if request.method == 'POST' and 'fechar_lote_id' in request.POST:
         lote_id = request.POST.get('fechar_lote_id')
         lote = get_object_or_404(LoteBipagem, id=lote_id)
-        lote.status = 'Aguardando Validação'
-        lote.save()
-        return redirect('inventario:index')
+
+        if not Bipagem.objects.filter(id_caixa__lote=lote).exists():
+            messages.error(request, "Não é possível finalizar o lote sem nenhum serial bipado.")
+
+        else:
+            lote.status = 'Aguardando Validação'
+            lote.save()
+            return redirect('inventario:validar_lote')
 
     busca = request.GET.get('q', '')
 
