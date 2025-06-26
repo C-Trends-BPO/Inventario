@@ -34,7 +34,7 @@ def index(request):
         lotes_list = LoteBipagem.objects.all().order_by('-criado_em')
     else:
         lotes_list = LoteBipagem.objects.filter(group_user__in=user_groups).order_by('-criado_em')
-    
+
     if busca:
         try:
             busca_id = int(busca)

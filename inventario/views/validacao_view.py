@@ -24,12 +24,12 @@ def validar_lote_view(request, lote_id):
             messages.warning(request, "⚠️ Não é possivel finalizar um lote sem bipagens.")
             return redirect('inventario:lote', lote_id=lote_id)
     else:
-        return redirect('inventario:lote', lote_id=lote_id)
+        return redirect('inventario:index')
 
 
     seriais = lote.bipagem.all()
     total_seriais = seriais.count()
-    amostra_necessaria = math.ceil(total_seriais * 0.05)
+    amostra_necessaria = math.ceil(total_seriais * 0.10)
 
     context = {
         "lote": lote,
@@ -63,11 +63,14 @@ def validar_serial(request, lote_id):
                 "redirect_url": reverse('inventario:index')
             })
 
-        return JsonResponse({
-            "status": "ok",
-            "mensagem": "✅ Serial validado com sucesso!",
-            "redirect_url": reverse('inventario:validar_lote', args=[lote.id])
-        })
+        if serial_valido:
+            lote.status = "fechado"
+            lote.save()
+            return JsonResponse({
+                "status": "ok",
+                "mensagem": "✅ Serial validado com sucesso!",
+                "redirect_url": reverse('inventario:validar_lote', args=[lote.id])
+            })
 
     return JsonResponse({"status": "erro", "mensagem": "Método não permitido"}, status=405)
 
@@ -106,9 +109,8 @@ def finalizar_lote_view(request, lote_id):
 
     lote.status = 'fechado'
     lote.save()
-
     return JsonResponse({
         "status": "ok",
         "mensagem": "✅ Lote finalizado com sucesso!",
-        "redirect_url": reverse('inventario:validar_lote', args=[lote_id])
+        "redirect_url": reverse('inventario:index')
     })

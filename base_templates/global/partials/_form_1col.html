@@ -1,9 +1,6 @@
 <h2 class="form-title">{{ form.nome_formulario }}</h2>
 {% csrf_token %}
 
-{% for campo in form %}
-
-{% if campo.name == 'modelo' %}
 
 <div class="form-group-1col">
   {{ campo.label_tag }}
@@ -14,7 +11,9 @@
   <input type="text" id="serial-input" name="serial" class="form-control" autocomplete="off" required />
 </div>
 
-{% else %}
+{% for campo in form %}
+
+
 
 <div class="form-group-1col">
   {{ campo.label_tag }}
@@ -26,7 +25,6 @@
   {% endif %}
 </div>
 
-{% endif %}
 
 {% endfor %}
 
