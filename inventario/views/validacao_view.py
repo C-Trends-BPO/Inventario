@@ -9,6 +9,7 @@ from django.db import models
 from django.db.models import Count
 import math
 from django.contrib import messages
+from django.contrib.messages import add_message, SUCCESS
 
 @login_required(login_url='inventario:login')
 def validar_lote_view(request, lote_id):
@@ -66,9 +67,11 @@ def validar_serial(request, lote_id):
         if serial_valido:
             lote.status = "fechado"
             lote.save()
+            add_message(request, SUCCESS, "✅ Lote validado com sucesso!", extra_tags='lote_validado')
             return JsonResponse({
                 "status": "ok",
-                "mensagem": "✅ Serial validado com sucesso!",
+                "mensagem": "✅ Lote validado com sucesso!",
+                "popup": True,
                 "redirect_url": reverse('inventario:validar_lote', args=[lote.id])
             })
 

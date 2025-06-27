@@ -12,6 +12,14 @@
             <p><strong>Seriais validados:</strong> <span id="validados">0</span> / {{ amostra_necessaria }}</p>
         </div>
 
+        {% for message in messages %}
+            {% if 'lote_validado' in message.tags %}
+                <script type="text/javascript">
+                    alert("{{ message|escapejs }}");
+                </script>
+            {% endif %}
+        {% endfor %}
+
         {% if not is_visualizador_master %}
         <div class="form-group" style="margin-top: 30px; text-align: center; justify-content: center;">
             <label for="codigo" style="font-weight: bold; color: #b74d4d;">Bipe o código aqui:</label><br>
