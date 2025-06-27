@@ -41,7 +41,6 @@
   font-weight: bold;
   text-decoration: none;
   background: none;
-  margin-bottom: 8px;
   border: none;
   cursor: pointer;
   padding: 10px 18px;
@@ -124,7 +123,7 @@
   padding-right: 8px;
 }
 
-.column a{
+.column a {
   display: flex;
   align-items: center;
   width: 140px;
