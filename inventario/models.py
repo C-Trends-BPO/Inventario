@@ -47,9 +47,10 @@ class Bipagem(models.Model):
     patrimonio = models.CharField(max_length=100, null=True)
 
     ESTADO_CHOICES = [
-        ('Good', 'Good'),
-        ('No Good', 'No Good'),
-        ('Descarte', 'Descarte'),
+        ('GOOD', 'GOOD'),
+        ('BAD', 'BAD'),
+        ('OBSOLETO', 'OBSOLETO'),
+        ('TRIAGEM', 'TRIAGEM'),
     ]
     estado = models.CharField(max_length=100, choices=ESTADO_CHOICES, null=True)
 
