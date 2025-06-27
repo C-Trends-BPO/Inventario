@@ -14,8 +14,8 @@
         {% endif %}
     </form>
     {% endif %}
-
 </div>
+
 {% if messages %}
 <div>
     {% for message in messages %}
@@ -25,6 +25,14 @@
     {% endfor %}
 </div>
 {% endif %}
+
+{% for message in messages %}
+  {% if 'serial_repetido' in message.tags %}
+    <script type="text/javascript">
+      alert("{{ message|escapejs }}");
+    </script>
+  {% endif %}
+{% endfor %}
 
 <div class="centraliza-bipagem">
     <div class="scroll-tabela-bipagem">

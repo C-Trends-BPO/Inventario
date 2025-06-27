@@ -38,7 +38,7 @@ class Bipagem(models.Model):
     id = models.AutoField(primary_key=True)
     id_caixa = models.ForeignKey(Caixa, on_delete=models.CASCADE, related_name='bipagem')
     id_lote = models.ForeignKey(LoteBipagem, on_delete=models.CASCADE, related_name='bipagem')
-    group_user = models.ForeignKey(Group, on_delete=models.CASCADE, null=True)  # ← redundância necessária
+    group_user = models.ForeignKey(Group, on_delete=models.CASCADE, null=True)
 
     unidade = models.IntegerField(null=True)
     nrserie = models.CharField(max_length=50)
@@ -47,10 +47,9 @@ class Bipagem(models.Model):
     patrimonio = models.CharField(max_length=100, null=True)
 
     ESTADO_CHOICES = [
-        ('Excelente', 'Excelente'),
-        ('Bom', 'Bom'),
-        ('Ruim', 'Ruim'),
-        ('Péssimo', 'Péssimo'),
+        ('Good', 'Good'),
+        ('No Good', 'No Good'),
+        ('Descarte', 'Descarte'),
     ]
     estado = models.CharField(max_length=100, choices=ESTADO_CHOICES, null=True)
 
