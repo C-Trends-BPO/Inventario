@@ -40,8 +40,13 @@ def bipagem(request, lote_id, caixa_id):
             form.add_error(None, "Nenhum serial foi fornecido.")
             messages.warning(request, "⚠️ Nenhum serial foi fornecido.")
         elif form.is_valid() and serial:
-            if Bipagem.objects.filter(group_user=lote.group_user, nrserie=serial).exists():
+            bipagens_mesma_pa = Bipagem.objects.filter(group_user=lote.group_user, nrserie=serial)
+
+            serial_em_lote_ativo = bipagens_mesma_pa.exclude(id_lote__status='cancelado').exists()
+
+            if serial_em_lote_ativo:
                 messages.error(request, f"❌ O serial '{serial}' já foi inserido nesta PA.", extra_tags='serial_repetido')
+
             else:
                 Bipagem.objects.create(
                     id_caixa=caixa,
