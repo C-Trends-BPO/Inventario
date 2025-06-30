@@ -27,11 +27,11 @@
 {% endif %}
 
 {% for message in messages %}
-  {% if 'serial_repetido' in message.tags %}
-    <script type="text/javascript">
-      alert("{{ message|escapejs }}");
-    </script>
-  {% endif %}
+{% if 'serial_repetido' in message.tags %}
+<script type="text/javascript">
+    alert("{{ message|escapejs }}");
+</script>
+{% endif %}
 {% endfor %}
 
 <div class="centraliza-bipagem">
@@ -106,67 +106,60 @@
 </div>
 
 <script>
-    const serialInput = document.getElementById('serial-input');
-    let buffer = '';
-    let lastTime = Date.now();
-
-    serialInput.addEventListener('keydown', (e) => {
-        const now = Date.now();
-        const timeDiff = now - lastTime;
-        lastTime = now;
-
-        if (timeDiff < 50) {
-            if (e.key.length === 1) {
-                buffer += e.key;
-            }
-        } else {
-            buffer = e.key.length === 1 ? e.key : '';
-        }
-
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            serialInput.value = buffer.trim();
-            buffer = '';
-
-            focusNextField(serialInput);
-        }
-
-        if (e.key !== 'Enter') {
-            e.preventDefault();
-        }
-    });
-
-    ['paste', 'drop', 'contextmenu'].forEach(evt =>
-        serialInput.addEventListener(evt, (e) => e.preventDefault())
-    );
-
-    function focusNextField(currentField) {
-        const focusables = Array.from(document.querySelectorAll('input:not([type="hidden"]):not([disabled]), textarea:not([disabled]), select:not([disabled])'));
-        const index = focusables.indexOf(currentField);
-        if (index !== -1 && index < focusables.length - 1) {
-            focusables[index + 1].focus();
-        }
-    }
-
-    const clearButton = document.getElementById('clear-button');
-
-    clearButton.addEventListener('click', () => {
-        const form = document.querySelector('form');
-
-        form.querySelectorAll('input:not([type="hidden"]):not([disabled]), textarea:not([disabled]), select:not([disabled])')
-            .forEach(field => {
-                field.value = '';
-            });
-
-        buffer = '';
-    });
-
     document.addEventListener('DOMContentLoaded', function () {
         const serialInput = document.getElementById('serial-input');
+        const clearButton = document.getElementById('clear-button');
+        let buffer = '';
+        let lastTime = Date.now();
+
         if (serialInput) {
             serialInput.focus();
+
+            serialInput.addEventListener('keydown', (e) => {
+                const now = Date.now();
+                const timeDiff = now - lastTime;
+                lastTime = now;
+
+                if (timeDiff < 50 && e.key.length === 1) {
+                    buffer += e.key;
+                } else {
+                    buffer = e.key.length === 1 ? e.key : '';
+                }
+
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    serialInput.value = buffer.trim();
+                    buffer = '';
+
+                    const form = serialInput.closest('form');
+                    const consultarBtn = form.querySelector('button[name="buscar_dados"]');
+                    if (consultarBtn) consultarBtn.click();
+                }
+
+                if (e.key !== 'Enter') {
+                    e.preventDefault();
+                }
+            });
+
+            ['paste', 'drop', 'contextmenu'].forEach(evt =>
+                serialInput.addEventListener(evt, (e) => e.preventDefault())
+            );
+        }
+
+        if (clearButton) {
+            clearButton.addEventListener('click', () => {
+                const form = clearButton.closest('form');
+
+                form.querySelectorAll('input:not([type="hidden"]):not([disabled]), textarea:not([disabled]), select:not([disabled])')
+                    .forEach(field => {
+                        field.value = '';
+                    });
+
+                buffer = '';
+
+                if (serialInput) serialInput.focus();
+            });
         }
     });
-
 </script>
 {% endblock %}

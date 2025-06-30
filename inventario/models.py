@@ -81,7 +81,7 @@ class PontoAtendimentoInfo(models.Model):
 class InventarioDadosImportados(models.Model):
     modalidade_comercial = models.CharField(max_length=100)
     material = models.IntegerField()
-    serial = models.CharField(max_length=100)
+    serial = models.CharField(max_length=100, primary_key=True)
     modelo = models.CharField(max_length=200)
     status_sistema = models.CharField(max_length=50)
     status_usuario = models.CharField(max_length=50)
