@@ -74,8 +74,9 @@ def bipagem(request, lote_id, caixa_id):
 
         elif form.is_valid() and serial:
             if not form.cleaned_data.get('estado'):
-                form.add_error('estado', "Este campo é obrigatório.")
                 messages.warning(request, "⚠️ Preencha o campo Estado antes de inserir.")
+            elif not form.cleaned_data.get('modelo'):
+                messages.warning(request, "⚠️ Preencha o campo Modelo antes de inserir.")
             else:
                 bipagens_mesma_pa = Bipagem.objects.filter(group_user=lote.group_user, nrserie=serial)
                 serial_em_lote_ativo = bipagens_mesma_pa.exclude(id_lote__status='cancelado').exists()

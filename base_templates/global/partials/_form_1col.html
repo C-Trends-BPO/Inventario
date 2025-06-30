@@ -7,27 +7,30 @@
 
   {% if campo.name == "modelo" %}
   {% if modelo_autocompletado %}
-    <input type="text" name="modelo" id="modelo-input" value="{{ campo.value|stringformat:'s' }}" readonly>
+  <input type="text" name="modelo" id="modelo-input" value="{{ campo.value|stringformat:'s' }}" readonly>
   {% else %}
-    <input type="text" name="modelo" id="modelo-input" value="{{ campo.value|stringformat:'s' }}">
+  <input type="text" name="modelo" id="modelo-input" value="{{ campo.value|stringformat:'s' }}">
   {% endif %}
 
   {% else %}
-    {{ campo }}
+  {{ campo }}
   {% endif %}
 
   {% if campo.errors %}
 
   <div class="error">{{ campo.errors }}</div>
   {% endif %}
-  </div>
+</div>
 {% endfor %}
 
 <div class="button-group">
   {% if exibir_consultar %}
   <button type="submit" name="buscar_dados" class="buscar-dados">Consultar</button>
   {% else %}
-  <button type="submit" class="bipagem-button">Inserir</button>
+  <button type="submit" class="bipagem-button"
+    data-modelo-autocompletado="{{ modelo_autocompletado|yesno:'true,false' }}">
+    Inserir
+  </button>
   {% endif %}
   <button type="button" id="clear-button" class="bipagem-button-clear">Limpar</button>
 </div>

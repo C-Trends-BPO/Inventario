@@ -129,8 +129,17 @@
 
                     setTimeout(() => {
                         const inserirBtn = form.querySelector('button[type="submit"]:not([name="buscar_dados"])');
-                        if (inserirBtn) inserirBtn.focus();
-                    }, 300);
+                        const modeloInput = document.getElementById('modelo-input');
+
+                        if (inserirBtn) {
+                            const modeloAuto = inserirBtn.getAttribute('data-modelo-autocompletado');
+                            if (modeloAuto === 'false' && modeloInput) {
+                                modeloInput.focus();
+                            } else {
+                                inserirBtn.focus();
+                            }
+                        }
+                    }, 300);;
                 }
 
                 if (e.key.length === 1) {
