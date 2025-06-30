@@ -161,5 +161,14 @@
             });
         }
     });
+
+    const estadoSelect = document.querySelector('select[name="estado"]');
+    if (estadoSelect) {
+        estadoSelect.addEventListener('change', () => {
+            const form = estadoSelect.closest('form');
+            const inserirBtn = form.querySelector('button[type="submit"]:not([name="buscar_dados"])');
+            if (inserirBtn) inserirBtn.focus();
+        });
+    }
 </script>
 {% endblock %}
