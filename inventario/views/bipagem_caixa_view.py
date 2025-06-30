@@ -93,7 +93,7 @@ def bipagem(request, lote_id, caixa_id):
         form = BipagemForm()
 
     bipagens_da_caixa = Bipagem.objects.filter(id_caixa=caixa).order_by('-id')
-    paginator = Paginator(bipagens_da_caixa, 5)
+    paginator = Paginator(bipagens_da_caixa, 10)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
     mensagem = {'mostrar': True, 'encerrar': True}

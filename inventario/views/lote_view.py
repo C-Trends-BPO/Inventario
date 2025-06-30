@@ -9,8 +9,7 @@ from django.http import HttpResponseForbidden
 @login_required(login_url='inventario:login')
 def lote(request, lote_id):
     lote = get_object_or_404(LoteBipagem, id=lote_id)
-    
-    # Impede ações POST para o grupo de visualização
+
     if request.method == 'POST' and request.user.groups.filter(name='Visualizador Master').exists():
         return HttpResponseForbidden("Você não tem permissão para modificar esse lote.")
 
