@@ -18,5 +18,5 @@ class BipagemForm(forms.Form):
     estado = forms.ChoiceField(
         required=False,
         choices=[('', ''), ('GOOD', 'GOOD'), ('BAD', 'BAD'), ('OBSOLETO', 'OBSOLETO'), ('TRIAGEM', 'TRIAGEM')],
-        label='Estado'
+        label='Status'
     )

@@ -9,7 +9,7 @@ class LoteBipagem(models.Model):
         ('aberto', 'Aberto'),
         ('fechado', 'Fechado'),
         ('aguardando validação', 'Aguardando Validação'),
-        ('cancelado', 'Cancelado'),
+        ('invalidado', 'Invalidado'),
     ]
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Aberto')
     user_created = models.ForeignKey('auth.User', on_delete=models.CASCADE,null=True)

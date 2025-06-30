@@ -56,7 +56,7 @@ def validar_serial(request, lote_id):
         serial_valido = lote.bipagem.filter(nrserie=codigo).exists()
 
         if not serial_valido:
-            lote.status = "cancelado"
+            lote.status = "invalidado"
             lote.save()
             return JsonResponse({
                 "status": "erro",
