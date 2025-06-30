@@ -110,25 +110,20 @@
         const serialInput = document.getElementById('serial-input');
         const clearButton = document.getElementById('clear-button');
         const estadoSelect = document.querySelector('select[name="estado"]');
-
         let buffer = '';
-        let lastTime = Date.now();
 
         if (serialInput) {
             serialInput.setAttribute('autocomplete', 'off');
 
-            // Bloqueia copiar/colar/arrastar/menu
+            // Bloqueia colar/arrastar/menu/digitação manual
             ['paste', 'drop', 'contextmenu', 'copy', 'cut'].forEach(evt =>
-                serialInput.addEventListener(evt, (e) => e.preventDefault())
+                serialInput.addEventListener(evt, e => e.preventDefault())
             );
+            serialInput.addEventListener('keypress', e => e.preventDefault());
+            serialInput.addEventListener('input', () => serialInput.value = '');
 
-            // Impede digitação manual direta
-            serialInput.addEventListener('keypress', (e) => e.preventDefault());
-            serialInput.addEventListener('input', (e) => {
-                serialInput.value = '';
-            });
-
-            serialInput.addEventListener('keydown', (e) => {
+            // Captura entrada do leitor
+            serialInput.addEventListener('keydown', e => {
                 if (e.key === 'Enter') {
                     e.preventDefault();
                     serialInput.value = buffer.trim();
@@ -137,6 +132,7 @@
                     const form = serialInput.closest('form');
                     const consultarBtn = form.querySelector('button[name="buscar_dados"]');
                     if (consultarBtn) consultarBtn.click();
+
                     return;
                 }
 
@@ -144,10 +140,26 @@
                     buffer += e.key;
                 }
 
-                e.preventDefault(); // Impede qualquer digitação manual
+                e.preventDefault();
             });
 
-            serialInput.focus();
+            // Se o campo serial estiver preenchido (após consulta), foca no estado
+            if (serialInput.value.trim()) {
+                setTimeout(() => {
+                    if (estadoSelect) estadoSelect.focus();
+                }, 200); // pequeno delay após carregamento
+            } else {
+                serialInput.focus();
+            }
+        }
+
+        // Ao selecionar o estado → foca no botão de inserir
+        if (estadoSelect) {
+            estadoSelect.addEventListener('change', () => {
+                const form = estadoSelect.closest('form');
+                const inserirBtn = form.querySelector('button[type="submit"]:not([name="buscar_dados"])');
+                if (inserirBtn) inserirBtn.focus();
+            });
         }
 
         if (clearButton) {
@@ -161,15 +173,8 @@
                 if (serialInput) serialInput.focus();
             });
         }
-
-        if (estadoSelect) {
-            estadoSelect.addEventListener('change', () => {
-                const form = estadoSelect.closest('form');
-                const inserirBtn = form.querySelector('button[type="submit"]:not([name="buscar_dados"])');
-                if (inserirBtn) inserirBtn.focus();
-            });
-        }
     });
 </script>
+
 
 {% endblock %}
