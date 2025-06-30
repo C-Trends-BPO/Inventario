@@ -47,7 +47,7 @@ def validar_serial(request, lote_id):
         if request.user.groups.filter(name='INV_PA_VISUALIZADOR_MASTER').exists():
             return JsonResponse({
                 "status": "erro",
-                "mensagem": "❌ Você não tem permissão para validar seriais."
+                "mensagem": " Você não tem permissão para validar seriais."
             })
 
         lote = get_object_or_404(LoteBipagem, id=lote_id)

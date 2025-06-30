@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import Group
+from decimal import Decimal
 
 class LoteBipagem(models.Model):
     id=models.AutoField(primary_key=True)
@@ -76,3 +77,34 @@ class PontoAtendimentoInfo(models.Model):
 
     def __str__(self):
         return f"{self.group.name} - {self.endereco}"
+    
+class InventarioDadosImportados(models.Model):
+    modalidade_comercial = models.CharField(max_length=100)
+    material = models.IntegerField()
+    serial = models.CharField(max_length=100)
+    modelo = models.CharField(max_length=200)
+    status_sistema = models.CharField(max_length=50)
+    status_usuario = models.CharField(max_length=50)
+    opl = models.IntegerField()
+    serial_fabricante = models.CharField(max_length=100)
+    equipamento = models.IntegerField()
+    centro = models.IntegerField()
+    deposito = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    modificado_por = models.CharField(max_length=100, null=True, blank=True)
+    modificado_em = models.DateField(null=True, blank=True)
+    ct = models.CharField(max_length=50, null=True, blank=True)
+    data_aquisicao = models.DateField(null=True, blank=True)
+    nome_ct = models.CharField(max_length=100, null=True, blank=True)
+    nome_fornecedor = models.CharField(max_length=200, null=True, blank=True)
+    acao = models.CharField(max_length=50, null=True, blank=True)
+    mensagem_ferramenta_inv = models.CharField(max_length=100, null=True, blank=True)
+    vl_aquisicao = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    vl_residual = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+
+    class Meta:
+        db_table = 'inventario_dados_importados'
+        verbose_name = "Inventário Importado"
+        verbose_name_plural = "Inventários Importados"
+
+    def _str_(self):
+        return f"{self.serial} - {self.modelo}"
