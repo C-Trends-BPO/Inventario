@@ -109,23 +109,26 @@
     document.addEventListener('DOMContentLoaded', function () {
         const serialInput = document.getElementById('serial-input');
         const clearButton = document.getElementById('clear-button');
+        const estadoSelect = document.querySelector('select[name="estado"]');
+
         let buffer = '';
         let lastTime = Date.now();
 
         if (serialInput) {
-            serialInput.focus();
+            serialInput.setAttribute('autocomplete', 'off');
+
+            // Bloqueia copiar/colar/arrastar/menu
+            ['paste', 'drop', 'contextmenu', 'copy', 'cut'].forEach(evt =>
+                serialInput.addEventListener(evt, (e) => e.preventDefault())
+            );
+
+            // Impede digitação manual direta
+            serialInput.addEventListener('keypress', (e) => e.preventDefault());
+            serialInput.addEventListener('input', (e) => {
+                serialInput.value = '';
+            });
 
             serialInput.addEventListener('keydown', (e) => {
-                const now = Date.now();
-                const timeDiff = now - lastTime;
-                lastTime = now;
-
-                if (timeDiff < 50 && e.key.length === 1) {
-                    buffer += e.key;
-                } else {
-                    buffer = e.key.length === 1 ? e.key : '';
-                }
-
                 if (e.key === 'Enter') {
                     e.preventDefault();
                     serialInput.value = buffer.trim();
@@ -134,41 +137,39 @@
                     const form = serialInput.closest('form');
                     const consultarBtn = form.querySelector('button[name="buscar_dados"]');
                     if (consultarBtn) consultarBtn.click();
+                    return;
                 }
 
-                if (e.key !== 'Enter') {
-                    e.preventDefault();
+                if (e.key.length === 1) {
+                    buffer += e.key;
                 }
+
+                e.preventDefault(); // Impede qualquer digitação manual
             });
 
-            ['paste', 'drop', 'contextmenu'].forEach(evt =>
-                serialInput.addEventListener(evt, (e) => e.preventDefault())
-            );
+            serialInput.focus();
         }
 
         if (clearButton) {
             clearButton.addEventListener('click', () => {
                 const form = clearButton.closest('form');
-
-                form.querySelectorAll('input:not([type="hidden"]):not([disabled]), textarea:not([disabled]), select:not([disabled])')
-                    .forEach(field => {
-                        field.value = '';
-                    });
+                form.querySelectorAll('input, select, textarea').forEach(field => {
+                    if (!field.disabled && field.type !== 'hidden') field.value = '';
+                });
 
                 buffer = '';
-
                 if (serialInput) serialInput.focus();
             });
         }
-    });
 
-    const estadoSelect = document.querySelector('select[name="estado"]');
-    if (estadoSelect) {
-        estadoSelect.addEventListener('change', () => {
-            const form = estadoSelect.closest('form');
-            const inserirBtn = form.querySelector('button[type="submit"]:not([name="buscar_dados"])');
-            if (inserirBtn) inserirBtn.focus();
-        });
-    }
+        if (estadoSelect) {
+            estadoSelect.addEventListener('change', () => {
+                const form = estadoSelect.closest('form');
+                const inserirBtn = form.querySelector('button[type="submit"]:not([name="buscar_dados"])');
+                if (inserirBtn) inserirBtn.focus();
+            });
+        }
+    });
 </script>
+
 {% endblock %}
