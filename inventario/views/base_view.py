@@ -38,14 +38,14 @@ def index(request):
     if busca:
         try:
             busca_id = int(busca)
-            filtro_id = Q(id=busca_id)
         except ValueError:
-            filtro_id = Q()
+            busca_id = None
 
         lotes_list = lotes_list.filter(
-            filtro_id |
+            Q(numero_lote__icontains=busca) |
             Q(status__icontains=busca) |
-            Q(user_created__username__icontains=busca)
+            Q(user_created__username__icontains=busca) |
+            Q(id=busca_id) if busca_id else Q()
         )
 
     paginator = Paginator(lotes_list, 10)
