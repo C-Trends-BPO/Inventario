@@ -105,8 +105,11 @@
     document.addEventListener('DOMContentLoaded', function () {
         const serialInput = document.getElementById('serial-input');
         const clearButton = document.getElementById('clear-button');
-        const estadoSelect = document.querySelector('select[name="estado"]');
+        const modeloInput = document.getElementById('modelo-input');
         let buffer = '';
+
+        // Remove o foco automático inicial para evitar sobrescrever o foco desejado
+        // serialInput.focus(); ❌ REMOVIDO DAQUI
 
         if (serialInput) {
             serialInput.setAttribute('autocomplete', 'off');
@@ -127,10 +130,9 @@
                     const consultarBtn = form.querySelector('button[name="buscar_dados"]');
                     if (consultarBtn) consultarBtn.click();
 
+                    // Espera o back-end responder e o DOM atualizar
                     setTimeout(() => {
                         const inserirBtn = form.querySelector('button[type="submit"]:not([name="buscar_dados"])');
-                        const modeloInput = document.getElementById('modelo-input');
-
                         if (inserirBtn) {
                             const modeloAuto = inserirBtn.getAttribute('data-modelo-autocompletado');
                             if (modeloAuto === 'false' && modeloInput) {
@@ -139,7 +141,7 @@
                                 inserirBtn.focus();
                             }
                         }
-                    }, 300);;
+                    }, 300);
                 }
 
                 if (e.key.length === 1) {
@@ -148,8 +150,6 @@
 
                 e.preventDefault();
             });
-
-            serialInput.focus();
         }
 
         if (clearButton) {
@@ -164,20 +164,10 @@
             });
         }
 
-        if (serialInput && serialInput.value.trim() !== '') {
-            const form = serialInput.closest('form');
-            const inserirBtn = form.querySelector('button[type="submit"]:not([name="buscar_dados"])');
-            if (inserirBtn) inserirBtn.focus();
-        }
-    });
-
-    document.addEventListener('DOMContentLoaded', function () {
-        const modeloInput = document.getElementById('modelo-input');
-
+        // Trata o campo modelo: readonly ou não
         if (modeloInput) {
             if (modeloInput.value.trim()) {
                 modeloInput.setAttribute('readonly', 'readonly');
-
                 ['paste', 'drop', 'contextmenu', 'copy', 'cut', 'keydown'].forEach(evt =>
                     modeloInput.addEventListener(evt, e => e.preventDefault())
                 );
@@ -185,6 +175,19 @@
                 modeloInput.removeAttribute('readonly');
             }
         }
+
+        // Foco inicial inteligente (apenas no carregamento da página)
+        const inserirBtn = document.querySelector('button[type="submit"]:not([name="buscar_dados"])');
+        if (inserirBtn) {
+            const modeloAuto = inserirBtn.getAttribute('data-modelo-autocompletado');
+            if (modeloAuto === 'false' && modeloInput) {
+                modeloInput.focus();
+            } else {
+                serialInput?.focus();
+            }
+        }
     });
 </script>
+
+
 {% endblock %}
