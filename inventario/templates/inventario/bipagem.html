@@ -108,9 +108,6 @@
         const modeloInput = document.getElementById('modelo-input');
         let buffer = '';
 
-        // Remove o foco automático inicial para evitar sobrescrever o foco desejado
-        // serialInput.focus(); ❌ REMOVIDO DAQUI
-
         if (serialInput) {
             serialInput.setAttribute('autocomplete', 'off');
 
@@ -130,7 +127,6 @@
                     const consultarBtn = form.querySelector('button[name="buscar_dados"]');
                     if (consultarBtn) consultarBtn.click();
 
-                    // Espera o back-end responder e o DOM atualizar
                     setTimeout(() => {
                         const inserirBtn = form.querySelector('button[type="submit"]:not([name="buscar_dados"])');
                         if (inserirBtn) {
@@ -164,7 +160,7 @@
             });
         }
 
-        // Trata o campo modelo: readonly ou não
+        // Trata o campo modelo: readonly se preenchido
         if (modeloInput) {
             if (modeloInput.value.trim()) {
                 modeloInput.setAttribute('readonly', 'readonly');
@@ -176,18 +172,17 @@
             }
         }
 
-        // Foco inicial inteligente (apenas no carregamento da página)
+        // Ajuste de foco após renderização
         const inserirBtn = document.querySelector('button[type="submit"]:not([name="buscar_dados"])');
         if (inserirBtn) {
             const modeloAuto = inserirBtn.getAttribute('data-modelo-autocompletado');
             if (modeloAuto === 'false' && modeloInput) {
                 modeloInput.focus();
             } else {
-                serialInput?.focus();
+                inserirBtn.focus();
             }
         }
     });
 </script>
-
 
 {% endblock %}
