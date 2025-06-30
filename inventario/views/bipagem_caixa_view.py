@@ -86,11 +86,13 @@ def bipagem(request, lote_id, caixa_id):
                         modelo=form.cleaned_data['modelo'],
                         patrimonio=form.cleaned_data['patrimonio']
                     )
-                    request.session['modelo_bipagem'] = form.cleaned_data['modelo']
+                    request.session['estado_bipagem'] = form.cleaned_data['estado']
                     messages.success(request, "✅ Serial bipado com sucesso!")
                     return redirect(reverse('inventario:caixa', args=[lote.id, caixa.id]))
     else:
-        form = BipagemForm()
+        form = BipagemForm(initial={
+            'estado': request.session.get('estado_bipagem', ''),
+        })
 
     bipagens_da_caixa = Bipagem.objects.filter(id_caixa=caixa).order_by('-id')
     paginator = Paginator(bipagens_da_caixa, 10)

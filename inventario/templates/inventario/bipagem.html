@@ -131,7 +131,11 @@
                     const consultarBtn = form.querySelector('button[name="buscar_dados"]');
                     if (consultarBtn) consultarBtn.click();
 
-                    return;
+                    // Aguarda o formulário atualizar (dados preenchidos) e foca no botão de Inserir
+                    setTimeout(() => {
+                        const inserirBtn = form.querySelector('button[type="submit"]:not([name="buscar_dados"])');
+                        if (inserirBtn) inserirBtn.focus();
+                    }, 300); // tempo suficiente para atualização do form
                 }
 
                 if (e.key.length === 1) {
@@ -141,23 +145,7 @@
                 e.preventDefault();
             });
 
-            // Se o campo serial estiver preenchido (após consulta), foca no estado
-            if (serialInput.value.trim()) {
-                setTimeout(() => {
-                    if (estadoSelect) estadoSelect.focus();
-                }, 200); // pequeno delay após carregamento
-            } else {
-                serialInput.focus();
-            }
-        }
-
-        // Ao selecionar o estado → foca no botão de inserir
-        if (estadoSelect) {
-            estadoSelect.addEventListener('change', () => {
-                const form = estadoSelect.closest('form');
-                const inserirBtn = form.querySelector('button[type="submit"]:not([name="buscar_dados"])');
-                if (inserirBtn) inserirBtn.focus();
-            });
+            serialInput.focus();
         }
 
         if (clearButton) {
@@ -170,6 +158,12 @@
                 buffer = '';
                 if (serialInput) serialInput.focus();
             });
+        }
+
+        if (serialInput && serialInput.value.trim() !== '') {
+            const form = serialInput.closest('form');
+            const inserirBtn = form.querySelector('button[type="submit"]:not([name="buscar_dados"])');
+            if (inserirBtn) inserirBtn.focus();
         }
     });
 </script>
