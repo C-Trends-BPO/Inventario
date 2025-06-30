@@ -16,6 +16,7 @@ def bipagem(request, lote_id, caixa_id):
     is_visualizador_master = request.user.groups.filter(name='INV_PA_VISUALIZADOR_MASTER').exists()
 
     exibir_consultar = True
+    modelo_autocompletado = False
 
     if request.method == 'POST' and is_visualizador_master:
         return HttpResponseForbidden("Você não tem permissão para bipar seriais.")
@@ -23,8 +24,7 @@ def bipagem(request, lote_id, caixa_id):
     if request.method == 'POST':
         form = BipagemForm(request.POST)
         serial = form.data.get('serial', '').strip()
-
-        # 🔍 CONSULTAR DADOS AUTOMATICAMENTE
+        
         if 'buscar_dados' in request.POST and form.is_valid():
             from ..models import InventarioDadosImportados
             serial = form.cleaned_data.get('serial', '').strip()
@@ -36,17 +36,24 @@ def bipagem(request, lote_id, caixa_id):
                 print("📦 Modelo:", dados.modelo)
                 print("📦 Patrimônio:", dados.serial_fabricante)
 
+                modelo_autocompletado = True
                 form = BipagemForm(initial={
                     'serial': serial,
                     'modelo': dados.modelo,
-                    'patrimonio': dados.serial_fabricante,
                     'estado': form.cleaned_data.get('estado', '')
                 })
                 messages.info(request, "ℹ️ Dados preenchidos automaticamente.")
                 exibir_consultar = False
             else:
-                print("❌ Serial não encontrado no banco.")
+                form = BipagemForm(initial={
+                    'serial': serial,
+                    'modelo': '',
+                    'estado': form.cleaned_data.get('estado', '')
+                })
+                exibir_consultar = False
                 messages.warning(request, f"⚠️ Serial '{serial}' não encontrado.")
+
+                modelo_autocompletado = False
 
         qtd_seriais = Bipagem.objects.filter(id_caixa=caixa).count()
         if qtd_seriais >= limite_por_pa and qtd_seriais != 0:
@@ -84,7 +91,6 @@ def bipagem(request, lote_id, caixa_id):
                         unidade=caixa.bipagem.count() + 1,
                         estado=form.cleaned_data['estado'],
                         modelo=form.cleaned_data['modelo'],
-                        patrimonio=form.cleaned_data['patrimonio']
                     )
                     request.session['estado_bipagem'] = form.cleaned_data['estado']
                     messages.success(request, "✅ Serial bipado com sucesso!")
@@ -92,6 +98,7 @@ def bipagem(request, lote_id, caixa_id):
     else:
         form = BipagemForm(initial={
             'estado': request.session.get('estado_bipagem', ''),
+            'modelo': ''
         })
 
     bipagens_da_caixa = Bipagem.objects.filter(id_caixa=caixa).order_by('-id')
@@ -117,6 +124,7 @@ def bipagem(request, lote_id, caixa_id):
         'mensagem': mensagem,
         'is_visualizador_master': is_visualizador_master,
         'exibir_consultar': exibir_consultar,
+        'modelo_autocompletado': modelo_autocompletado,
     }
 
     return render(request, 'inventario/bipagem.html', context)

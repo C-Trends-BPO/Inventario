@@ -42,7 +42,6 @@
                     <th>Serial</th>
                     <th>Modelo</th>
                     <th>Status</th>
-                    <th>Patrimonio</th>
                 </tr>
             </thead>
             <tbody>
@@ -53,7 +52,6 @@
                     <td>{{ item.nrserie }}</td>
                     <td>{{ item.modelo }}</td>
                     <td>{{ item.estado }}</td>
-                    <td>{{ item.patrimonio }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -113,14 +111,12 @@
         if (serialInput) {
             serialInput.setAttribute('autocomplete', 'off');
 
-            // Bloqueia colar/arrastar/menu/digitação manual
             ['paste', 'drop', 'contextmenu', 'copy', 'cut'].forEach(evt =>
                 serialInput.addEventListener(evt, e => e.preventDefault())
             );
             serialInput.addEventListener('keypress', e => e.preventDefault());
             serialInput.addEventListener('input', () => serialInput.value = '');
 
-            // Captura entrada do leitor
             serialInput.addEventListener('keydown', e => {
                 if (e.key === 'Enter') {
                     e.preventDefault();
@@ -131,11 +127,10 @@
                     const consultarBtn = form.querySelector('button[name="buscar_dados"]');
                     if (consultarBtn) consultarBtn.click();
 
-                    // Aguarda o formulário atualizar (dados preenchidos) e foca no botão de Inserir
                     setTimeout(() => {
                         const inserirBtn = form.querySelector('button[type="submit"]:not([name="buscar_dados"])');
                         if (inserirBtn) inserirBtn.focus();
-                    }, 300); // tempo suficiente para atualização do form
+                    }, 300);
                 }
 
                 if (e.key.length === 1) {
@@ -166,7 +161,21 @@
             if (inserirBtn) inserirBtn.focus();
         }
     });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const modeloInput = document.getElementById('modelo-input');
+
+        if (modeloInput) {
+            if (modeloInput.value.trim()) {
+                modeloInput.setAttribute('readonly', 'readonly');
+
+                ['paste', 'drop', 'contextmenu', 'copy', 'cut', 'keydown'].forEach(evt =>
+                    modeloInput.addEventListener(evt, e => e.preventDefault())
+                );
+            } else {
+                modeloInput.removeAttribute('readonly');
+            }
+        }
+    });
 </script>
-
-
 {% endblock %}

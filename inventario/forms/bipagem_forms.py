@@ -18,5 +18,9 @@ class BipagemForm(forms.Form):
         'autocomplete': 'off'
     })
     )
-    modelo = forms.CharField(label='Modelo', max_length=100, required=False)
-    patrimonio = forms.CharField(label='Patrimônio', max_length=100, required=False)
+    modelo = forms.CharField(
+    label='Modelo',
+    max_length=100,
+    required=False,
+    widget=forms.TextInput(attrs={'id': 'modelo-input'})
+    )
