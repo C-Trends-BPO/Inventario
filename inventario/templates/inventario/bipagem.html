@@ -173,13 +173,20 @@
         }
 
         // Ajuste de foco após renderização
-        const inserirBtn = document.querySelector('button[type="submit"]:not([name="buscar_dados"])');
-        if (inserirBtn) {
-            const modeloAuto = inserirBtn.getAttribute('data-modelo-autocompletado');
-            if (modeloAuto === 'false' && modeloInput) {
-                modeloInput.focus();
-            } else {
-                inserirBtn.focus();
+        const voltarParaSerial = sessionStorage.getItem('voltarParaSerial');
+
+        if (voltarParaSerial === 'true') {
+            sessionStorage.removeItem('voltarParaSerial');
+            serialInput?.focus();
+        } else {
+            const inserirBtn = document.querySelector('button[type="submit"]:not([name="buscar_dados"])');
+            if (inserirBtn) {
+                const modeloAuto = inserirBtn.getAttribute('data-modelo-autocompletado');
+                if (modeloAuto === 'false' && modeloInput) {
+                    modeloInput.focus();
+                } else {
+                    inserirBtn.focus();
+                }
             }
         }
     });
