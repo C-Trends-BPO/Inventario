@@ -17,13 +17,11 @@
 </div>
 
 {% if messages %}
-<div>
+<ul class="messages">
     {% for message in messages %}
-    <div class="alert alert-{{ message.tags }}">
-        {{ message }}
-    </div>
+    <li class="{{ message.tags }}">{{ message }}</li>
     {% endfor %}
-</div>
+</ul>
 {% endif %}
 
 {% for message in messages %}
