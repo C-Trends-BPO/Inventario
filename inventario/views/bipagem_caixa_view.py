@@ -79,7 +79,7 @@ def bipagem(request, lote_id, caixa_id):
                 messages.warning(request, "⚠️ Preencha o campo Modelo antes de inserir.")
             else:
                 bipagens_mesma_pa = Bipagem.objects.filter(group_user=lote.group_user, nrserie=serial)
-                serial_em_lote_ativo = bipagens_mesma_pa.exclude(id_lote__status='cancelado').exists()
+                serial_em_lote_ativo = bipagens_mesma_pa.exclude(id_lote__status='invalidado').exists()
 
                 if serial_em_lote_ativo:
                     messages.error(request, f"❌ O serial '{serial}' já foi inserido nesta PA.", extra_tags='serial_repetido')
