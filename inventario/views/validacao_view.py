@@ -65,15 +65,32 @@ def validar_serial(request, lote_id):
             })
 
         if serial_valido:
-            lote.status = "fechado"
-            lote.save()
-            add_message(request, SUCCESS, "✅ Lote validado com sucesso!", extra_tags='lote_validado')
-            return JsonResponse({
-                "status": "ok",
-                "mensagem": "✅ Lote validado com sucesso!",
-                "popup": True,
-                "redirect_url": reverse('inventario:validar_lote', args=[lote.id])
-            })
+            # Valida quantos seriais únicos foram validados na sessão
+            validos = request.session.get(f"seriais_validados_lote_{lote.id}", [])
+            
+            if codigo not in validos:
+                validos.append(codigo)
+                request.session[f"seriais_validados_lote_{lote.id}"] = validos
+
+            total_necessario = math.ceil(lote.bipagem.count() * 0.10)
+
+            if len(validos) >= total_necessario:
+                lote.status = "fechado"
+                lote.save()
+                request.session.pop(f"seriais_validados_lote_{lote.id}", None)  # limpa sessão
+
+                add_message(request, SUCCESS, "✅ Lote validado com sucesso!", extra_tags='lote_validado')
+                return JsonResponse({
+                    "status": "ok",
+                    "mensagem": "✅ Lote validado com sucesso!",
+                    "popup": True,
+                    "redirect_url": reverse('inventario:validar_lote', args=[lote.id])
+                })
+            else:
+                return JsonResponse({
+                    "status": "ok",
+                    "mensagem": f"✅ Serial {codigo} validado com sucesso! ({len(validos)}/{total_necessario})"
+                })
 
     return JsonResponse({"status": "erro", "mensagem": "Método não permitido"}, status=405)
 
