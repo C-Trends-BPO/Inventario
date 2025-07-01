@@ -16,14 +16,38 @@
     {% endif %}
 </div>
 
-{% if messages %}
-<ul class="messages">
-    {% for message in messages %}
-    <li class="{{ message.tags }}">{{ message }}</li>
-    {% endfor %}
-</ul>
+{# Sucesso com ferramenta #}
+{% for message in messages %}
+{% if message.tags == 'success' %}
+<div class="alert-success-custom">
+    <ul class="messages">
+        <li class="{{ message.tags }}">{{ message }}</li>
+        {% if mensagem_ferramenta %}
+        <li class="alert-tool-message">🛠️ {{ mensagem_ferramenta }}</li>
+        {% endif %}
+    </ul>
+</div>
 {% endif %}
+{% endfor %}
 
+{# Erros e avisos separados #}
+{% for message in messages %}
+  {% if 'error' in message.tags %}
+    <div class="alert-error">
+      <ul class="messages">
+        <li>{{ message }}</li>
+      </ul>
+    </div>
+  {% elif 'warning' in message.tags %}
+    <div class="alert-warning">
+      <ul class="messages">
+        <li>{{ message }}</li>
+      </ul>
+    </div>
+  {% endif %}
+{% endfor %}
+
+{# Alerta JavaScript se for serial repetido #}
 {% for message in messages %}
 {% if 'serial_repetido' in message.tags %}
 <script type="text/javascript">
@@ -137,7 +161,7 @@
                                 inserirBtn.focus();
                             }
                         }
-                    }, 300);
+                    }, 100);
                 }
 
                 if (e.key.length === 1) {
