@@ -94,7 +94,6 @@ def validar_serial(request, lote_id):
 
     return JsonResponse({"status": "erro", "mensagem": "Método não permitido"}, status=405)
 
-
 @login_required(login_url='inventario:login')
 @require_POST
 @csrf_exempt
