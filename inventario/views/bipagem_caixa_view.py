@@ -17,7 +17,7 @@ def bipagem(request, lote_id, caixa_id):
 
     mensagem_ferramenta = request.session.get('mensagem_ferramenta', None)
     exibir_consultar = True
-    modelo_autocompletado = False  # valor padrão
+    modelo_autocompletado = False
 
     if request.method == 'POST' and is_visualizador_master:
         return HttpResponseForbidden("Você não tem permissão para bipar seriais.")
@@ -29,13 +29,31 @@ def bipagem(request, lote_id, caixa_id):
         if 'buscar_dados' in request.POST and form.is_valid():
             from ..models import InventarioDadosImportados
             serial = form.cleaned_data.get('serial', '').strip()
-            print(f"🔍 Buscando serial: '{serial}'")
             dados = InventarioDadosImportados.objects.filter(serial__iexact=serial).first()
 
             if dados:
-                print("✅ Serial encontrado:")
-                print("📦 Modelo:", dados.modelo)
-                print("📦 Patrimônio:", dados.serial_fabricante)
+                bipagens_mesma_pa = Bipagem.objects.filter(group_user=lote.group_user, nrserie=serial)
+                serial_em_lote_ativo = bipagens_mesma_pa.exclude(id_lote__status='invalidado').exists()
+
+                if serial_em_lote_ativo:
+                    messages.error(
+                        request,
+                        f"❌ O serial '{serial}' já foi inserido nesta PA. (Duplicidade)",
+                        extra_tags='serial_repetido'
+                    )
+                else:
+                    Bipagem.objects.create(
+                        id_caixa=caixa,
+                        id_lote=lote,
+                        group_user=lote.group_user,
+                        nrserie=serial,
+                        unidade=caixa.bipagem.count() + 1,
+                        estado=form.cleaned_data['estado'],
+                        modelo=dados.modelo,
+                    )
+                    request.session['estado_bipagem'] = form.cleaned_data['estado']
+                    messages.success(request, "✅ Serial inserido com sucesso!")
+                    return redirect(reverse('inventario:caixa', args=[lote.id, caixa.id]))
 
                 modelo_autocompletado = True
                 form = BipagemForm(initial={
@@ -45,8 +63,9 @@ def bipagem(request, lote_id, caixa_id):
                 })
                 mensagem_ferramenta = dados.mensagem_ferramenta_inv
                 request.session['mensagem_ferramenta'] = mensagem_ferramenta
-                request.session['modelo_autocompletado'] = True  # salva na sessão
+                request.session['modelo_autocompletado'] = True
                 exibir_consultar = False
+
             else:
                 form = BipagemForm(initial={
                     'serial': serial,
@@ -54,11 +73,10 @@ def bipagem(request, lote_id, caixa_id):
                     'estado': form.cleaned_data.get('estado', '')
                 })
                 exibir_consultar = False
-                messages.warning(request, f"⚠️ Serial '{serial}' não encontrado.")
                 modelo_autocompletado = False
-                request.session.pop('modelo_autocompletado', None)  # remove da sessão
-                mensagem_ferramenta = ''
+                request.session.pop('modelo_autocompletado', None)
                 request.session.pop('mensagem_ferramenta', None)
+                messages.warning(request, f"⚠️ Serial '{serial}' não encontrado.")
 
         qtd_seriais = Bipagem.objects.filter(id_caixa=caixa).count()
         if qtd_seriais >= limite_por_pa and qtd_seriais != 0:
