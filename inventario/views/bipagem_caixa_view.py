@@ -32,38 +32,28 @@ def bipagem(request, lote_id, caixa_id):
             dados = InventarioDadosImportados.objects.filter(serial__iexact=serial).first()
 
             if dados:
-                serial_ja_bipado = Bipagem.objects.filter(nrserie=serial).exists()
-
-                if serial_ja_bipado:
-                    messages.error(
-                        request,
-                        f"❌ O serial '{serial}' já foi inserido anteriormente. (Duplicidade)",
-                        extra_tags='serial_repetido'
-                    )
-                else:
-                    Bipagem.objects.create(
-                        id_caixa=caixa,
-                        id_lote=lote,
-                        group_user=lote.group_user,
-                        nrserie=serial,
-                        unidade=caixa.bipagem.count() + 1,
-                        estado=form.cleaned_data['estado'],
-                        modelo=dados.modelo,
-                    )
-                    request.session['estado_bipagem'] = form.cleaned_data['estado']
-                    messages.success(request, "✅ Serial inserido com sucesso!")
-                    return redirect(reverse('inventario:caixa', args=[lote.id, caixa.id]))
-
                 modelo_autocompletado = True
-                form = BipagemForm(initial={
-                    'serial': serial,
-                    'modelo': dados.modelo,
-                    'estado': form.cleaned_data.get('estado', '')
-                })
                 mensagem_ferramenta = dados.mensagem_ferramenta_inv
                 request.session['mensagem_ferramenta'] = mensagem_ferramenta
                 request.session['modelo_autocompletado'] = True
                 exibir_consultar = False
+
+                serial_ja_bipado = Bipagem.objects.filter(nrserie=serial).exists()
+                observacao = "Duplicidade" if serial_ja_bipado else ""
+
+                Bipagem.objects.create(
+                    id_caixa=caixa,
+                    id_lote=lote,
+                    group_user=lote.group_user,
+                    nrserie=serial,
+                    unidade=caixa.bipagem.count() + 1,
+                    estado=form.cleaned_data['estado'],
+                    modelo=dados.modelo,
+                    observacao=observacao,
+                )
+                request.session['estado_bipagem'] = form.cleaned_data['estado']
+                messages.success(request, "✅ Serial inserido com sucesso!")
+                return redirect(reverse('inventario:caixa', args=[lote.id, caixa.id]))
 
             else:
                 form = BipagemForm(initial={
@@ -77,22 +67,18 @@ def bipagem(request, lote_id, caixa_id):
                 request.session.pop('mensagem_ferramenta', None)
                 messages.warning(request, f"⚠️ Serial '{serial}' não encontrado.")
 
-        qtd_seriais = Bipagem.objects.filter(id_caixa=caixa).count()
-        if qtd_seriais >= limite_por_pa and qtd_seriais != 0:
-            form.add_error(None, f"Esta caixa já atingiu o limite de {limite_por_pa} bipagens definido para esta PA.")
-            messages.warning(request, f"⚠️ Esta caixa já possui o limite de {limite_por_pa} bipagens.")
-
-        if 'encerrar_caixa' in request.POST and qtd_seriais != 0:
-            caixa_aberta = lote.caixas.filter(status='Iniciada').last()
-            if caixa_aberta:
-                caixa_aberta.status = 'Finalizada'
-                caixa_aberta.save()
-            request.session.pop('modelo_bipagem', None)
-            return redirect('inventario:lote', lote_id=lote.id)
-
-        elif 'encerrar_caixa' in request.POST and qtd_seriais == 0:
-            form.add_error(None, "Nenhum serial foi fornecido.")
-            messages.warning(request, "⚠️ Nenhum serial foi fornecido.")
+        elif 'encerrar_caixa' in request.POST:
+            qtd_seriais = Bipagem.objects.filter(id_caixa=caixa).count()
+            if qtd_seriais == 0:
+                form.add_error(None, "Nenhum serial foi fornecido.")
+                messages.warning(request, "⚠️ Nenhum serial foi fornecido.")
+            else:
+                caixa_aberta = lote.caixas.filter(status='Iniciada').last()
+                if caixa_aberta:
+                    caixa_aberta.status = 'Finalizada'
+                    caixa_aberta.save()
+                request.session.pop('modelo_bipagem', None)
+                return redirect('inventario:lote', lote_id=lote.id)
 
         elif form.is_valid() and serial:
             if not form.cleaned_data.get('estado'):
@@ -101,26 +87,22 @@ def bipagem(request, lote_id, caixa_id):
                 messages.warning(request, "⚠️ Preencha o campo Modelo antes de inserir.")
             else:
                 serial_ja_bipado = Bipagem.objects.filter(nrserie=serial).exists()
+                observacao = "Duplicidade" if serial_ja_bipado else ""
 
-                if serial_ja_bipado:
-                    messages.error(
-                        request,
-                        f"❌ O serial '{serial}' já foi inserido anteriormente. (Duplicidade)",
-                        extra_tags='serial_repetido'
-                    )
-                else:
-                    Bipagem.objects.create(
-                        id_caixa=caixa,
-                        id_lote=lote,
-                        group_user=lote.group_user,
-                        nrserie=serial,
-                        unidade=caixa.bipagem.count() + 1,
-                        estado=form.cleaned_data['estado'],
-                        modelo=form.cleaned_data['modelo'],
-                    )
-                    request.session['estado_bipagem'] = form.cleaned_data['estado']
-                    messages.success(request, "✅ Serial inserido com sucesso!")
-                    return redirect(reverse('inventario:caixa', args=[lote.id, caixa.id]))
+                Bipagem.objects.create(
+                    id_caixa=caixa,
+                    id_lote=lote,
+                    group_user=lote.group_user,
+                    nrserie=serial,
+                    unidade=caixa.bipagem.count() + 1,
+                    estado=form.cleaned_data['estado'],
+                    modelo=form.cleaned_data['modelo'],
+                    observacao=observacao,
+                )
+                request.session['estado_bipagem'] = form.cleaned_data['estado']
+                messages.success(request, "✅ Serial inserido com sucesso!")
+                return redirect(reverse('inventario:caixa', args=[lote.id, caixa.id]))
+
     else:
         form = BipagemForm(initial={
             'estado': request.session.get('estado_bipagem', ''),
@@ -133,10 +115,10 @@ def bipagem(request, lote_id, caixa_id):
     paginator = Paginator(bipagens_da_caixa, 10)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
+
     mensagem = {'mostrar': True, 'encerrar': True}
 
-    caixa_bloqueada = caixa.status in ['Finalizada']
-    if caixa_bloqueada:
+    if caixa.status == 'Finalizada':
         mensagem = {'mensagem': 'Esta caixa está bloqueada e não pode ser editada.', 'voltar': True}
         messages.error(request, "❌ Esta caixa está bloqueada.")
     elif bipagens_da_caixa.count() >= limite_por_pa:
