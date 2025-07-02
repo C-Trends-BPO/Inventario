@@ -7,9 +7,9 @@
 
   {% if campo.name == "modelo" %}
   {% if modelo_autocompletado %}
-  <input type="text" name="modelo" id="modelo-input" value="{{ campo.value|stringformat:'s' }}" readonly>
+    <input type="text" name="modelo" id="modelo-input" value="{{ campo.value|stringformat:'s' }}" readonly>
   {% else %}
-  <input type="text" name="modelo" id="modelo-input" value="{{ campo.value|stringformat:'s' }}">
+    {{ campo }}
   {% endif %}
 
   {% else %}
