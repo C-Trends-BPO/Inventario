@@ -32,19 +32,19 @@
 
 {# Erros e avisos separados #}
 {% for message in messages %}
-  {% if 'error' in message.tags %}
-    <div class="alert-error">
-      <ul class="messages">
+{% if 'error' in message.tags %}
+<div class="alert-error">
+    <ul class="messages">
         <li>{{ message }}</li>
-      </ul>
-    </div>
-  {% elif 'warning' in message.tags %}
-    <div class="alert-warning">
-      <ul class="messages">
+    </ul>
+</div>
+{% elif 'warning' in message.tags %}
+<div class="alert-warning">
+    <ul class="messages">
         <li>{{ message }}</li>
-      </ul>
-    </div>
-  {% endif %}
+    </ul>
+</div>
+{% endif %}
 {% endfor %}
 
 {# Alerta JavaScript se for serial repetido #}
@@ -126,94 +126,87 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const serialInput = document.getElementById('serial-input');
-        const clearButton = document.getElementById('clear-button');
-        const modeloInput = document.getElementById('modelo-input');
-        let buffer = '';
+document.addEventListener('DOMContentLoaded', function () {
+    const serialInput = document.getElementById('serial-input');
+    const modeloInput = document.getElementById('modelo-input');
+    const clearButton = document.getElementById('clear-button');
+    let buffer = '';
 
-        if (serialInput) {
-            serialInput.setAttribute('autocomplete', 'off');
+    if (serialInput) {
+        serialInput.setAttribute('autocomplete', 'off');
 
-            ['paste', 'drop', 'contextmenu', 'copy', 'cut'].forEach(evt =>
-                serialInput.addEventListener(evt, e => e.preventDefault())
-            );
-            serialInput.addEventListener('keypress', e => e.preventDefault());
-            serialInput.addEventListener('input', () => serialInput.value = '');
+        ['paste', 'drop', 'contextmenu', 'copy', 'cut'].forEach(evt =>
+            serialInput.addEventListener(evt, e => e.preventDefault())
+        );
+        serialInput.addEventListener('keypress', e => e.preventDefault());
+        serialInput.addEventListener('input', () => serialInput.value = '');
 
-            serialInput.addEventListener('keydown', e => {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    serialInput.value = buffer.trim();
-                    buffer = '';
-
-                    const form = serialInput.closest('form');
-                    const consultarBtn = form.querySelector('button[name="buscar_dados"]');
-                    if (consultarBtn) consultarBtn.click();
-
-                    setTimeout(() => {
-                        const inserirBtn = form.querySelector('button[type="submit"]:not([name="buscar_dados"])');
-                        if (inserirBtn) {
-                            const modeloAuto = inserirBtn.getAttribute('data-modelo-autocompletado');
-                            if (modeloAuto === 'false' && modeloInput) {
-                                modeloInput.focus();
-                            } else {
-                                inserirBtn.focus();
-                            }
-                        }
-                    }, 100);
-                }
-
-                if (e.key.length === 1) {
-                    buffer += e.key;
-                }
-
+        serialInput.addEventListener('keydown', e => {
+            if (e.key === 'Enter') {
                 e.preventDefault();
-            });
-        }
-
-        if (clearButton) {
-            clearButton.addEventListener('click', () => {
-                const form = clearButton.closest('form');
-                form.querySelectorAll('input, select, textarea').forEach(field => {
-                    if (!field.disabled && field.type !== 'hidden') field.value = '';
-                });
-
+                serialInput.value = buffer.trim();
                 buffer = '';
-                if (serialInput) serialInput.focus();
-            });
-        }
 
-        // Trata o campo modelo: readonly se preenchido
-        if (modeloInput) {
-            if (modeloInput.value.trim()) {
-                modeloInput.setAttribute('readonly', 'readonly');
-                ['paste', 'drop', 'contextmenu', 'copy', 'cut', 'keydown'].forEach(evt =>
-                    modeloInput.addEventListener(evt, e => e.preventDefault())
-                );
-            } else {
-                modeloInput.removeAttribute('readonly');
-            }
-        }
-
-        // Ajuste de foco após renderização
-        const voltarParaSerial = sessionStorage.getItem('voltarParaSerial');
-
-        if (voltarParaSerial === 'true') {
-            sessionStorage.removeItem('voltarParaSerial');
-            serialInput?.focus();
-        } else {
-            const inserirBtn = document.querySelector('button[type="submit"]:not([name="buscar_dados"])');
-            if (inserirBtn) {
-                const modeloAuto = inserirBtn.getAttribute('data-modelo-autocompletado');
-                if (modeloAuto === 'false' && modeloInput) {
-                    modeloInput.focus();
-                } else {
-                    inserirBtn.focus();
+                const form = serialInput.closest('form');
+                const consultarBtn = form.querySelector('button[name="buscar_dados"]');
+                if (consultarBtn) {
+                    consultarBtn.click();
+                    sessionStorage.setItem('serialConsultado', 'true');
                 }
             }
+
+            if (e.key.length === 1) {
+                buffer += e.key;
+            }
+
+            e.preventDefault();
+        });
+    }
+
+    if (clearButton) {
+        clearButton.addEventListener('click', () => {
+            sessionStorage.removeItem('serialConsultado');
+            sessionStorage.setItem('limparTudo', 'true');
+            window.location.href = window.location.pathname;
+        });
+    }
+
+    // Trata campo modelo como readonly se preenchido
+    if (modeloInput) {
+        if (modeloInput.value.trim()) {
+            modeloInput.setAttribute('readonly', 'readonly');
+            ['paste', 'drop', 'contextmenu', 'copy', 'cut', 'keydown'].forEach(evt =>
+                modeloInput.addEventListener(evt, e => e.preventDefault())
+            );
+        } else {
+            modeloInput.removeAttribute('readonly');
         }
-    });
+    }
+
+    // Lógica de foco após renderização
+    const limparTudo = sessionStorage.getItem('limparTudo');
+    const serialConsultado = sessionStorage.getItem('serialConsultado');
+    const inserirBtn = document.querySelector('button[type="submit"]:not([name="buscar_dados"])');
+    const consultarBtn = document.querySelector('button[name="buscar_dados"]');
+    const modeloAuto = inserirBtn?.getAttribute('data-modelo-autocompletado');
+
+    if (limparTudo === 'true') {
+        sessionStorage.removeItem('limparTudo');
+        consultarBtn?.focus();
+
+    } else if (serialConsultado === 'true') {
+        sessionStorage.removeItem('serialConsultado');
+
+        if (modeloAuto === 'true') {
+            inserirBtn?.focus(); // modelo autocompletado
+        } else {
+            modeloInput?.focus(); // modelo vazio
+        }
+    } else {
+        consultarBtn?.focus(); // fallback padrão
+    }
+});
 </script>
+
 
 {% endblock %}
