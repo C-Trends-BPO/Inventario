@@ -32,13 +32,12 @@ def bipagem(request, lote_id, caixa_id):
             dados = InventarioDadosImportados.objects.filter(serial__iexact=serial).first()
 
             if dados:
-                bipagens_mesma_pa = Bipagem.objects.filter(group_user=lote.group_user, nrserie=serial)
-                serial_em_lote_ativo = bipagens_mesma_pa.exclude(id_lote__status='invalidado').exists()
+                serial_ja_bipado = Bipagem.objects.filter(nrserie=serial).exists()
 
-                if serial_em_lote_ativo:
+                if serial_ja_bipado:
                     messages.error(
                         request,
-                        f"❌ O serial '{serial}' já foi inserido nesta PA. (Duplicidade)",
+                        f"❌ O serial '{serial}' já foi inserido anteriormente. (Duplicidade)",
                         extra_tags='serial_repetido'
                     )
                 else:
@@ -101,13 +100,12 @@ def bipagem(request, lote_id, caixa_id):
             elif not form.cleaned_data.get('modelo'):
                 messages.warning(request, "⚠️ Preencha o campo Modelo antes de inserir.")
             else:
-                bipagens_mesma_pa = Bipagem.objects.filter(group_user=lote.group_user, nrserie=serial)
-                serial_em_lote_ativo = bipagens_mesma_pa.exclude(id_lote__status='invalidado').exists()
+                serial_ja_bipado = Bipagem.objects.filter(nrserie=serial).exists()
 
-                if serial_em_lote_ativo:
+                if serial_ja_bipado:
                     messages.error(
                         request,
-                        f"❌ O serial '{serial}' já foi inserido nesta PA. (Duplicidade)",
+                        f"❌ O serial '{serial}' já foi inserido anteriormente. (Duplicidade)",
                         extra_tags='serial_repetido'
                     )
                 else:
@@ -129,7 +127,6 @@ def bipagem(request, lote_id, caixa_id):
             'modelo': ''
         })
 
-    # Recupera o valor da sessão após o POST e limpa
     modelo_autocompletado = request.session.pop('modelo_autocompletado', False)
 
     bipagens_da_caixa = Bipagem.objects.filter(id_caixa=caixa).order_by('-id')
