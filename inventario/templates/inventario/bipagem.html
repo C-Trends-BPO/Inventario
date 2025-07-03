@@ -134,8 +134,12 @@
         const serialInput = document.getElementById('serial-input');
         const modeloInput = document.getElementById('modelo-input');
         const clearButton = document.getElementById('clear-button');
+        const inserirBtn = document.getElementById('inserir-button');
+        const consultarBtn = document.querySelector('button[name="buscar_dados"]');
+        const modeloAuto = inserirBtn?.getAttribute('data-modelo-autocompletado');
         let buffer = '';
 
+        // Configurações iniciais do campo serial
         if (serialInput) {
             serialInput.setAttribute('autocomplete', 'off');
 
@@ -152,9 +156,9 @@
                     buffer = '';
 
                     const form = serialInput.closest('form');
-                    const consultarBtn = form.querySelector('button[name="buscar_dados"]');
-                    if (consultarBtn) {
-                        consultarBtn.click();
+                    const consultar = form.querySelector('button[name="buscar_dados"]');
+                    if (consultar) {
+                        consultar.click();
                         sessionStorage.setItem('serialConsultado', 'true');
                     }
                 }
@@ -167,6 +171,7 @@
             });
         }
 
+        // Botão Limpar
         if (clearButton) {
             clearButton.addEventListener('click', () => {
                 sessionStorage.removeItem('serialConsultado');
@@ -175,7 +180,14 @@
             });
         }
 
-        // Trata campo modelo como readonly se preenchido
+        // Marcar foco após clique no botão Inserir
+        if (inserirBtn) {
+            inserirBtn.addEventListener('click', () => {
+                sessionStorage.setItem('focoDepoisInserir', 'true');
+            });
+        }
+
+        // Campo modelo como readonly se preenchido
         if (modeloInput) {
             if (modeloInput.value.trim()) {
                 modeloInput.setAttribute('readonly', 'readonly');
@@ -188,29 +200,33 @@
         }
 
         // Lógica de foco após renderização
+        const focoDepoisInserir = sessionStorage.getItem('focoDepoisInserir');
+        const focoSerialCookie = document.cookie.includes('foco_serial=true');
         const limparTudo = sessionStorage.getItem('limparTudo');
         const serialConsultado = sessionStorage.getItem('serialConsultado');
-        const inserirBtn = document.querySelector('button[type="submit"]:not([name="buscar_dados"])');
-        const consultarBtn = document.querySelector('button[name="buscar_dados"]');
-        const modeloAuto = inserirBtn?.getAttribute('data-modelo-autocompletado');
 
         if (limparTudo === 'true') {
             sessionStorage.removeItem('limparTudo');
             consultarBtn?.focus();
 
+        } else if (focoDepoisInserir === 'true') {
+            sessionStorage.removeItem('focoDepoisInserir');
+            serialInput?.focus();
+
+        } else if (focoSerialCookie) {
+            document.cookie = 'foco_serial=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+            serialInput?.focus();
+
         } else if (serialConsultado === 'true') {
             sessionStorage.removeItem('serialConsultado');
 
             if (modeloAuto === 'true') {
-                inserirBtn?.focus();
+                serialInput?.focus();
             } else {
                 modeloInput?.focus();
             }
-        } else {
-            consultarBtn?.focus();
         }
     });
 </script>
-
 
 {% endblock %}

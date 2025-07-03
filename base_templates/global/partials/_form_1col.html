@@ -27,7 +27,7 @@
   {% if exibir_consultar %}
   <button type="submit" name="buscar_dados" class="buscar-dados">Consultar</button>
   {% else %}
-  <button type="submit" data-modelo-autocompletado="{{ modelo_autocompletado|yesno:'true,false' }}">
+  <button id="inserir-button" type="submit" data-modelo-autocompletado="{{ modelo_autocompletado|yesno:'true,false' }}">
     Inserir
   </button>
   {% endif %}

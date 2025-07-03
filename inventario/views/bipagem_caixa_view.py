@@ -53,7 +53,9 @@ def bipagem(request, lote_id, caixa_id):
                 )
                 request.session['estado_bipagem'] = form.cleaned_data['estado']
                 messages.success(request, "✅ Serial inserido com sucesso!")
-                return redirect(reverse('inventario:caixa', args=[lote.id, caixa.id]))
+                response = redirect(reverse('inventario:caixa', args=[lote.id, caixa.id]))
+                response.set_cookie('foco_serial', 'true', max_age=10)
+                return response
 
             else:
                 form = BipagemForm(initial={
