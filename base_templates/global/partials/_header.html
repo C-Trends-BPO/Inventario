@@ -11,11 +11,10 @@
     <div class="nav-links">
         <a href="{% url 'inventario:index' %}">Home</a>
 
-        {% if is_visualizador_master %}
+        {% if is_visualizador_master or is_gerente_total %}
         <div class="dropdown">
             <a class="dropbtn" href="{% url 'inventario:acompanhamento' %}">Acompanhamento</a>
         </div>
-        
         {% endif %}
 
         <div class="usuario-dropdown">

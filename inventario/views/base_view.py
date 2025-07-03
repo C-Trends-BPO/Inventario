@@ -27,6 +27,7 @@ def index(request):
     grupos_usuario = request.user.groups.values_list('name', flat=True)
 
     is_visualizador_master = any(g in ['INV_PA_VISUALIZADOR_MASTER', 'ADM_TOTAL'] for g in grupos_usuario)
+    is_gerente_total = 'INV_PA_GER_TOTAL' in grupos_usuario  # <- Adicionado aqui
 
     if request.method == 'POST' and is_visualizador_master:
         return HttpResponseForbidden("Você não tem permissão para bipar seriais.")
@@ -66,4 +67,5 @@ def index(request):
         'lotes': page_obj.object_list,
         'page_obj': page_obj,
         'is_visualizador_master': is_visualizador_master,
+        'is_gerente_total': is_gerente_total,  # <- Incluído no contexto
     })
