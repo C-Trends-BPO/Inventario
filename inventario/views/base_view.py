@@ -6,9 +6,27 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
 from django.contrib import messages
 
+def get_lotes_disponiveis_para_usuario(user):
+    grupos_usuario = user.groups.values_list('name', flat=True)
+
+    if 'INV_PA_VISUALIZADOR_MASTER' in grupos_usuario or 'ADM_TOTAL' in grupos_usuario:
+        return LoteBipagem.objects.all()
+
+    pa_gerenciadas = [
+        nome_grupo.replace('INV_PA_GER_', '')
+        for nome_grupo in grupos_usuario if nome_grupo.startswith('INV_PA_GER_')
+    ]
+
+    return LoteBipagem.objects.filter(
+        Q(group_user__name__in=pa_gerenciadas) |
+        Q(group_user__in=user.groups.all())
+    )
+
 @login_required(login_url='inventario:login')
 def index(request):
-    is_visualizador_master = request.user.groups.filter(name='INV_PA_VISUALIZADOR_MASTER').exists()
+    grupos_usuario = request.user.groups.values_list('name', flat=True)
+
+    is_visualizador_master = any(g in ['INV_PA_VISUALIZADOR_MASTER', 'ADM_TOTAL'] for g in grupos_usuario)
 
     if request.method == 'POST' and is_visualizador_master:
         return HttpResponseForbidden("Você não tem permissão para bipar seriais.")
@@ -19,21 +37,13 @@ def index(request):
 
         if not Bipagem.objects.filter(id_caixa__lote=lote).exists():
             messages.error(request, "Não é possível finalizar o lote sem nenhum serial bipado.")
-
         else:
             lote.status = 'Aguardando Validação'
             lote.save()
             return redirect('inventario:validar_lote')
 
     busca = request.GET.get('q', '')
-
-    user_groups = request.user.groups.all()
-    is_visualizador_master = request.user.groups.filter(name='INV_PA_VISUALIZADOR_MASTER').exists()
-
-    if is_visualizador_master:
-        lotes_list = LoteBipagem.objects.all().order_by('-criado_em')
-    else:
-        lotes_list = LoteBipagem.objects.filter(group_user__in=user_groups).order_by('-criado_em')
+    lotes_list = get_lotes_disponiveis_para_usuario(request.user).order_by('-criado_em')
 
     if busca:
         try:
@@ -55,26 +65,5 @@ def index(request):
     return render(request, 'inventario/index.html', {
         'lotes': page_obj.object_list,
         'page_obj': page_obj,
-        'is_visualizador_master': is_visualizador_master, 
-    })
-
-
-def listar_lotes(request):
-    busca = request.GET.get('q', '')
-    lotes = LoteBipagem.objects.all()
-
-    if busca:
-        lotes = lotes.filter(
-            Q(id__icontains=busca) |
-            Q(status__icontains=busca) |
-            Q(user_created__username__icontains=busca)
-        )
-
-    paginator = Paginator(lotes, 10)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-
-    return render(request, 'inventario/listar_lotes.html', {
-        'lotes': page_obj.object_list,
-        'page_obj': page_obj,
+        'is_visualizador_master': is_visualizador_master,
     })
