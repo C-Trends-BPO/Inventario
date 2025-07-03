@@ -84,14 +84,14 @@
                     {% if is_gerente_pa %}
                     <td>
                         <div class="icon-actions">
-                            <form method="post" action="{% url 'inventario:editar_serial' item.id %}" style="display:inline;">
+                            <a href="{% url 'inventario:caixa' lote.id caixa.id %}?edit_serial={{ item.id }}">
+                                <button type="button"><i class="fa-solid fa-pencil"></i></button>
+                            </a>
+                            <form method="post" action="{% url 'inventario:excluir_serial' item.id %}"
+                                style="display:inline;">
                                 {% csrf_token %}
-                                <button type="submit"><i class="fa-solid fa-pencil"></i></button>
-                            </form>
-                            <form method="post" action="{% url 'inventario:excluir_serial' item.id %}" style="display:inline;">
-                                {% csrf_token %}
-                                <button type="submit"
-                                    onclick="return confirm('Deseja excluir este serial?')"><i class="fa-solid fa-trash"></i></button>
+                                <button type="submit" onclick="return confirm('Deseja excluir este serial?')"><i
+                                        class="fa-solid fa-trash"></i></button>
                             </form>
                         </div>
                     </td>
@@ -111,15 +111,15 @@
                 {% for num in page_obj.paginator.page_range %}
                 {% if num == page_obj.number %}
                 <span class="pagination-link active">{{ num }}</span>
-                {% elif num >= page_obj.number|add:-2 and num <= page_obj.number|add:2 %} <a href="?page={{ num }}"
-                    class="pagination-link">{{ num }}</a>
-                    {% endif %}
-                    {% endfor %}
+                {% elif num >= page_obj.number|add:-2 and num <= page_obj.number|add:2 %}
+                <a href="?page={{ num }}" class="pagination-link">{{ num }}</a>
+                {% endif %}
+                {% endfor %}
 
-                    {% if page_obj.has_next %}
-                    <a href="?page={{ page_obj.next_page_number }}" class="pagination-link">›</a>
-                    <a href="?page={{ page_obj.paginator.num_pages }}" class="pagination-link">Última »</a>
-                    {% endif %}
+                {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}" class="pagination-link">›</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}" class="pagination-link">Última »</a>
+                {% endif %}
             </div>
             {% endif %}
         </div>
@@ -130,22 +130,22 @@
         <h2>Finalização</h2>
         <form method="post" class="encerrar" action="{% url 'inventario:caixa' lote.id caixa.id %}">
             {% csrf_token %}
-            <button type="submit" name="encerrar_caixa" class="finalizar-bipagem">
-                Encerrar Bipagem</button>
+            <button type="submit" name="encerrar_caixa" class="finalizar-bipagem">Encerrar Bipagem</button>
         </form>
     </div>
     {% else %}
     <div class="encerrar-bipagem">
         <form class="encerrar" action="{% url 'inventario:lote' lote.id %}">
             {% csrf_token %}
-            <button type="submit" name="encerrar_caixa" class="finalizar-bipagem">
-                Voltar</button>
+            <button type="submit" name="encerrar_caixa" class="finalizar-bipagem">Voltar</button>
         </form>
     </div>
     {% endif %}
 </div>
 
 <script>
+    const modoEdicao = JSON.parse("{{ modo_edicao|yesno:'true,false'|lower }}");
+
     document.addEventListener('DOMContentLoaded', function () {
         const serialInput = document.getElementById('serial-input');
         const modeloInput = document.getElementById('modelo-input');
@@ -155,36 +155,38 @@
         const modeloAuto = inserirBtn?.getAttribute('data-modelo-autocompletado');
         let buffer = '';
 
-        // Configurações iniciais do campo serial
+        // Configurações do campo serial
         if (serialInput) {
             serialInput.setAttribute('autocomplete', 'off');
 
-            ['paste', 'drop', 'contextmenu', 'copy', 'cut'].forEach(evt =>
-                serialInput.addEventListener(evt, e => e.preventDefault())
-            );
-            serialInput.addEventListener('keypress', e => e.preventDefault());
-            serialInput.addEventListener('input', () => serialInput.value = '');
+            if (!modoEdicao) {
+                ['paste', 'drop', 'contextmenu', 'copy', 'cut'].forEach(evt =>
+                    serialInput.addEventListener(evt, e => e.preventDefault())
+                );
+                serialInput.addEventListener('keypress', e => e.preventDefault());
+                serialInput.addEventListener('input', () => serialInput.value = '');
 
-            serialInput.addEventListener('keydown', e => {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    serialInput.value = buffer.trim();
-                    buffer = '';
+                serialInput.addEventListener('keydown', e => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        serialInput.value = buffer.trim();
+                        buffer = '';
 
-                    const form = serialInput.closest('form');
-                    const consultar = form.querySelector('button[name="buscar_dados"]');
-                    if (consultar) {
-                        consultar.click();
-                        sessionStorage.setItem('serialConsultado', 'true');
+                        const form = serialInput.closest('form');
+                        const consultar = form.querySelector('button[name="buscar_dados"]');
+                        if (consultar) {
+                            consultar.click();
+                            sessionStorage.setItem('serialConsultado', 'true');
+                        }
                     }
-                }
 
-                if (e.key.length === 1) {
-                    buffer += e.key;
-                }
+                    if (e.key.length === 1) {
+                        buffer += e.key;
+                    }
 
-                e.preventDefault();
-            });
+                    e.preventDefault();
+                });
+            }
         }
 
         // Botão Limpar
@@ -224,18 +226,14 @@
         if (limparTudo === 'true') {
             sessionStorage.removeItem('limparTudo');
             consultarBtn?.focus();
-
         } else if (focoDepoisInserir === 'true') {
             sessionStorage.removeItem('focoDepoisInserir');
             serialInput?.focus();
-
         } else if (focoSerialCookie) {
             document.cookie = 'foco_serial=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
             serialInput?.focus();
-
         } else if (serialConsultado === 'true') {
             sessionStorage.removeItem('serialConsultado');
-
             if (modeloAuto === 'true') {
                 serialInput?.focus();
             } else {
