@@ -68,6 +68,7 @@
                     <th>Status</th>
                     <th>Ação</th>
                     <th>Observação</th>
+                    <th>Ações</th>
                 </tr>
             </thead>
             <tbody>
@@ -82,12 +83,17 @@
                     <td>{{ item.observacao }}</td>
                     {% if is_gerente_pa %}
                     <td>
-                        <a href="{% url 'inventario:editar_serial' item.id %}">Editar</a>
-                        <form method="post" action="{% url 'inventario:excluir_serial' item.id %}" style="display:inline;">
-                            {% csrf_token %}
-                            <button type="submit"
-                                onclick="return confirm('Deseja excluir este serial?')">Excluir</button>
-                        </form>
+                        <div class="icon-actions">
+                            <form method="post" action="{% url 'inventario:editar_serial' item.id %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit"><i class="fa-solid fa-pencil"></i></button>
+                            </form>
+                            <form method="post" action="{% url 'inventario:excluir_serial' item.id %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit"
+                                    onclick="return confirm('Deseja excluir este serial?')"><i class="fa-solid fa-trash"></i></button>
+                            </form>
+                        </div>
                     </td>
                     {% endif %}
                 </tr>
