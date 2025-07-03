@@ -53,6 +53,7 @@ def bipagem(request, lote_id, caixa_id):
                     estado=form.cleaned_data['estado'],
                     modelo=dados.modelo,
                     observacao=observacao,
+                    mensagem_ferramenta_inv=dados.mensagem_ferramenta_inv,
                 )
                 request.session['estado_bipagem'] = form.cleaned_data['estado']
                 messages.success(request, "✅ Serial inserido com sucesso!")
@@ -103,6 +104,7 @@ def bipagem(request, lote_id, caixa_id):
                     estado=form.cleaned_data['estado'],
                     modelo=form.cleaned_data['modelo'],
                     observacao=observacao,
+                    mensagem_ferramenta_inv=dados.mensagem_ferramenta_inv,
                 )
                 request.session['estado_bipagem'] = form.cleaned_data['estado']
                 messages.success(request, "✅ Serial inserido com sucesso!")

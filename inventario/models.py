@@ -46,6 +46,7 @@ class Bipagem(models.Model):
     criado_em = models.DateTimeField(auto_now_add=True)
     modelo = models.CharField(max_length=100, null=True)
     patrimonio = models.CharField(max_length=100, null=True)
+    mensagem_ferramenta_inv = models.CharField(max_length=255, blank=True, null=True)
     observacao = models.CharField(max_length=255, blank=True, null=True)
 
     ESTADO_CHOICES = [
@@ -54,7 +55,7 @@ class Bipagem(models.Model):
         ('OBSOLETO', 'OBSOLETO'),
         ('TRIAGEM', 'TRIAGEM'),
     ]
-    estado = models.CharField(max_length=100, choices=ESTADO_CHOICES, null=True)
+    estado = models.CharField(max_length=100, choices=ESTADO_CHOICES, null=True, blank=True)
 
     class Meta:
         constraints = [
@@ -107,5 +108,5 @@ class InventarioDadosImportados(models.Model):
         verbose_name = "Inventário Importado"
         verbose_name_plural = "Inventários Importados"
 
-    def _str_(self):
+    def __str__(self):
         return f"{self.serial} - {self.modelo}"
