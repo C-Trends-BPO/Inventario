@@ -80,6 +80,18 @@
                     <td>{{ item.estado }}</td>
                     <td>{{ mensagem_ferramenta }}</td>
                     <td>{{ item.observacao }}</td>
+                    <td>
+                        {% if is_gerente_pa %}
+                        <a href="{% url 'inventario:editar_serial' item.id %}">Editar</a> |
+                        <form method="post" action="{% url 'inventario:excluir_serial' item.id %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit"
+                                onclick="return confirm('Deseja excluir este serial?')">Excluir</button>
+                        </form>
+                        {% else %}
+                            {{ item.observacao }}
+                        {% endif %}
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>

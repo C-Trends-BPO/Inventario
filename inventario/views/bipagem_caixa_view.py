@@ -6,6 +6,7 @@ from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
 from django.contrib import messages
+from django.views.decorators.http import require_POST
 
 @login_required(login_url='inventario:login')
 def bipagem(request, lote_id, caixa_id):
@@ -13,7 +14,9 @@ def bipagem(request, lote_id, caixa_id):
     caixa = get_object_or_404(Caixa, id=caixa_id, lote=lote)
 
     limite_por_pa = getattr(lote.group_user.informacoes, 'limite', 50)
-    is_visualizador_master = request.user.groups.filter(name='INV_PA_VISUALIZADOR_MASTER').exists()
+    user_groups = request.user.groups.values_list('name', flat=True)
+    is_visualizador_master = 'INV_PA_VISUALIZADOR_MASTER' in user_groups
+    is_gerente_pa = any(g.startswith('INV_PA_GER') for g in user_groups)
 
     mensagem_ferramenta = request.session.get('mensagem_ferramenta', None)
     exibir_consultar = True
@@ -135,9 +138,41 @@ def bipagem(request, lote_id, caixa_id):
         'page_obj': page_obj,
         'mensagem': mensagem,
         'is_visualizador_master': is_visualizador_master,
+        'is_gerente_pa': is_gerente_pa,
         'exibir_consultar': exibir_consultar,
         'modelo_autocompletado': modelo_autocompletado,
         'mensagem_ferramenta': mensagem_ferramenta,
     }
 
     return render(request, 'inventario/bipagem.html', context)
+
+@login_required
+def editar_serial(request, serial_id):
+    bipagem = get_object_or_404(Bipagem, id=serial_id)
+    
+    if request.method == 'POST':
+        form = BipagemForm(request.POST, instance=bipagem)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "✅ Serial atualizado com sucesso!")
+            return redirect('inventario:caixa', lote_id=bipagem.id_lote.id, caixa_id=bipagem.id_caixa.id)
+    else:
+        form = BipagemForm(instance=bipagem)
+
+    return render(request, 'inventario/editar_serial.html', {'form': form, 'bipagem': bipagem})
+
+
+@require_POST
+@login_required(login_url='inventario:login')
+def excluir_serial(request, serial_id):
+    bipagem = get_object_or_404(Bipagem, id=serial_id)
+
+    is_gerente_pa = any(g.name.startswith('INV_PA_GER') for g in request.user.groups.all())
+    if not is_gerente_pa:
+        return HttpResponseForbidden("Você não tem permissão para excluir.")
+
+    lote_id = bipagem.id_lote.id
+    caixa_id = bipagem.id_caixa.id
+    bipagem.delete()
+    messages.success(request, "🗑️ Serial excluído com sucesso.")
+    return redirect('inventario:caixa', lote_id=lote_id, caixa_id=caixa_id)
