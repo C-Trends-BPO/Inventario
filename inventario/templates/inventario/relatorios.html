@@ -3,10 +3,6 @@
 {% block content %}
 
 <style>
-    body {
-        overflow: hidden;
-    }
-
     .form-pa {
         margin-top: 310px;
         display: flex;
@@ -16,19 +12,22 @@
 </style>
 
 <div class="form-pa">
-    <form method="get" action="{% url 'inventario:download_extracao' %}" class="form-1col">
+    <form method="get" action="{% url 'inventario:relatorios' %}" class="form-1col">
         <div class="form-title">Relatórios de Inventário</div>
 
         <div class="form-group-1col">
             <label for="pa">Selecione a PA:</label>
             <select name="pa" id="pa">
                 {% for grupo in grupos %}
-                <option value="{{ grupo.name }}">{{ grupo.name|cut:"INV_PA_" }}</option>
+                <option value="{{ grupo.name }}" {% if grupo.name == pa_selecionada %}selected{% endif %}>
+                    {{ grupo.name|slice:"7:" }}
+                </option>
                 {% endfor %}
             </select>
         </div>
 
         <div class="button-group">
+            <button class="bipagem-button" type="submit">Visualizar</button>
             <button class="bipagem-button" type="submit" name="formato" value="pdf">Extrair PDF</button>
             <button class="bipagem-button" type="submit" name="formato" value="csv">Extrair CSV</button>
         </div>
@@ -36,8 +35,8 @@
 </div>
 
 {% if dados_pa %}
-<div class="scroll-tabela-bipagem" style="margin-top: 30px;">
-    <table class="tabela-bipagem">
+<div class="scroll-tabela-lotes">
+    <table class="tabela-lotes">
         <thead>
             <tr>
                 <th>Lote</th>
