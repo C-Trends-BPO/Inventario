@@ -68,7 +68,9 @@
                     <th>Status</th>
                     <th>Ação</th>
                     <th>Observação</th>
-                    <th>Ações</th>
+                    {% if is_gerente_pa %}
+                        <th>Ações</th>
+                    {% endif %}
                 </tr>
             </thead>
             <tbody>

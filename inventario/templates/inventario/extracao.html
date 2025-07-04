@@ -12,9 +12,7 @@
             color: #333;
         }
 
-        h1,
-        h2,
-        h3 {
+        h1, h2, h3 {
             color: #7a2e2e;
         }
 
@@ -24,8 +22,7 @@
             margin: 20px 0;
         }
 
-        th,
-        td {
+        th, td {
             border: 1px solid #aaa;
             padding: 8px 12px;
             text-align: center;
@@ -53,6 +50,16 @@
             padding-top: 5px;
             font-weight: bold;
         }
+
+        .observacao {
+            margin-top: 40px;
+            font-size: 0.9em;
+            color: #555;
+        }
+
+        .info-basica p {
+            margin: 4px 0;
+        }
     </style>
 </head>
 
@@ -60,66 +67,75 @@
 
     <h1>Relatório Simplificado de Inventário Patrimonial em Poder de Terceiros</h1>
 
-    <h3>Empresa Responsável: {{ empresa }}</h3>
-    <p><strong>Endereço:</strong> {{ endereco_pa }}</p>
-    <p><strong>CNPJ:</strong> {{ cnpj }}</p>
-    <p><strong>Responsável Técnico:</strong> {{ responsavel }}</p>
-    <p><strong>Ponto de Atendimento (PA):</strong> {{ nome_pa|slice:"7:" }}</p>
-    <p><strong>Data de Emissão:</strong> {{ data_emissao }}</p>
+    <div class="info-basica">
+        <h3>Empresa Responsável: {{ empresa }}</h3>
+        <p><strong>Endereço CD:</strong> {{ endereco_pa }}</p>
+        <p><strong>Responsável Técnico do Local:</strong> {{ responsavel }}</p>
+        <p><strong>Ponto de Atendimento (PA) / CD:</strong> {{ nome_pa|slice:"7:" }}</p>
+        <p><strong>Data de Emissão:</strong> {{ data_emissao }}</p>
+    </div>
 
     <h2>1. Objetivo</h2>
     <p>Registrar de forma simplificada os bens patrimoniais sob guarda de terceiros, com base em bipagem eletrônica
         realizada por sistema automatizado.</p>
 
     <h2>2. Estrutura do Inventário</h2>
-    <p>O inventário está estruturado em lotes, com caixas e seriais conforme tabela a seguir:</p>
-
+    <p>O inventário está estruturado em lotes, com caixas e seriais conforme tabela a seguir, segregando por tipos de
+        equipamentos, se BAD, GOOD, FIFO, ILEGÍVEIS, DESCARTES e outros, conforme a necessidade de cada local.</p>
 
     <h2>3. Localização dos Bens</h2>
     <p>Os equipamentos encontram-se atualmente sob a guarda de terceiros, conforme registros e acordos vigentes, estando
-        alocados nos pontos de atendimento (PAs) devidamente identificados no sistema.</p>
+        alocados nos pontos de atendimento (PAs), centros de distribuição (CDs) e/ou agências, devidamente identificados no
+        sistema e indicados neste documento.</p>
 
     <h2>4. Conclusão</h2>
     <p>Todos os itens listados neste laudo foram conferidos por bipagem e encontram-se regularizados conforme os dados
-        registrados no sistema. Nenhuma divergência foi constatada no momento da emissão deste documento.</p>
+        registrados no sistema. As partes concordam que este documento resume, com correção, aquilo que foi bipado, conforme
+        resumo quantitativo abaixo.</p>
 
     <h2>5. Resumo Quantitativo</h2>
     <table>
         <thead>
             <tr>
-                <th>Lote</th>
-                <th>Nº de Caixas</th>
-                <th>Total de Seriais Bipados</th>
+                <th>Total de Lotes</th>
+                <th>Total de Seriais</th>
             </tr>
         </thead>
         <tbody>
             {% for item in resumo_pa %}
             <tr>
                 <td>{{ item.lote }}</td>
-                <td>{{ item.caixas }}</td>
                 <td>{{ item.seriais }}</td>
             </tr>
             {% endfor %}
             <tr>
                 <td><strong>Total Geral</strong></td>
-                <td><strong>{{ total_caixas }}</strong></td>
                 <td><strong>{{ total_seriais }}</strong></td>
             </tr>
         </tbody>
     </table>
+
     <h2>6. Assinaturas</h2>
     <div class="assinaturas">
         <div class="assinatura">
-            <p>Representante da PA</p>
+            <p>Responsável Técnico da Unidade</p>
         </div>
         <div class="assinatura">
-            <p>Representante do Contratante</p>
+            <p>Representante da GetNet</p>
         </div>
         <div class="assinatura">
-            <p>Auditor Responsável</p>
+            <p>Supervisor dos Auditores</p>
         </div>
     </div>
 
-</body>
+    <div class="observacao">
+        <p><strong>IMPORTANTE:</strong> Este documento deve ser impresso em 03 vias de igual teor e forma.</p>
+        <ul>
+            <li>VIA 01  Fica com o Responsável Técnico da Unidade Inventariada</li>
+            <li>VIA 02  Fica com o Representante da GetNet</li>
+            <li>VIA 03  Fica com o Supervisor dos Auditores e retorna para a C-TRENDS</li>
+        </ul>
+    </div>
 
+</body>
 </html>
