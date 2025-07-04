@@ -10,15 +10,26 @@ from django.contrib.auth.decorators import login_required
 def download_extracao_pdf(request):
     user = request.user
     responsavel = user.get_full_name() or user.username
-    grupo = user.groups.first()
-    nome_pa = grupo.name if grupo else "PA Não vinculada"
-    endereco_pa = getattr(grupo.informacoes, "endereco", "Não informado") if grupo else "Não informado"
+    grupos = user.groups.values_list('name', flat=True)
 
-    lotes = LoteBipagem.objects.filter(user_created=user)
+    is_admin_total = 'INV_PA_GER_TOTAL' in grupos 
 
-    total_lotes = lotes.count()
-    total_caixas = Bipagem.objects.filter(id_caixa__lote__user_created=user).values('id_caixa').distinct().count()
-    total_seriais = Bipagem.objects.filter(id_caixa__lote__user_created=user).count()
+    if is_admin_total:
+        lotes = LoteBipagem.objects.all()
+        total_lotes = lotes.count()
+        total_caixas = Bipagem.objects.values('id_caixa').distinct().count()
+        total_seriais = Bipagem.objects.count()
+        nome_pa = "TODAS AS PAs"
+        endereco_pa = "Consolidado Geral"
+    else:
+        grupo = user.groups.first()
+        nome_pa = grupo.name if grupo else "PA Não vinculada"
+        endereco_pa = getattr(grupo.informacoes, "endereco", "Não informado") if grupo else "Não informado"
+
+        lotes = LoteBipagem.objects.filter(user_created=user)
+        total_lotes = lotes.count()
+        total_caixas = Bipagem.objects.filter(id_caixa__lote__user_created=user).values('id_caixa').distinct().count()
+        total_seriais = Bipagem.objects.filter(id_caixa__lote__user_created=user).count()
 
     context = {
         "empresa": "Getnet",
