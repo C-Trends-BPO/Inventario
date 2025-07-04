@@ -68,7 +68,7 @@
                     <th>Status</th>
                     <th>Ação</th>
                     <th>Observação</th>
-                    {% if is_gerente_pa %}
+                    {% if is_gerente_pa and not is_visualizador_master %}
                         <th>Ações</th>
                     {% endif %}
                 </tr>
@@ -83,7 +83,7 @@
                     <td>{{ item.estado }}</td>
                     <td>{{ item.mensagem_ferramenta_inv }}</td>
                     <td>{{ item.observacao }}</td>
-                    {% if is_gerente_pa %}
+                    {% if is_gerente_pa and not is_visualizador_master %}
                     <td>
                         <div class="icon-actions">
                             <a href="{% url 'inventario:caixa' lote.id caixa.id %}?edit_serial={{ item.id }}">
