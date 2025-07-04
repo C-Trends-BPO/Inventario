@@ -3,14 +3,15 @@
 {% block content %}
 
 <style>
-    body{
+    body {
         overflow: hidden;
     }
+
     .form-pa {
-    margin-top: 310px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+        margin-top: 310px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 </style>
 
@@ -22,15 +23,42 @@
             <label for="pa">Selecione a PA:</label>
             <select name="pa" id="pa">
                 {% for grupo in grupos %}
-                    <option value="{{ grupo.name }}">{{ grupo.name|slice:"7:" }}</option>
+                <option value="{{ grupo.name }}">{{ grupo.name|cut:"INV_PA_" }}</option>
                 {% endfor %}
             </select>
         </div>
 
         <div class="button-group">
             <button class="bipagem-button" type="submit" name="formato" value="pdf">Extrair PDF</button>
-            <button class="bipagem-button bipagem-button-clear" type="submit" name="formato" value="csv">Extrair CSV</button>
+            <button class="bipagem-button" type="submit" name="formato" value="csv">Extrair CSV</button>
         </div>
     </form>
 </div>
+
+{% if dados_pa %}
+<div class="scroll-tabela-bipagem" style="margin-top: 30px;">
+    <table class="tabela-bipagem">
+        <thead>
+            <tr>
+                <th>Lote</th>
+                <th>Status</th>
+                <th>Criado por</th>
+                <th>Total de Caixas</th>
+                <th>Total de Seriais</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in dados_pa %}
+            <tr>
+                <td>{{ item.lote }}</td>
+                <td>{{ item.status }}</td>
+                <td>{{ item.criado_por }}</td>
+                <td>{{ item.total_caixas }}</td>
+                <td>{{ item.total_seriais }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
 {% endblock %}
