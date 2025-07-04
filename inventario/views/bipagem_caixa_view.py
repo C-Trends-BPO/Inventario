@@ -51,7 +51,6 @@ def bipagem(request, lote_id, caixa_id):
             if form.is_valid():
                 novo_serial = form.cleaned_data['serial'].strip()
 
-                # Verifica se o novo serial já está em uso por outro registro
                 serial_em_uso = Bipagem.objects.filter(nrserie__iexact=novo_serial).exclude(id=bipagem_edit.id).first()
                 if serial_em_uso:
                     messages.warning(request, f"⚠️ O serial '{novo_serial}' já está em uso.")

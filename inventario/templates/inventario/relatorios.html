@@ -11,8 +11,32 @@
     }
 </style>
 
+<script>
+    function definirAcaoEEnviar(acao) {
+        const form = document.getElementById('form-relatorio');
+        if (acao === 'visualizar') {
+            form.action = "{% url 'inventario:relatorios' %}";
+        } else if (acao === 'pdf') {
+            form.action = "{% url 'inventario:download_extracao' %}";
+            const input = document.createElement("input");
+            input.type = "hidden";
+            input.name = "formato";
+            input.value = "pdf";
+            form.appendChild(input);
+        } else if (acao === 'csv') {
+            form.action = "{% url 'inventario:download_extracao_csv' %}";
+            const input = document.createElement("input");
+            input.type = "hidden";
+            input.name = "formato";
+            input.value = "csv";
+            form.appendChild(input);
+        }
+        form.submit();
+    }
+</script>
+
 <div class="form-pa">
-    <form method="get" action="{% url 'inventario:download_extracao_csv' %}" class="form-1col">
+    <form method="get" id="form-relatorio" class="form-1col">
         <div class="form-title">Relatórios de Inventário</div>
 
         <div class="form-group-1col">
@@ -27,9 +51,9 @@
         </div>
 
         <div class="button-group">
-            <button class="bipagem-button" type="submit">Visualizar</button>
-            <button class="bipagem-button" type="submit" name="formato" value="pdf">Extrair PDF</button>
-            <button class="bipagem-button" type="submit" name="formato" value="csv">Extrair CSV</button>
+            <button type="button" class="bipagem-button" onclick="definirAcaoEEnviar('visualizar')">Visualizar</button>
+            <button type="button" class="bipagem-button" onclick="definirAcaoEEnviar('pdf')">Extrair PDF</button>
+            <button type="button" class="bipagem-button" onclick="definirAcaoEEnviar('csv')">Extrair CSV</button>
         </div>
     </form>
 </div>
