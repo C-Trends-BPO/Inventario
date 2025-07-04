@@ -5,6 +5,8 @@ from django.db.models import Count
 from inventario.models import LoteBipagem, Bipagem
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from django.contrib.auth.models import Group
 
 @login_required(login_url='inventario:login')
 def download_extracao_pdf(request):
@@ -57,3 +59,8 @@ def download_extracao_pdf(request):
     if pisa_status.err:
         return HttpResponse('Erro ao gerar PDF', status=500)
     return response
+
+@login_required(login_url='inventario:login')
+def relatorios_view(request):
+    grupos = Group.objects.filter(name__startswith='INV_PA_')
+    return render(request, 'inventario/relatorios.html', {'grupos': grupos})
