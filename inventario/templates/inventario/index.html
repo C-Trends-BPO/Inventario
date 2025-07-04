@@ -14,7 +14,7 @@
             </div>
 
             <div class="botoes-lote">
-                {% if not is_visualizador_master %}
+                {% if not is_visualizador_master and not is_gerente_total %}
                 <form method="post" action="{% url 'inventario:criar_lote' %}" style="margin-bottom: 10px;">
                     {% csrf_token %}
                     <button type="submit" class="btn-novo-lote">Criar novo lote</button>

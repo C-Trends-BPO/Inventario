@@ -156,18 +156,13 @@ def download_extracao_csv(request):
         writer.writerow([
             'PA',
             'Lote',
-            'Número da Caixa',
-            'Tipo de Caixa',
             'Serial',
-            'Tipo de Equipamento',
+            'Modelo',
             'Data',
-            'Nota Fiscal',
-            'Lote NF',
-            'CD Origem',
-            'CD Destino',
-            'Local',
-            'Cod. SAP Terminal',
-            'Responsável'
+            'Status',
+            'Obs',
+            'Acao',
+            'Status Lote',
         ])
 
         if is_admin_total and pa_param:
@@ -181,18 +176,18 @@ def download_extracao_csv(request):
             writer.writerow([
                 bip.id_caixa.lote.group_user.name if bip.id_caixa.lote.group_user else '',
                 bip.id_caixa.lote.numero_lote if bip.id_caixa.lote else '',
-                bip.id_caixa.nr_caixa,
-                bip.id_caixa.tipo_caixa if hasattr(bip.id_caixa, 'tipo_caixa') else '',
+                #bip.id_caixa.nr_caixa,
+                #bip.id_caixa.tipo_caixa if hasattr(bip.id_caixa, 'tipo_caixa') else '',
                 bip.nrserie,
                 bip.modelo,
                 bip.criado_em.strftime('%d/%m/%Y %H:%M') if bip.criado_em else '',
-                bip.patrimonio,
+                #bip.patrimonio,
                 bip.estado,
                 bip.observacao,
                 bip.mensagem_ferramenta_inv,
-                bip.id_caixa.identificador,
-                bip.id_caixa.status,
-                bip.id_caixa.lote.user_created.get_full_name() if bip.id_caixa.lote.user_created else '',
+                #bip.id_caixa.identificador,
+                #bip.id_caixa.status,
+                bip.id_caixa.lote.status if bip.id_caixa and bip.id_caixa.lote else '',
             ])
 
         return response
