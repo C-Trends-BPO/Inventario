@@ -50,14 +50,15 @@ def bipagem(request, lote_id, caixa_id):
             form = BipagemForm(request.POST)
             if form.is_valid():
                 novo_serial = form.cleaned_data['serial'].strip()
-
                 serial_em_uso = Bipagem.objects.filter(nrserie__iexact=novo_serial).exclude(id=bipagem_edit.id).first()
+
                 if serial_em_uso:
                     messages.warning(request, f"⚠️ O serial '{novo_serial}' já está em uso.")
                 else:
                     bipagem_edit.nrserie = novo_serial
                     bipagem_edit.estado = form.cleaned_data['estado']
                     bipagem_edit.modelo = form.cleaned_data['modelo']
+                    bipagem_edit.comentarios = form.cleaned_data.get('comentarios', '')
                     bipagem_edit.save()
                     messages.success(request, "✅ Serial editado com sucesso.")
                     return redirect('inventario:caixa', lote_id=lote.id, caixa_id=caixa.id)

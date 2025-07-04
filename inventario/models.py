@@ -48,6 +48,7 @@ class Bipagem(models.Model):
     patrimonio = models.CharField(max_length=100, null=True)
     mensagem_ferramenta_inv = models.CharField(max_length=255, blank=True, null=True)
     observacao = models.CharField(max_length=255, blank=True, null=True)
+    comentarios = models.CharField(max_length=250, blank=True, null=True)
 
     ESTADO_CHOICES = [
         ('GOOD', 'GOOD'),

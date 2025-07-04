@@ -1,4 +1,5 @@
 from django import forms
+from ..models import Bipagem
 
 class BipagemForm(forms.Form):
     nome_formulario = 'Bipagem'
@@ -132,3 +133,9 @@ class BipagemForm(forms.Form):
         choices=MODELO_CHOICES,
         widget=forms.Select(attrs={'id': 'modelo-input'})
     )
+
+    comentarios = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 2}), label="Comentários")
+
+    class Meta:
+        model = Bipagem
+        fields = ['serial', 'modelo', 'estado', 'comentarios']
