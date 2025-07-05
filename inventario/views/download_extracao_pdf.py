@@ -14,23 +14,27 @@ def download_extracao_pdf(request):
     user = request.user
     responsavel = user.get_full_name() or user.username
     grupos = user.groups.values_list('name', flat=True)
-    pa_param = request.GET.get('pa')  # <-- Aqui pegamos a PA selecionada na URL
-
+    pa_param = request.GET.get('pa')
     is_admin_total = 'INV_PA_GER_TOTAL' in grupos
 
-    # Caso seja um admin e tenha selecionado uma PA:
-    if is_admin_total and pa_param:
+    if is_admin_total and pa_param and pa_param.upper() != "TODAS":
         lotes = LoteBipagem.objects.filter(group_user__name=pa_param)
         total_lotes = lotes.count()
         total_caixas = Bipagem.objects.filter(id_caixa__lote__group_user__name=pa_param).values('id_caixa').distinct().count()
         total_seriais = Bipagem.objects.filter(id_caixa__lote__group_user__name=pa_param).count()
-
         nome_pa = pa_param
         grupo = Group.objects.filter(name=pa_param).first()
         endereco_pa = getattr(grupo.informacoes, "endereco", "Não informado") if grupo else "Não informado"
 
+    elif is_admin_total and pa_param and pa_param.upper() == "TODAS":
+        lotes = LoteBipagem.objects.all()
+        total_lotes = lotes.count()
+        total_caixas = Bipagem.objects.values('id_caixa').distinct().count()
+        total_seriais = Bipagem.objects.count()
+        nome_pa = "TODAS AS PAs"
+        endereco_pa = "Consolidado Geral"
+
     elif is_admin_total and not pa_param:
-        # Acesso geral para todos
         lotes = LoteBipagem.objects.all()
         total_lotes = lotes.count()
         total_caixas = Bipagem.objects.values('id_caixa').distinct().count()
@@ -39,11 +43,9 @@ def download_extracao_pdf(request):
         endereco_pa = "Consolidado Geral"
 
     else:
-        # Usuários normais
         grupo = user.groups.first()
         nome_pa = grupo.name if grupo else "PA Não vinculada"
         endereco_pa = getattr(grupo.informacoes, "endereco", "Não informado") if grupo else "Não informado"
-
         lotes = LoteBipagem.objects.filter(user_created=user)
         total_lotes = lotes.count()
         total_caixas = Bipagem.objects.filter(id_caixa__lote__user_created=user).values('id_caixa').distinct().count()
@@ -67,7 +69,6 @@ def download_extracao_pdf(request):
 
     template = get_template('inventario/extracao.html')
     html = template.render(context)
-
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'inline; filename="laudo_pa.pdf"'
     pisa_status = pisa.CreatePDF(html, dest=response)
@@ -81,12 +82,14 @@ def download_extracao_pdf(request):
 def relatorios_view(request):
     user = request.user
     username = user.username.lower()
-
     usuarios_admins = ['adm_tecnico', 'adm_gtn', 'adm_auditoria']
     is_admin = username in usuarios_admins
 
     if is_admin:
-        grupos = Group.objects.exclude(name__in=["INV_PA_GER_TOTAL", "INV_PA_VISUALIZADOR_MASTER"])
+        grupos = list(Group.objects.exclude(name__in=["INV_PA_GER_TOTAL", "INV_PA_VISUALIZADOR_MASTER"]))
+        class DummyGroup:
+            def __init__(self, name): self.name = name
+        grupos.insert(0, DummyGroup("TODAS"))
     else:
         grupos = user.groups.exclude(name__in=["INV_PA_GER_TOTAL", "INV_PA_VISUALIZADOR_MASTER"])
 
@@ -94,11 +97,16 @@ def relatorios_view(request):
     dados_pa = []
 
     if pa_selecionada:
-        lotes = LoteBipagem.objects.filter(group_user__name=pa_selecionada)
+        if pa_selecionada == "TODAS":
+            lotes = LoteBipagem.objects.select_related('group_user').all()
+        else:
+            lotes = LoteBipagem.objects.select_related('group_user').filter(group_user__name=pa_selecionada)
+
         for lote in lotes:
             total_seriais = Bipagem.objects.filter(id_caixa__lote=lote).count()
             total_caixas = lote.caixas.count()
             dados_pa.append({
+                'pa': lote.group_user.name if lote.group_user else "N/A",  # <-- aqui o nome da PA
                 'lote': lote.numero_lote,
                 'status': lote.status,
                 'criado_por': lote.user_created.username,
@@ -119,10 +127,9 @@ def download_extracao_csv(request):
     grupos = user.groups.values_list('name', flat=True)
     pa_param = request.GET.get('pa')
     formato = request.GET.get('formato')
-
     is_admin_total = 'INV_PA_GER_TOTAL' in grupos
 
-    if is_admin_total and pa_param:
+    if is_admin_total and pa_param and pa_param.upper() != "TODAS":
         lotes = LoteBipagem.objects.filter(group_user__name=pa_param)
         total_lotes = lotes.count()
         total_caixas = Bipagem.objects.filter(id_caixa__lote__group_user__name=pa_param).values('id_caixa').distinct().count()
@@ -130,6 +137,14 @@ def download_extracao_csv(request):
         nome_pa = pa_param
         grupo = Group.objects.filter(name=pa_param).first()
         endereco_pa = getattr(grupo.informacoes, "endereco", "Não informado") if grupo else "Não informado"
+
+    elif is_admin_total and pa_param and pa_param.upper() == "TODAS":
+        lotes = LoteBipagem.objects.all()
+        total_lotes = lotes.count()
+        total_caixas = Bipagem.objects.values('id_caixa').distinct().count()
+        total_seriais = Bipagem.objects.count()
+        nome_pa = "TODAS AS PAs"
+        endereco_pa = "Consolidado Geral"
 
     elif is_admin_total and not pa_param:
         lotes = LoteBipagem.objects.all()
@@ -154,44 +169,35 @@ def download_extracao_csv(request):
 
         writer = csv.writer(response)
         writer.writerow([
-            'PA',
-            'Lote',
-            'Serial',
-            'Modelo',
-            'Data',
-            'Status',
-            'Obs',
-            'Acao',
-            'Status Lote',
+            'PA', 'Lote', 'Serial', 'Modelo', 'Data', 'Status',
+            'Obs', 'Acao', 'Status Lote',
         ])
 
-        if is_admin_total and pa_param:
+        if is_admin_total and pa_param and pa_param.upper() != "TODAS":
             bipagens = Bipagem.objects.filter(id_caixa__lote__group_user__name=pa_param)
+        elif is_admin_total and pa_param and pa_param.upper() == "TODAS":
+            bipagens = Bipagem.objects.all()
         elif is_admin_total and not pa_param:
             bipagens = Bipagem.objects.all()
         else:
             bipagens = Bipagem.objects.filter(id_caixa__lote__user_created=user)
 
-        for bip in bipagens.select_related('id_caixa', 'id_caixa__lote', 'id_caixa__lote__group_user', 'id_caixa__lote__user_created'):
+        for bip in bipagens.select_related('id_caixa', 'id_caixa__lote', 'id_caixa__lote__group_user'):
             writer.writerow([
                 bip.id_caixa.lote.group_user.name if bip.id_caixa.lote.group_user else '',
                 bip.id_caixa.lote.numero_lote if bip.id_caixa.lote else '',
-                #bip.id_caixa.nr_caixa,
-                #bip.id_caixa.tipo_caixa if hasattr(bip.id_caixa, 'tipo_caixa') else '',
                 bip.nrserie,
                 bip.modelo,
                 bip.criado_em.strftime('%d/%m/%Y %H:%M') if bip.criado_em else '',
-                #bip.patrimonio,
                 bip.estado,
                 bip.observacao,
                 bip.mensagem_ferramenta_inv,
-                #bip.id_caixa.identificador,
-                #bip.id_caixa.status,
                 bip.id_caixa.lote.status if bip.id_caixa and bip.id_caixa.lote else '',
             ])
 
         return response
-    
+
+    # Se formato não for CSV, gerar PDF
     context = {
         "empresa": "Getnet",
         "cnpj": "12.345.678/0001-99",
@@ -210,7 +216,6 @@ def download_extracao_csv(request):
 
     template = get_template('inventario/extracao.html')
     html = template.render(context)
-
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'inline; filename="laudo_pa.pdf"'
     pisa_status = pisa.CreatePDF(html, dest=response)
