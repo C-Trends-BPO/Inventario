@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.template.loader import get_template
 from django.http import HttpResponse
 from xhtml2pdf import pisa
@@ -7,6 +7,7 @@ from inventario.models import LoteBipagem, Bipagem
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
+from django.contrib import messages
 import csv
 
 @login_required(login_url='inventario:login')
@@ -106,13 +107,41 @@ def relatorios_view(request):
             total_seriais = Bipagem.objects.filter(id_caixa__lote=lote).count()
             total_caixas = lote.caixas.count()
             dados_pa.append({
-                'pa': lote.group_user.name if lote.group_user else "N/A",  # <-- aqui o nome da PA
+                'pa': lote.group_user.name if lote.group_user else "N/A",
                 'lote': lote.numero_lote,
                 'status': lote.status,
                 'criado_por': lote.user_created.username,
                 'total_caixas': total_caixas,
                 'total_seriais': total_seriais
             })
+
+    if request.method == 'POST':
+        serial_form = request.POST.get('serial_manual', '').strip()
+        modelo = request.POST.get('modelo_manual', '').strip()
+        estado = request.POST.get('estado_manual', '').strip()
+
+        if not serial_form or not modelo or not estado:
+            messages.error(request, "⚠️ Preencha todos os campos para inserir um serial.")
+        else:
+            lote = LoteBipagem.objects.filter(user_created=user).first()
+            if lote:
+                caixa = lote.caixas.first()
+                if caixa:
+                    Bipagem.objects.create(
+                        nrserie=serial_form,
+                        modelo=modelo,
+                        estado=estado,
+                        id_lote=lote,
+                        id_caixa=caixa,
+                        group_user=lote.group_user,
+                        unidade=caixa.bipagem.count() + 1
+                    )
+                    messages.success(request, f"✅ Serial '{serial_form}' inserido com sucesso.")
+                    return redirect(request.path_info)
+                else:
+                    messages.error(request, "❌ Nenhuma caixa encontrada para associar o serial.")
+            else:
+                messages.error(request, "❌ Nenhum lote encontrado para associar o serial.")
 
     return render(request, 'inventario/relatorios.html', {
         'grupos': grupos,
