@@ -45,13 +45,15 @@ def bipagem(request, lote_id, caixa_id):
 
     if request.method == 'POST':
         edit_id = request.POST.get('edit_id')
+        form = BipagemForm(request.POST)
+        serial = form.data.get('serial', '').strip()
+
         if edit_id:
             bipagem_edit = get_object_or_404(Bipagem, id=edit_id)
-            form = BipagemForm(request.POST)
             if form.is_valid():
                 novo_serial = form.cleaned_data['serial'].strip()
                 serial_em_uso = Bipagem.objects.filter(
-                    nrserie__iexact=serial
+                    nrserie__iexact=novo_serial
                 ).exclude(id=bipagem_edit.id).exclude(id_lote__status='invalidado').first()
 
                 if serial_em_uso:
