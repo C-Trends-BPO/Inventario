@@ -188,7 +188,6 @@
                         <th>Status</th>
                         <th>PA Responsável</th>
                         <th>Criado por</th>
-                        <th>Total Caixas</th>
                         <th>Total Seriais</th>
                     </tr>
                 </thead>
@@ -199,7 +198,6 @@
                         <td>{{ item.status }}</td>
                         <td>{{ item.pa|slice:"7:" }}</td>
                         <td>{{ item.criado_por }}</td>
-                        <td>{{ item.total_caixas }}</td>
                         <td>{{ item.total_seriais }}</td>
                     </tr>
                     {% endfor %}

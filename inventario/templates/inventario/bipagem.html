@@ -69,8 +69,8 @@
                     <th>Ação</th>
                     <th>Observação</th>
                     {% if is_gerente_pa and not is_visualizador_master %}
-                        <th>Comentários</th>
-                        <th>Ações</th>
+                    <th>Comentários</th>
+                    <th>Ações</th>
                     {% endif %}
                 </tr>
             </thead>
@@ -115,15 +115,15 @@
                 {% for num in page_obj.paginator.page_range %}
                 {% if num == page_obj.number %}
                 <span class="pagination-link active">{{ num }}</span>
-                {% elif num >= page_obj.number|add:-2 and num <= page_obj.number|add:2 %}
-                <a href="?page={{ num }}" class="pagination-link">{{ num }}</a>
-                {% endif %}
-                {% endfor %}
+                {% elif num >= page_obj.number|add:-2 and num <= page_obj.number|add:2 %} <a href="?page={{ num }}"
+                    class="pagination-link">{{ num }}</a>
+                    {% endif %}
+                    {% endfor %}
 
-                {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}" class="pagination-link">›</a>
-                <a href="?page={{ page_obj.paginator.num_pages }}" class="pagination-link">Última »</a>
-                {% endif %}
+                    {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}" class="pagination-link">›</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}" class="pagination-link">Última »</a>
+                    {% endif %}
             </div>
             {% endif %}
         </div>
