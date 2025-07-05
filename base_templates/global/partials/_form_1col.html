@@ -7,6 +7,15 @@
 {% endif %}
 
 <div class="form-group-1col">
+  {{ form.estado.label_tag }}
+  {{ form.estado }}
+  {% if form.estado.errors %}
+    <div class="error">{{ form.estado.errors }}</div>
+  {% endif %}
+</div>
+
+
+<div class="form-group-1col">
   {{ form.serial.label_tag }}
   {{ form.serial }}
   {% if form.serial.errors %}
@@ -26,13 +35,6 @@
   {% endif %}
 </div>
 
-<div class="form-group-1col">
-  {{ form.estado.label_tag }}
-  {{ form.estado }}
-  {% if form.estado.errors %}
-    <div class="error">{{ form.estado.errors }}</div>
-  {% endif %}
-</div>
 
 {# Só exibe comentários se estiver editando #}
 {% if modo_edicao %}

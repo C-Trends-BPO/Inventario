@@ -138,4 +138,4 @@ class BipagemForm(forms.Form):
 
     class Meta:
         model = Bipagem
-        fields = ['serial', 'modelo', 'estado', 'comentarios']
+        fields = ['estado', 'serial', 'modelo', 'comentarios']
