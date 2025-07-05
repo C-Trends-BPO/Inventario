@@ -50,7 +50,9 @@ def bipagem(request, lote_id, caixa_id):
             form = BipagemForm(request.POST)
             if form.is_valid():
                 novo_serial = form.cleaned_data['serial'].strip()
-                serial_em_uso = Bipagem.objects.filter(nrserie__iexact=novo_serial).exclude(id=bipagem_edit.id).first()
+                serial_em_uso = Bipagem.objects.filter(
+                    nrserie__iexact=serial
+                ).exclude(id=bipagem_edit.id).exclude(id_lote__status='invalidado').first()
 
                 if serial_em_uso:
                     messages.warning(request, f"⚠️ O serial '{novo_serial}' já está em uso.")
@@ -78,7 +80,9 @@ def bipagem(request, lote_id, caixa_id):
                     request.session['modelo_autocompletado'] = True
                     exibir_consultar = False
 
-                    serial_ja_bipado = Bipagem.objects.filter(nrserie=serial).exists()
+                    serial_ja_bipado = Bipagem.objects.filter(
+                        nrserie__iexact=serial
+                    ).exclude(id_lote__status='invalidado').exists()
                     observacao = "Duplicidade" if serial_ja_bipado else ""
 
                     Bipagem.objects.create(
@@ -129,7 +133,9 @@ def bipagem(request, lote_id, caixa_id):
                 elif not form.cleaned_data.get('modelo'):
                     messages.warning(request, "⚠️ Preencha o campo Modelo antes de inserir.")
                 else:
-                    serial_ja_bipado = Bipagem.objects.filter(nrserie=serial).exists()
+                    serial_ja_bipado = Bipagem.objects.filter(
+                        nrserie__iexact=serial
+                    ).exclude(id_lote__status='invalidado').exists()
                     observacao = "Duplicidade" if serial_ja_bipado else ""
 
                     Bipagem.objects.create(
