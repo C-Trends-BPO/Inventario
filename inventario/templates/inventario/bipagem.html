@@ -23,7 +23,17 @@
     <ul class="messages">
         <li class="{{ message.tags }}">{{ message }}</li>
         {% if mensagem_ferramenta %}
-        <li class="alert-tool-message">🛠️ {{ mensagem_ferramenta }}</li>
+            {% if mensagem_ferramenta == 'FIFO' %}
+            <li class="alert-tool-message msg-fifo">{{ mensagem_ferramenta }}</li>
+            {% elif mensagem_ferramenta == 'DESCARTE' %}
+            <li class="alert-tool-message msg-descarte">{{ mensagem_ferramenta }}</li>
+            {% elif mensagem_ferramenta == 'NUNCA INSTALADO' %}
+            <li class="alert-tool-message msg-nunca-instalado">{{ mensagem_ferramenta }}</li>
+            {% elif mensagem_ferramenta == 'SEGREGAR' %}
+            <li class="alert-tool-message msg-segregar">{{ mensagem_ferramenta }}</li>
+            {% else %}
+            <li class="alert-tool-message">{{ mensagem_ferramenta }}</li>
+            {% endif %}
         {% endif %}
     </ul>
 </div>
@@ -44,15 +54,6 @@
         <li>{{ message }}</li>
     </ul>
 </div>
-{% endif %}
-{% endfor %}
-
-{# Alerta JavaScript se for serial repetido #}
-{% for message in messages %}
-{% if 'serial_repetido' in message.tags %}
-<script type="text/javascript">
-    alert("{{ message|escapejs }}");
-</script>
 {% endif %}
 {% endfor %}
 
@@ -82,7 +83,19 @@
                     <td>{{ item.nrserie }}</td>
                     <td>{{ item.modelo }}</td>
                     <td>{{ item.estado }}</td>
-                    <td>{{ item.mensagem_ferramenta_inv }}</td>
+                    <td>
+                        {% if item.mensagem_ferramenta_inv == 'FIFO' %}
+                        <span class="msg-fifo">{{ item.mensagem_ferramenta_inv }}</span>
+                        {% elif item.mensagem_ferramenta_inv == 'DESCARTE' %}
+                        <span class="msg-descarte">{{ item.mensagem_ferramenta_inv }}</span>
+                        {% elif item.mensagem_ferramenta_inv == 'NUNCA INSTALADO' %}
+                        <span class="msg-nunca-instalado">{{ item.mensagem_ferramenta_inv }}</span>
+                        {% elif item.mensagem_ferramenta_inv == 'SEGREGAR' %}
+                        <span class="msg-segregar">{{ item.mensagem_ferramenta_inv }}</span>
+                        {% else %}
+                        {{ item.mensagem_ferramenta_inv }}
+                        {% endif %}
+                    </td>
                     <td>{{ item.observacao }}</td>
                     {% if is_gerente_pa and not is_visualizador_master %}
                     <td>{{ item.comentarios|default:"—"}}</td>
