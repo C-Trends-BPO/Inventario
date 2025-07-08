@@ -18,10 +18,11 @@
 
 {# Sucesso com ferramenta #}
 {% for message in messages %}
-{% if message.tags == 'success' %}
 <div class="alert-success-custom">
+<li class="{{ message.tags }}">{{ message }}</li>
+</div>
+{% if message.tags == 'success' %}
     <ul class="messages">
-        <li class="{{ message.tags }}">{{ message }}</li>
         {% if mensagem_ferramenta %}
             {% if mensagem_ferramenta == 'FIFO' %}
             <li class="alert-tool-message msg-fifo">{{ mensagem_ferramenta }}</li>
@@ -36,7 +37,6 @@
             {% endif %}
         {% endif %}
     </ul>
-</div>
 {% endif %}
 {% endfor %}
 
@@ -84,17 +84,7 @@
                     <td>{{ item.modelo }}</td>
                     <td>{{ item.estado }}</td>
                     <td>
-                        {% if item.mensagem_ferramenta_inv == 'FIFO' %}
-                        <span class="msg-fifo">{{ item.mensagem_ferramenta_inv }}</span>
-                        {% elif item.mensagem_ferramenta_inv == 'DESCARTE' %}
-                        <span class="msg-descarte">{{ item.mensagem_ferramenta_inv }}</span>
-                        {% elif item.mensagem_ferramenta_inv == 'NUNCA INSTALADO' %}
-                        <span class="msg-nunca-instalado">{{ item.mensagem_ferramenta_inv }}</span>
-                        {% elif item.mensagem_ferramenta_inv == 'SEGREGAR' %}
-                        <span class="msg-segregar">{{ item.mensagem_ferramenta_inv }}</span>
-                        {% else %}
                         {{ item.mensagem_ferramenta_inv }}
-                        {% endif %}
                     </td>
                     <td>{{ item.observacao }}</td>
                     {% if is_gerente_pa and not is_visualizador_master %}
