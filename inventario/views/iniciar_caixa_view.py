@@ -14,7 +14,7 @@ def iniciar_caixa_redirect(request, lote_id):
     lote = get_object_or_404(LoteBipagem, id=lote_id)
 
     if Caixa.objects.filter(lote=lote).exists():
-        messages.warning(request, "⚠️ Este lote já possui uma caixa. Não é possível criar outra.")
+        messages.warning(request, "Este lote já possui uma caixa. Não é possível criar outra.")
         return redirect('inventario:lote', lote_id=lote.id)
 
     nova_caixa = Caixa.objects.create(

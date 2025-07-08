@@ -57,14 +57,14 @@ def bipagem(request, lote_id, caixa_id):
                 ).exclude(id=bipagem_edit.id).exclude(id_lote__status='invalidado').first()
 
                 if serial_em_uso:
-                    messages.warning(request, f"⚠️ O serial '{novo_serial}' já está em uso.")
+                    messages.warning(request, f"O serial '{novo_serial}' já está em uso.")
                 else:
                     bipagem_edit.nrserie = novo_serial
                     bipagem_edit.estado = form.cleaned_data['estado']
                     bipagem_edit.modelo = form.cleaned_data['modelo']
                     bipagem_edit.comentarios = form.cleaned_data.get('comentarios', '')
                     bipagem_edit.save()
-                    messages.success(request, "✅ Serial editado com sucesso.")
+                    messages.success(request, "Serial editado com sucesso.")
                     return redirect('inventario:caixa', lote_id=lote.id, caixa_id=caixa.id)
         else:
             form = BipagemForm(request.POST)
@@ -99,7 +99,7 @@ def bipagem(request, lote_id, caixa_id):
                         mensagem_ferramenta_inv=dados.mensagem_ferramenta_inv,
                     )
                     request.session['estado_bipagem'] = form.cleaned_data['estado']
-                    messages.success(request, "✅ Serial inserido com sucesso!")
+                    messages.success(request, "Serial inserido com sucesso!")
                     response = redirect(reverse('inventario:caixa', args=[lote.id, caixa.id]))
                     response.set_cookie('foco_serial', 'true', max_age=10)
                     return response
@@ -114,13 +114,13 @@ def bipagem(request, lote_id, caixa_id):
                     modelo_autocompletado = False
                     request.session.pop('modelo_autocompletado', None)
                     request.session.pop('mensagem_ferramenta', None)
-                    messages.warning(request, f"⚠️ Serial '{serial}' não encontrado.")
+                    messages.warning(request, f"Serial '{serial}' não encontrado.")
 
             elif 'encerrar_caixa' in request.POST:
                 qtd_seriais = Bipagem.objects.filter(id_caixa=caixa).count()
                 if qtd_seriais == 0:
                     form.add_error(None, "Nenhum serial foi fornecido.")
-                    messages.warning(request, "⚠️ Nenhum serial foi fornecido.")
+                    messages.warning(request, "Nenhum serial foi fornecido.")
                 else:
                     caixa_aberta = lote.caixas.filter(status='Iniciada').last()
                     if caixa_aberta:
@@ -131,9 +131,9 @@ def bipagem(request, lote_id, caixa_id):
 
             elif form.is_valid() and serial:
                 if not form.cleaned_data.get('estado'):
-                    messages.warning(request, "⚠️ Preencha o campo Estado antes de inserir.")
+                    messages.warning(request, "Preencha o campo Estado antes de inserir.")
                 elif not form.cleaned_data.get('modelo'):
-                    messages.warning(request, "⚠️ Preencha o campo Modelo antes de inserir.")
+                    messages.warning(request, "Preencha o campo Modelo antes de inserir.")
                 else:
                     serial_ja_bipado = Bipagem.objects.filter(
                         nrserie__iexact=serial
@@ -152,7 +152,7 @@ def bipagem(request, lote_id, caixa_id):
                         mensagem_ferramenta_inv=request.session.get('mensagem_ferramenta', ''),
                     )
                     request.session['estado_bipagem'] = form.cleaned_data['estado']
-                    messages.success(request, "✅ Serial inserido com sucesso!")
+                    messages.success(request, "Serial inserido com sucesso!")
                     return redirect(reverse('inventario:caixa', args=[lote.id, caixa.id]))
 
     modelo_autocompletado = request.session.pop('modelo_autocompletado', False)
@@ -166,10 +166,10 @@ def bipagem(request, lote_id, caixa_id):
 
     if caixa.status == 'Finalizada':
         mensagem = {'mensagem': 'Esta caixa está bloqueada e não pode ser editada.', 'voltar': True}
-        messages.error(request, "❌ Esta caixa está bloqueada.")
+        messages.error(request, "Esta caixa está bloqueada.")
     elif bipagens_da_caixa.count() >= limite_por_pa:
         mensagem = {'mensagem': f'Esta caixa já possui o limite de {limite_por_pa} bipagens.', 'encerrar': True}
-        messages.warning(request, f"⚠️ Esta caixa já possui o limite de {limite_por_pa} bipagens.")
+        messages.warning(request, f"Esta caixa já possui o limite de {limite_por_pa} bipagens.")
 
     context = {
         'lote': lote,
@@ -198,7 +198,7 @@ def editar_serial(request, serial_id):
         form = BipagemForm(request.POST, instance=bipagem)
         if form.is_valid():
             form.save()
-            messages.success(request, "✅ Serial atualizado com sucesso!")
+            messages.success(request, "Serial atualizado com sucesso!")
             return redirect('inventario:caixa', lote_id=bipagem.id_lote.id, caixa_id=bipagem.id_caixa.id)
     else:
         form = BipagemForm(instance=bipagem)
@@ -218,5 +218,5 @@ def excluir_serial(request, serial_id):
     lote_id = bipagem.id_lote.id
     caixa_id = bipagem.id_caixa.id
     bipagem.delete()
-    messages.success(request, "🗑️ Serial excluído com sucesso.")
+    messages.success(request, "Serial excluído com sucesso.")
     return redirect('inventario:caixa', lote_id=lote_id, caixa_id=caixa_id)

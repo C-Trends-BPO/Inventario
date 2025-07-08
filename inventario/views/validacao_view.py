@@ -22,7 +22,7 @@ def validar_lote_view(request, lote_id):
     if request.method == 'POST':
         qtd_caixas = Caixa.objects.filter(lote_id=lote_id).count()
         if qtd_caixas == 0:
-            messages.warning(request, "⚠️ Não é possivel finalizar um lote sem bipagens.")
+            messages.warning(request, "Não é possivel finalizar um lote sem bipagens.")
             return redirect('inventario:lote', lote_id=lote_id)
     else:
         return redirect('inventario:index')
@@ -60,7 +60,7 @@ def validar_serial(request, lote_id):
             lote.save()
             return JsonResponse({
                 "status": "erro",
-                "mensagem": f"❌ Serial {codigo} inválido. Lote cancelado.",
+                "mensagem": f"Serial {codigo} inválido. Lote cancelado.",
                 "redirect_url": reverse('inventario:index')
             })
 
@@ -79,17 +79,17 @@ def validar_serial(request, lote_id):
                 lote.save()
                 request.session.pop(f"seriais_validados_lote_{lote.id}", None)  # limpa sessão
 
-                add_message(request, SUCCESS, "✅ Lote validado com sucesso!", extra_tags='lote_validado')
+                add_message(request, SUCCESS, "Lote validado com sucesso!", extra_tags='lote_validado')
                 return JsonResponse({
                     "status": "ok",
-                    "mensagem": "✅ Lote validado com sucesso!",
+                    "mensagem": "Lote validado com sucesso!",
                     "popup": True,
                     "redirect_url": reverse('inventario:validar_lote', args=[lote.id])
                 })
             else:
                 return JsonResponse({
                     "status": "ok",
-                    "mensagem": f"✅ Serial {codigo} validado com sucesso! ({len(validos)}/{total_necessario})"
+                    "mensagem": f"Serial {codigo} validado com sucesso! ({len(validos)}/{total_necessario})"
                 })
 
     return JsonResponse({"status": "erro", "mensagem": "Método não permitido"}, status=405)
@@ -101,7 +101,7 @@ def finalizar_lote_view(request, lote_id):
     if request.user.groups.filter(name='INV_PA_VISUALIZADOR_MASTER').exists():
         return JsonResponse({
             "status": "erro",
-            "mensagem": "❌ Você não tem permissão para finalizar lotes."
+            "mensagem": "Você não tem permissão para finalizar lotes."
         })
 
     lote = get_object_or_404(LoteBipagem, id=lote_id)
@@ -110,26 +110,26 @@ def finalizar_lote_view(request, lote_id):
     if not caixas.exists():
         return JsonResponse({
             "status": "erro",
-            "mensagem": "❌ Este lote não possui nenhuma caixa. Crie ao menos uma caixa para finalizar o lote."
+            "mensagem": "Este lote não possui nenhuma caixa. Crie ao menos uma caixa para finalizar o lote."
         })
 
     caixas_sem_bipagem = caixas.annotate(total_bipagem=Count('bipagem')).filter(total_bipagem=0)
     if caixas_sem_bipagem.exists():
         return JsonResponse({
             "status": "erro",
-            "mensagem": "❌ Há caixas no lote sem nenhuma bipagem. Todas as caixas devem ter pelo menos uma bipagem para finalizar o lote."
+            "mensagem": "Há caixas no lote sem nenhuma bipagem. Todas as caixas devem ter pelo menos uma bipagem para finalizar o lote."
         })
 
     if caixas.filter(status='iniciada').exists():
         return JsonResponse({
             "status": "erro",
-            "mensagem": "❌ O lote possui caixas ainda iniciadas. Finalize todas as caixas antes de concluir o lote."
+            "mensagem": "O lote possui caixas ainda iniciadas. Finalize todas as caixas antes de concluir o lote."
         })
 
     lote.status = 'fechado'
     lote.save()
     return JsonResponse({
         "status": "ok",
-        "mensagem": "✅ Lote finalizado com sucesso!",
+        "mensagem": "Lote finalizado com sucesso!",
         "redirect_url": reverse('inventario:index')
     })

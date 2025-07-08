@@ -125,9 +125,9 @@ def relatorios_view(request):
         pa_selecionada = request.GET.get('pa')
 
         if not modelo or not estado or not quantidade:
-            messages.error(request, "⚠️ Preencha todos os campos para inserir o registro.")
+            messages.error(request, "Preencha todos os campos para inserir o registro.")
         elif not quantidade.isdigit():
-            messages.error(request, "⚠️ A quantidade deve ser um número válido.")
+            messages.error(request, "A quantidade deve ser um número válido.")
         else:
             grupo = None
             if pa_selecionada and pa_selecionada != "TODAS":
@@ -162,7 +162,7 @@ def relatorios_view(request):
                     unidade=i + 1
                 )
 
-            messages.success(request, f"✅ {quantidade} seriais inseridos no novo lote {proximo_numero_lote}.")
+            messages.success(request, f"{quantidade} seriais inseridos no novo lote {proximo_numero_lote}.")
             return redirect(f"{request.path_info}?pa={pa_selecionada}")
 
     return render(request, 'inventario/relatorios.html', {
