@@ -126,8 +126,9 @@ def relatorios_view(request):
 
         if not modelo or not estado or not quantidade:
             messages.error(request, "⚠️ Preencha todos os campos para inserir o registro.")
+        elif not quantidade.isdigit():
+            messages.error(request, "⚠️ A quantidade deve ser um número válido.")
         else:
-
             grupo = None
             if pa_selecionada and pa_selecionada != "TODAS":
                 grupo = Group.objects.filter(name=pa_selecionada).first()
@@ -146,18 +147,22 @@ def relatorios_view(request):
 
             nova_caixa = novo_lote.caixas.create(nr_caixa=1)
 
-            observacao = f"Modelo: {modelo}, Estado: {estado}, Quantidade: {quantidade}"
-            Bipagem.objects.create(
-                modelo=modelo,
-                estado=estado,
-                observacao=observacao,
-                id_lote=novo_lote,
-                id_caixa=nova_caixa,
-                group_user=grupo,
-                unidade=1
-            )
+            qtd = int(quantidade)
+            for i in range(qtd):
+                serial_fake = f"FAKE-{i+1:06d}"
+                observacao = f"Modelo: {modelo}, Estado: {estado}, Quantidade: {quantidade}"
+                Bipagem.objects.create(
+                    nrserie=serial_fake,
+                    modelo=modelo,
+                    estado=estado,
+                    observacao=observacao,
+                    id_lote=novo_lote,
+                    id_caixa=nova_caixa,
+                    group_user=grupo,
+                    unidade=i + 1
+                )
 
-            messages.success(request, f"✅ Registro inserido no novo lote {proximo_numero_lote}.")
+            messages.success(request, f"✅ {quantidade} seriais inseridos no novo lote {proximo_numero_lote}.")
             return redirect(f"{request.path_info}?pa={pa_selecionada}")
 
     return render(request, 'inventario/relatorios.html', {
@@ -243,7 +248,6 @@ def download_extracao_csv(request):
 
         return response
 
-    # Se formato não for CSV, gerar PDF
     context = {
         "empresa": "Getnet",
         "cnpj": "12.345.678/0001-99",
