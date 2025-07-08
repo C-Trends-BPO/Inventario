@@ -142,10 +142,12 @@ def relatorios_view(request):
                 numero_lote=proximo_numero_lote,
                 user_created=user,
                 group_user=grupo,
-                status='aberto'
+                status='Fechado'
             )
 
-            nova_caixa = novo_lote.caixas.create(nr_caixa=1)
+            nova_caixa = novo_lote.caixas.create(
+                nr_caixa=1,
+                status='Finalizada')
 
             qtd = int(quantidade)
             for i in range(qtd):
