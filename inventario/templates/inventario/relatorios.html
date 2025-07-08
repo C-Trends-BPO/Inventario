@@ -213,8 +213,6 @@
         <h3>Inserir Serial Manualmente</h3>
         <form method="post">
             {% csrf_token %}
-            <label for="serial_manual">Serial:</label>
-            <input type="text" name="serial_manual" id="serial_manual">
 
             <label for="modelo_manual">Modelo:</label>
             <input type="text" name="modelo_manual" id="modelo_manual">
@@ -222,7 +220,7 @@
             <label for="estado_manual">Estado:</label>
             <input type="text" name="estado_manual" id="estado_manual">
 
-            <label for="estado_manual">Quantidade:</label>
+            <label for="quantidade_manual">Quantidade:</label>
             <input type="text" name="quantidade_manual" id="quantidade_manual">
 
             <button type="submit" class="bipagem-button">Salvar Serial</button>

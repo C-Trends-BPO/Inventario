@@ -120,14 +120,13 @@ def relatorios_view(request):
             })
 
     if request.method == 'POST':
-        serial_form = request.POST.get('serial_manual', '').strip()
         modelo = request.POST.get('modelo_manual', '').strip()
         estado = request.POST.get('estado_manual', '').strip()
         quantidade = request.POST.get('quantidade_manual', '').strip()
         pa_selecionada = request.GET.get('pa')
 
-        if not serial_form or not modelo or not estado:
-            messages.error(request, "⚠️ Preencha todos os campos para inserir um serial.")
+        if not modelo or not estado or not quantidade:
+            messages.error(request, "⚠️ Preencha todos os campos para inserir o registro.")
         else:
             if pa_selecionada and pa_selecionada != "TODAS":
                 grupo = Group.objects.filter(name=pa_selecionada).first()
@@ -138,9 +137,8 @@ def relatorios_view(request):
             if lote:
                 caixa = lote.caixas.first()
                 if caixa:
-                    observacao = f"Serial: {serial_form}, Modelo: {modelo}, Estado: {estado},  Quantidade: {quantidade}"
+                    observacao = f"Modelo: {modelo}, Estado: {estado}, Quantidade: {quantidade}"
                     Bipagem.objects.create(
-                        nrserie=serial_form,
                         modelo=modelo,
                         estado=estado,
                         observacao=observacao,
@@ -149,12 +147,13 @@ def relatorios_view(request):
                         group_user=lote.group_user,
                         unidade=caixa.bipagem.count() + 1
                     )
-                    messages.success(request, f"✅ Serial '{serial_form}' inserido com sucesso.")
+                    messages.success(request, "✅ Registro inserido com sucesso.")
                     return redirect(f"{request.path_info}?pa={pa_selecionada}")
                 else:
-                    messages.error(request, "❌ Nenhuma caixa encontrada para associar o serial.")
+                    messages.error(request, "❌ Nenhuma caixa encontrada para associar o registro.")
             else:
-                messages.error(request, "❌ Nenhum lote encontrado para associar o serial.")
+                messages.error(request, "❌ Nenhum lote encontrado para associar o registro.")
+
 
     return render(request, 'inventario/relatorios.html', {
         'grupos': grupos,
