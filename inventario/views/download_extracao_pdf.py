@@ -106,38 +106,51 @@ def relatorios_view(request):
         for lote in lotes:
             total_seriais = Bipagem.objects.filter(id_caixa__lote=lote).count()
             total_caixas = lote.caixas.count()
+            ultima_bipagem = Bipagem.objects.filter(id_lote=lote).order_by('-id').first()
+            observacao = ultima_bipagem.observacao if ultima_bipagem else ''
+            
             dados_pa.append({
                 'pa': lote.group_user.name if lote.group_user else "N/A",
                 'lote': lote.numero_lote,
                 'status': lote.status,
                 'criado_por': lote.user_created.username,
                 'total_caixas': total_caixas,
-                'total_seriais': total_seriais
+                'total_seriais': total_seriais,
+                'observacao': observacao
             })
 
     if request.method == 'POST':
         serial_form = request.POST.get('serial_manual', '').strip()
         modelo = request.POST.get('modelo_manual', '').strip()
         estado = request.POST.get('estado_manual', '').strip()
+        quantidade = request.POST.get('quantidade_manual', '').strip()
+        pa_selecionada = request.GET.get('pa')
 
         if not serial_form or not modelo or not estado:
             messages.error(request, "⚠️ Preencha todos os campos para inserir um serial.")
         else:
-            lote = LoteBipagem.objects.filter(user_created=user).first()
+            if pa_selecionada and pa_selecionada != "TODAS":
+                grupo = Group.objects.filter(name=pa_selecionada).first()
+                lote = LoteBipagem.objects.filter(group_user=grupo).order_by('-id').first()
+            else:
+                lote = LoteBipagem.objects.filter(user_created=user).order_by('-id').first()
+
             if lote:
                 caixa = lote.caixas.first()
                 if caixa:
+                    observacao = f"Serial: {serial_form}, Modelo: {modelo}, Estado: {estado},  Quantidade: {quantidade}"
                     Bipagem.objects.create(
                         nrserie=serial_form,
                         modelo=modelo,
                         estado=estado,
+                        observacao=observacao,
                         id_lote=lote,
                         id_caixa=caixa,
                         group_user=lote.group_user,
                         unidade=caixa.bipagem.count() + 1
                     )
                     messages.success(request, f"✅ Serial '{serial_form}' inserido com sucesso.")
-                    return redirect(request.path_info)
+                    return redirect(f"{request.path_info}?pa={pa_selecionada}")
                 else:
                     messages.error(request, "❌ Nenhuma caixa encontrada para associar o serial.")
             else:

@@ -189,6 +189,7 @@
                         <th>PA Responsável</th>
                         <th>Criado por</th>
                         <th>Total Seriais</th>
+                        <th>Observação</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -199,6 +200,7 @@
                         <td>{{ item.pa|slice:"7:" }}</td>
                         <td>{{ item.criado_por }}</td>
                         <td>{{ item.total_seriais }}</td>
+                        <td>{{ item.observacao|linebreaksbr }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -207,19 +209,21 @@
         {% endif %}
     </div>
 
-    <!-- Inserção manual -->
     <div class="insercao-card">
         <h3>Inserir Serial Manualmente</h3>
         <form method="post">
             {% csrf_token %}
             <label for="serial_manual">Serial:</label>
-            <input type="text" name="serial_manual" id="serial_manual" placeholder="Ex: SN123456789">
+            <input type="text" name="serial_manual" id="serial_manual">
 
             <label for="modelo_manual">Modelo:</label>
-            <input type="text" name="modelo_manual" id="modelo_manual" placeholder="Ex: Verifone VX520">
+            <input type="text" name="modelo_manual" id="modelo_manual">
 
             <label for="estado_manual">Estado:</label>
-            <input type="text" name="estado_manual" id="estado_manual" placeholder="Ex: Novo, Usado">
+            <input type="text" name="estado_manual" id="estado_manual">
+
+            <label for="estado_manual">Quantidade:</label>
+            <input type="text" name="quantidade_manual" id="quantidade_manual">
 
             <button type="submit" class="bipagem-button">Salvar Serial</button>
         </form>
