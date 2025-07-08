@@ -85,8 +85,9 @@
                     <td>{{ item.mensagem_ferramenta_inv }}</td>
                     <td>{{ item.observacao }}</td>
                     {% if is_gerente_pa and not is_visualizador_master %}
-                    <td>{{ item.comentarios|default:"—" }}</td>
+                    <td>{{ item.comentarios|default:"—"}}</td>
                     <td>
+                        {% if caixa.status != 'Finalizada' %}
                         <div class="icon-actions">
                             <a href="{% url 'inventario:caixa' lote.id caixa.id %}?edit_serial={{ item.id }}">
                                 <button type="button"><i class="fa-solid fa-pencil"></i></button>
@@ -94,10 +95,14 @@
                             <form method="post" action="{% url 'inventario:excluir_serial' item.id %}"
                                 style="display:inline;">
                                 {% csrf_token %}
-                                <button type="submit" onclick="return confirm('Deseja excluir este serial?')"><i
-                                        class="fa-solid fa-trash"></i></button>
+                                <button type="submit" onclick="return confirm('Deseja excluir este serial?')">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
                             </form>
                         </div>
+                        {% else %}
+                        <span class="badge-fechado">—</span>
+                        {% endif %}
                     </td>
                     {% endif %}
                 </tr>
