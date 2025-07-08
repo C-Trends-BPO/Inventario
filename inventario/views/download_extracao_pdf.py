@@ -114,7 +114,6 @@ def relatorios_view(request):
                 'lote': lote.numero_lote,
                 'status': lote.status,
                 'criado_por': lote.user_created.username,
-                'total_caixas': total_caixas,
                 'total_seriais': total_seriais,
                 'observacao': observacao
             })
@@ -128,32 +127,38 @@ def relatorios_view(request):
         if not modelo or not estado or not quantidade:
             messages.error(request, "⚠️ Preencha todos os campos para inserir o registro.")
         else:
+
+            grupo = None
             if pa_selecionada and pa_selecionada != "TODAS":
                 grupo = Group.objects.filter(name=pa_selecionada).first()
-                lote = LoteBipagem.objects.filter(group_user=grupo).order_by('-id').first()
-            else:
-                lote = LoteBipagem.objects.filter(user_created=user).order_by('-id').first()
+            elif not pa_selecionada:
+                grupo = user.groups.first()
 
-            if lote:
-                caixa = lote.caixas.first()
-                if caixa:
-                    observacao = f"Modelo: {modelo}, Estado: {estado}, Quantidade: {quantidade}"
-                    Bipagem.objects.create(
-                        modelo=modelo,
-                        estado=estado,
-                        observacao=observacao,
-                        id_lote=lote,
-                        id_caixa=caixa,
-                        group_user=lote.group_user,
-                        unidade=caixa.bipagem.count() + 1
-                    )
-                    messages.success(request, "✅ Registro inserido com sucesso.")
-                    return redirect(f"{request.path_info}?pa={pa_selecionada}")
-                else:
-                    messages.error(request, "❌ Nenhuma caixa encontrada para associar o registro.")
-            else:
-                messages.error(request, "❌ Nenhum lote encontrado para associar o registro.")
+            ultimo_lote = LoteBipagem.objects.order_by('-numero_lote').first()
+            proximo_numero_lote = (ultimo_lote.numero_lote + 1) if ultimo_lote else 1
 
+            novo_lote = LoteBipagem.objects.create(
+                numero_lote=proximo_numero_lote,
+                user_created=user,
+                group_user=grupo,
+                status='aberto'
+            )
+
+            nova_caixa = novo_lote.caixas.create(nr_caixa=1)
+
+            observacao = f"Modelo: {modelo}, Estado: {estado}, Quantidade: {quantidade}"
+            Bipagem.objects.create(
+                modelo=modelo,
+                estado=estado,
+                observacao=observacao,
+                id_lote=novo_lote,
+                id_caixa=nova_caixa,
+                group_user=grupo,
+                unidade=1
+            )
+
+            messages.success(request, f"✅ Registro inserido no novo lote {proximo_numero_lote}.")
+            return redirect(f"{request.path_info}?pa={pa_selecionada}")
 
     return render(request, 'inventario/relatorios.html', {
         'grupos': grupos,
