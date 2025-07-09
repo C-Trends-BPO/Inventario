@@ -16,28 +16,48 @@
     {% endif %}
 </div>
 
-{# Sucesso com ferramenta #}
 {% for message in messages %}
-<div class="alert-success-custom">
-<li class="{{ message.tags }}">{{ message }}</li>
-</div>
-{% if message.tags == 'success' %}
-    <ul class="messages">
-        {% if mensagem_ferramenta %}
-            {% if mensagem_ferramenta == 'FIFO' %}
-            <li class="alert-tool-message msg-fifo">{{ mensagem_ferramenta }}</li>
-            {% elif mensagem_ferramenta == 'DESCARTE' %}
-            <li class="alert-tool-message msg-descarte">{{ mensagem_ferramenta }}</li>
-            {% elif mensagem_ferramenta == 'NUNCA INSTALADO' %}
-            <li class="alert-tool-message msg-nunca-instalado">{{ mensagem_ferramenta }}</li>
-            {% elif mensagem_ferramenta == 'SEGREGAR' %}
-            <li class="alert-tool-message msg-segregar">{{ mensagem_ferramenta }}</li>
+    <div class="alert-success-custom">
+        <ul class="messages">
+            <li class="{{ message.tags }}">{{ message }}</li>
+        </ul>
+    </div>
+
+    {% if message.tags == 'success' and mensagem_ferramenta %}
+        {% with ferramenta=mensagem_ferramenta|upper %}
+            {% if ferramenta == 'FIFO' %}
+                <div class="alert-success-customize msg-fifo">
+                    <ul class="messages">
+                        <li class="alert-tool-message">{{ ferramenta|title }}</li>
+                    </ul>
+                </div>
+            {% elif ferramenta == 'DESCARTE' %}
+                <div class="alert-success-customize msg-descarte">
+                    <ul class="messages">
+                        <li class="alert-tool-message">{{ ferramenta|title }}</li>
+                    </ul>
+                </div>
+            {% elif ferramenta == 'NUNCA INSTALADO' %}
+                <div class="alert-success-customize msg-nunca-instalado">
+                    <ul class="messages">
+                        <li class="alert-tool-message">{{ ferramenta|title }}</li>
+                    </ul>
+                </div>
+            {% elif ferramenta == 'SEGREGAR' %}
+                <div class="alert-success-customize msg-segregar">
+                    <ul class="messages">
+                        <li class="alert-tool-message">{{ ferramenta|title }}</li>
+                    </ul>
+                </div>
             {% else %}
-            <li class="alert-tool-message">{{ mensagem_ferramenta }}</li>
+                <div class="alert-success-customize">
+                    <ul class="messages">
+                        <li class="alert-tool-message">{{ ferramenta|title }}</li>
+                    </ul>
+                </div>
             {% endif %}
-        {% endif %}
-    </ul>
-{% endif %}
+        {% endwith %}
+    {% endif %}
 {% endfor %}
 
 {# Erros e avisos separados #}
