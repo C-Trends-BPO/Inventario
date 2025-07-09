@@ -229,21 +229,6 @@ tr:hover .edit-icon {
   transform: scale(1.03);
 }
 
-.success {
-  background-color: #d4edda;
-  color: #155724;
-}
-
-.warning {
-  background-color: #fff3cd;
-  color: #856404;
-}
-
-.error {
-  background-color: #f8d7da;
-  color: #721c24;
-}
-
 .info {
   background-color: #d4edda;
   color: #155724;
@@ -298,6 +283,15 @@ tr:hover .edit-icon {
 .warning {
   background-color: #fff3cd;
   color: #856404;
+  padding: 15px;
+  border-radius: 8px;
+  width: fit-content;
+  max-width: 90%;
+  text-align: center;
+  margin: 15px auto 0 auto;
+  font-weight: 500;
+  text-align: left;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .alert-error {

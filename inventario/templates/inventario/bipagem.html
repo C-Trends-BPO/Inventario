@@ -17,7 +17,17 @@
 </div>
 
 {% for message in messages %}
-    <div class="alert-success-custom">
+    <div class="
+        {% if message.tags == 'success' %}
+            alert-success-custom
+        {% elif message.tags == 'error' %}
+            alert-error-message
+        {% elif message.tags == 'warning' %}
+            alert-warning-message
+        {% else %}
+            alert-info
+        {% endif %}
+    ">
         <ul class="messages">
             <li class="{{ message.tags }}">{{ message }}</li>
         </ul>
@@ -60,22 +70,28 @@
     {% endif %}
 {% endfor %}
 
-{# Erros e avisos separados #}
-{% for message in messages %}
-{% if 'error' in message.tags %}
-<div class="alert-error">
-    <ul class="messages">
-        <li>{{ message }}</li>
-    </ul>
-</div>
-{% elif 'warning' in message.tags %}
-<div class="alert-warning">
-    <ul class="messages">
-        <li>{{ message }}</li>
-    </ul>
-</div>
+{% if messages %}
+    {% if 'error' in messages.0.tags %}
+        <div class="alert-error-message">
+            <ul class="messages">
+                <li>{{ messages.0 }}</li>
+            </ul>
+        </div>
+    {% elif 'warning' in messages.0.tags %}
+        <div class="alert-warning-message">
+            <ul class="messages">
+                <li>{{ messages.0 }}</li>
+            </ul>
+        </div>
+    {% elif 'success' in messages.0.tags %}
+        <div class="alert-error-custom">
+            <ul class="messages">
+                <li>{{ messages.0 }}</li>
+            </ul>
+        </div>
+    {% endif %}
 {% endif %}
-{% endfor %}
+
 
 <div class="centraliza-bipagem">
     <div class="scroll-tabela-bipagem">
