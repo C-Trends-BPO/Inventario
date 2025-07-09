@@ -47,6 +47,7 @@ def bipagem(request, lote_id, caixa_id):
         edit_id = request.POST.get('edit_id')
         form = BipagemForm(request.POST)
         serial = form.data.get('serial', '').strip()
+        serial = serial[-18:]
 
         if edit_id:
             bipagem_edit = get_object_or_404(Bipagem, id=edit_id)
@@ -69,10 +70,12 @@ def bipagem(request, lote_id, caixa_id):
         else:
             form = BipagemForm(request.POST)
             serial = form.data.get('serial', '').strip()
+            serial = serial[-18:]
 
             if 'buscar_dados' in request.POST and form.is_valid():
                 from ..models import InventarioDadosImportados
                 serial = form.cleaned_data.get('serial', '').strip()
+                serial = serial[-18:]
                 dados = InventarioDadosImportados.objects.filter(serial__iexact=serial).first()
 
                 if dados:
@@ -130,6 +133,7 @@ def bipagem(request, lote_id, caixa_id):
                     return redirect('inventario:lote', lote_id=lote.id)
 
             elif form.is_valid() and serial:
+                serial = serial[-18:]
                 if not form.cleaned_data.get('estado'):
                     messages.warning(request, "Preencha o campo Estado antes de inserir.")
                 elif not form.cleaned_data.get('modelo'):
