@@ -73,7 +73,7 @@
                             return;
                         }
 
-                        fetch(`/lote/${loteId}/validar/serial/`, {
+                        fetch(`/inventario/lote/${loteId}/validar/serial/`, {
                             method: "POST",
                             headers: {
                                 "Content-Type": "application/x-www-form-urlencoded",
@@ -85,14 +85,14 @@
                             .then(data => {
                                 if (data.status === "erro") {
                                     alert(" " + data.mensagem);
-                                    window.location.href = "/";
+                                    window.location.href = "/inventario";
                                 } else {
                                     validadosSet.add(codigo);
                                     validados += 1;
                                     document.getElementById("validados").innerText = validados;
 
                                     if (validados >= amostra) {
-                                        fetch(`/lote/${loteId}/fechar/`, {
+                                        fetch(`/inventario/lote/${loteId}/fechar/`, {
                                             method: "POST",
                                             headers: {
                                                 "X-CSRFToken": "{{ csrf_token }}"
@@ -101,7 +101,7 @@
                                             .then(res => res.json())
                                             .then(data => {
                                                 if (data.status === "ok") {
-                                                    window.location.href = "/";
+                                                    window.location.href = "/inventario";
                                                 } else {
                                                     alert(data.mensagem);
                                                 }
