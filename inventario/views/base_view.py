@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator
 from django.db.models import Q
-from ..models import LoteBipagem, Bipagem, Caixa
+from ..models import LoteBipagem, Bipagem, Caixa, PontoAtendimentoInfo
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
+from django.contrib.auth import logout
 from django.contrib import messages
 
 def get_lotes_disponiveis_para_usuario(user):
@@ -24,6 +25,23 @@ def get_lotes_disponiveis_para_usuario(user):
 
 @login_required(login_url='inventario:login')
 def index(request):
+    # 🔒 Verifica se algum dos grupos do usuário está com acesso liberado
+    grupos_usuario = request.user.groups.all()
+    acesso_liberado = False
+
+    for grupo in grupos_usuario:
+        try:
+            if grupo.informacoes.liberado:
+                acesso_liberado = True
+                break
+        except PontoAtendimentoInfo.DoesNotExist:
+            continue
+
+    if not acesso_liberado:
+        response = redirect('inventario:login')
+        response.set_cookie('mensagem_bloqueio', 'Seu acesso está bloqueado. Fale com o administrador.', max_age=5)
+        logout(request)
+        return response
     grupos_usuario = request.user.groups.values_list('name', flat=True)
 
     is_visualizador_master = any(g in ['INV_PA_VISUALIZADOR_MASTER', 'ADM_TOTAL'] for g in grupos_usuario)

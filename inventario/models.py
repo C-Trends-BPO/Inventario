@@ -77,6 +77,7 @@ class PontoAtendimentoInfo(models.Model):
     group = models.OneToOneField(Group, on_delete=models.CASCADE, related_name='informacoes')
     endereco = models.CharField(max_length=255, verbose_name="Endereço")
     limite = models.IntegerField(verbose_name="Limite de bipagens", default=50)
+    liberado = models.BooleanField(default=False, verbose_name="Acesso liberado")
 
     def __str__(self):
         return f"{self.group.name} - {self.endereco}"

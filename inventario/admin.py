@@ -20,7 +20,8 @@ class PontoAtendimentoInfoAdminForm(forms.ModelForm):
 @admin.register(PontoAtendimentoInfo)
 class PontoAtendimentoInfoAdmin(admin.ModelAdmin):
     form = PontoAtendimentoInfoAdminForm
-    list_display = ('group', 'endereco', 'limite')
+    list_display = ('group', 'endereco', 'limite', 'liberado')
+    list_editable = ('liberado',)
     search_fields = ('group__name', 'endereco')
 
 @admin.register(LoteBipagem)
