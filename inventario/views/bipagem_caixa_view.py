@@ -76,7 +76,7 @@ def bipagem(request, lote_id, caixa_id):
                 from ..models import InventarioDadosImportados
                 serial = form.cleaned_data.get('serial', '').strip()
                 serial = serial[-18:]
-                dados = InventarioDadosImportados.objects.filter(serial__iexact=serial).first()
+                dados = InventarioDadosImportados.objects.filter(serial_fabricante__iexact=serial).first()
 
                 if dados:
                     modelo_autocompletado = True
