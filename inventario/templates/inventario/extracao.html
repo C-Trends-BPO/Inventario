@@ -74,7 +74,7 @@
         <h3>Empresa Responsável: {{ empresa }}</h3>
         <p><strong>Endereço CD:</strong> {{ endereco_pa }}</p>
         <p><strong>Responsável Técnico do Local:</strong> {{ responsavel }}</p>
-        <p><strong>Ponto de Atendimento (PA) / CD:</strong> {{ nome_pa|slice:"7:" }}</p>
+        <p><strong>Ponto de Atendimento (PA) / CD:</strong> {{ nome_pa }}</p>
         <p><strong>Data de Emissão:</strong> {{ data_emissao }}</p>
     </div>
 
@@ -119,6 +119,37 @@
             </tr>
         </tbody>
     </table>
+
+
+    <h3>Controle de Seriais Esperados x Bipados</h3>
+<table>
+    <thead>
+        <tr style="background-color: #f28c8c;">
+            <th>PA</th>
+            <th>Seriais Esperados</th>
+            <th>Seriais Bipados</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>{{ nome_pa }}</td>
+            <td>
+                {% for base in seriais_base_por_pa %}
+                    {{ base.total }}
+                {% empty %}
+                    0
+                {% endfor %}
+            </td>
+            <td>
+                {% for bipado in seriais_bipados_por_pa %}
+                    {{ bipado.total }}
+                {% empty %}
+                    0
+                {% endfor %}
+            </td>
+        </tr>
+    </tbody>
+</table>
 
     <h2>6. Assinaturas</h2>
     <div class="assinaturas">

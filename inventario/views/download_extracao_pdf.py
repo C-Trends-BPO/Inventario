@@ -3,7 +3,7 @@ from django.template.loader import get_template
 from django.http import HttpResponse
 from xhtml2pdf import pisa
 from django.db.models import Count
-from inventario.models import LoteBipagem, Bipagem
+from inventario.models import LoteBipagem, Bipagem, InventarioDadosImportados
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
@@ -17,6 +17,24 @@ def download_extracao_pdf(request):
     grupos = user.groups.values_list('name', flat=True)
     pa_param = request.GET.get('pa')
     is_admin_total = 'INV_PA_GER_TOTAL' in grupos
+    seriais_base_por_pa = []
+    seriais_bipados_por_pa = []
+
+    if pa_param and pa_param.upper() != "TODAS":
+        seriais_base = (
+            InventarioDadosImportados.objects
+            .filter(nome_ct=pa_param)
+            .values('nome_ct')
+            .annotate(total=Count('serial'))
+        )
+        seriais_bipados = (
+            Bipagem.objects
+            .filter(group_user__name=pa_param)
+            .values('group_user__name')
+            .annotate(total=Count('nrserie'))
+        )
+        seriais_base_por_pa = list(seriais_base)
+        seriais_bipados_por_pa = list(seriais_bipados)
 
     if is_admin_total and pa_param and pa_param.upper() != "TODAS":
         lotes = LoteBipagem.objects.filter(group_user__name=pa_param)
@@ -58,6 +76,8 @@ def download_extracao_pdf(request):
         "responsavel": responsavel,
         "nome_pa": nome_pa,
         "endereco_pa": endereco_pa,
+        "seriais_base_por_pa": seriais_base_por_pa,
+        "seriais_bipados_por_pa": seriais_bipados_por_pa,
         "data_emissao": datetime.now().strftime('%d/%m/%Y'),
         "resumo_pa": [{
             "lote": total_lotes,
