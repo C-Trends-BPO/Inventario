@@ -59,6 +59,18 @@
                         <li class="alert-tool-message">{{ ferramenta|title }}</li>
                     </ul>
                 </div>
+            {% elif ferramenta == 'SEGREGAR - A8' %}
+                <div class="alert-success-customize msg-segregar">
+                    <ul class="messages">
+                        <li class="alert-tool-message">{{ ferramenta|title }}</li>
+                    </ul>
+                </div>
+            {% elif ferramenta == 'SEGREGAR - PLANEJAMENTO' %}
+                <div class="alert-success-customize msg-segregar">
+                    <ul class="messages">
+                        <li class="alert-tool-message">{{ ferramenta|title }}</li>
+                    </ul>
+                </div>
             {% else %}
                 <div class="alert-success-customize">
                     <ul class="messages">
@@ -233,7 +245,7 @@
                     }
 
                     e.preventDefault();
-                });
+                })
             }
         }
 
