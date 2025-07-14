@@ -201,40 +201,59 @@
         const inserirBtn = document.getElementById('inserir-button');
         const consultarBtn = document.querySelector('button[name="buscar_dados"]');
         const modeloAuto = inserirBtn?.getAttribute('data-modelo-autocompletado');
+
         let buffer = '';
+        let lastInputTime = Date.now();
+        const INTERVALO_MAXIMO = 250;  // tempo entre teclas aceito para considerar leitor de código
 
-        // Configurações do campo serial
-        if (serialInput) {
+        if (serialInput && !modoEdicao) {
+            serialInput.setAttribute('readonly', 'readonly');
             serialInput.setAttribute('autocomplete', 'off');
+            serialInput.value = '';
+            serialInput.style.color = 'transparent';
+            serialInput.style.textShadow = '0 0 0 gray';
 
-            if (!modoEdicao) {
-                ['paste', 'drop', 'contextmenu', 'copy', 'cut'].forEach(evt =>
-                    serialInput.addEventListener(evt, e => e.preventDefault())
-                );
-                serialInput.addEventListener('keypress', e => e.preventDefault());
-                serialInput.addEventListener('input', () => serialInput.value = '');
+            // Impede interações manuais com o campo
+            ['paste', 'drop', 'contextmenu', 'copy', 'cut', 'input'].forEach(evt =>
+                serialInput.addEventListener(evt, e => e.preventDefault())
+            );
 
-                serialInput.addEventListener('keydown', e => {
-                    if (e.key === 'Enter') {
-                        e.preventDefault();
-                        serialInput.value = buffer.trim();
-                        buffer = '';
+            // Captura apenas via teclado
+            serialInput.addEventListener('keydown', e => {
+                const now = Date.now();
+
+                // Se demorou demais entre uma tecla e outra, assume que é digitação manual
+                if (now - lastInputTime > INTERVALO_MAXIMO) {
+                    buffer = '';
+                }
+
+                lastInputTime = now;
+
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+
+                    const serial = buffer.trim();
+                    buffer = '';
+                    serialInput.value = '';
+
+                    if (serial.length > 0) {
+                        serialInput.removeAttribute('readonly'); // necessário para permitir inserir valor
+                        serialInput.value = serial;              // insere o valor lido no campo
+                        serialInput.setAttribute('readonly', 'readonly'); // volta a bloquear
+                        sessionStorage.setItem('serialConsultado', 'true');
 
                         const form = serialInput.closest('form');
                         const consultar = form.querySelector('button[name="buscar_dados"]');
                         if (consultar) {
                             consultar.click();
-                            sessionStorage.setItem('serialConsultado', 'true');
                         }
                     }
+                } else if (e.key.length === 1) {
+                    buffer += e.key;
+                }
 
-                    if (e.key.length === 1) {
-                        buffer += e.key;
-                    }
-
-                    e.preventDefault();
-                });
-            }
+                e.preventDefault();
+            });
         }
 
         // Botão Limpar
@@ -246,14 +265,14 @@
             });
         }
 
-        // Marcar foco após clique no botão Inserir
+        // Inserir
         if (inserirBtn) {
             inserirBtn.addEventListener('click', () => {
                 sessionStorage.setItem('focoDepoisInserir', 'true');
             });
         }
 
-        // Campo modelo como readonly se preenchido
+        // Campo modelo bloqueado se já preenchido
         if (modeloInput) {
             if (modeloInput.value.trim()) {
                 modeloInput.setAttribute('readonly', 'readonly');
@@ -265,7 +284,7 @@
             }
         }
 
-        // Lógica de foco após renderização
+        // Lógica de foco
         const focoDepoisInserir = sessionStorage.getItem('focoDepoisInserir');
         const focoSerialCookie = document.cookie.includes('foco_serial=true');
         const limparTudo = sessionStorage.getItem('limparTudo');
@@ -290,5 +309,4 @@
         }
     });
 </script>
-
 {% endblock %}

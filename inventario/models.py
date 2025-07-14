@@ -58,13 +58,13 @@ class Bipagem(models.Model):
     ]
     estado = models.CharField(max_length=100, choices=ESTADO_CHOICES, null=True, blank=True)
 
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=['nrserie', 'group_user'],
-                name='unique_serial_por_pa'
-            )
-        ]
+    # class Meta:
+    #     constraints = [
+    #         models.UniqueConstraint(
+    #             fields=['nrserie', 'group_user'],
+    #             name='unique_serial_por_pa'
+    #         )
+    #     ]
 
 class Serial(models.Model):
     codigo = models.CharField(max_length=100, unique=True)
