@@ -17,7 +17,7 @@
 </div>
 
 {% for message in messages %}
-    <div class="
+<div class="
         {% if message.tags == 'success' %}
             alert-success-custom
         {% elif message.tags == 'error' %}
@@ -28,68 +28,68 @@
             alert-info
         {% endif %}
     ">
-        <ul class="messages">
-            <li class="{{ message.tags }}">{{ message }}</li>
-        </ul>
-    </div>
+    <ul class="messages">
+        <li class="{{ message.tags }}">{{ message }}</li>
+    </ul>
+</div>
 
-    {% if message.tags == 'success' and mensagem_ferramenta %}
-        {% with ferramenta=mensagem_ferramenta|upper %}
-            {% if ferramenta == 'FIFO' %}
-                <div class="alert-success-customize msg-fifo">
-                    <ul class="messages">
-                        <li class="alert-tool-message">{{ ferramenta|title }}</li>
-                    </ul>
-                </div>
-            {% elif ferramenta == 'DESCARTE' %}
-                <div class="alert-success-customize msg-descarte">
-                    <ul class="messages">
-                        <li class="alert-tool-message">{{ ferramenta|title }}</li>
-                    </ul>
-                </div>
-            {% elif ferramenta == 'NUNCA INSTALADO' %}
-                <div class="alert-success-customize msg-nunca-instalado">
-                    <ul class="messages">
-                        <li class="alert-tool-message">{{ ferramenta|title }}</li>
-                    </ul>
-                </div>
-            {% elif ferramenta == 'SEGREGAR' %}
-                <div class="alert-success-customize msg-segregar">
-                    <ul class="messages">
-                        <li class="alert-tool-message">{{ ferramenta|title }}</li>
-                    </ul>
-                </div>
-            {% else %}
-                <div class="alert-success-customize">
-                    <ul class="messages">
-                        <li class="alert-tool-message">{{ ferramenta|title }}</li>
-                    </ul>
-                </div>
-            {% endif %}
-        {% endwith %}
-    {% endif %}
+{% if message.tags == 'success' and mensagem_ferramenta %}
+{% with ferramenta=mensagem_ferramenta|upper %}
+{% if ferramenta == 'FIFO' %}
+<div class="alert-success-customize msg-fifo">
+    <ul class="messages">
+        <li class="alert-tool-message">{{ ferramenta|title }}</li>
+    </ul>
+</div>
+{% elif ferramenta == 'DESCARTE' %}
+<div class="alert-success-customize msg-descarte">
+    <ul class="messages">
+        <li class="alert-tool-message">{{ ferramenta|title }}</li>
+    </ul>
+</div>
+{% elif ferramenta == 'NUNCA INSTALADO' %}
+<div class="alert-success-customize msg-nunca-instalado">
+    <ul class="messages">
+        <li class="alert-tool-message">{{ ferramenta|title }}</li>
+    </ul>
+</div>
+{% elif ferramenta == 'SEGREGAR' %}
+<div class="alert-success-customize msg-segregar">
+    <ul class="messages">
+        <li class="alert-tool-message">{{ ferramenta|title }}</li>
+    </ul>
+</div>
+{% else %}
+<div class="alert-success-customize">
+    <ul class="messages">
+        <li class="alert-tool-message">{{ ferramenta|title }}</li>
+    </ul>
+</div>
+{% endif %}
+{% endwith %}
+{% endif %}
 {% endfor %}
 
 {% if messages %}
-    {% if 'error' in messages.0.tags %}
-        <div class="alert-error-message">
-            <ul class="messages">
-                <li>{{ messages.0 }}</li>
-            </ul>
-        </div>
-    {% elif 'warning' in messages.0.tags %}
-        <div class="alert-warning-message">
-            <ul class="messages">
-                <li>{{ messages.0 }}</li>
-            </ul>
-        </div>
-    {% elif 'success' in messages.0.tags %}
-        <div class="alert-error-custom">
-            <ul class="messages">
-                <li>{{ messages.0 }}</li>
-            </ul>
-        </div>
-    {% endif %}
+{% if 'error' in messages.0.tags %}
+<div class="alert-error-message">
+    <ul class="messages">
+        <li>{{ messages.0 }}</li>
+    </ul>
+</div>
+{% elif 'warning' in messages.0.tags %}
+<div class="alert-warning-message">
+    <ul class="messages">
+        <li>{{ messages.0 }}</li>
+    </ul>
+</div>
+{% elif 'success' in messages.0.tags %}
+<div class="alert-error-custom">
+    <ul class="messages">
+        <li>{{ messages.0 }}</li>
+    </ul>
+</div>
+{% endif %}
 {% endif %}
 
 
@@ -204,7 +204,7 @@
 
         let buffer = '';
         let lastInputTime = Date.now();
-        const INTERVALO_MAXIMO = 250;  // tempo entre teclas aceito para considerar leitor de código
+        const INTERVALO_MAXIMO = 250;
 
         if (serialInput && !modoEdicao) {
             serialInput.setAttribute('readonly', 'readonly');
@@ -213,16 +213,13 @@
             serialInput.style.color = 'transparent';
             serialInput.style.textShadow = '0 0 0 gray';
 
-            // Impede interações manuais com o campo
             ['paste', 'drop', 'contextmenu', 'copy', 'cut', 'input'].forEach(evt =>
                 serialInput.addEventListener(evt, e => e.preventDefault())
             );
 
-            // Captura apenas via teclado
             serialInput.addEventListener('keydown', e => {
                 const now = Date.now();
 
-                // Se demorou demais entre uma tecla e outra, assume que é digitação manual
                 if (now - lastInputTime > INTERVALO_MAXIMO) {
                     buffer = '';
                 }
@@ -234,13 +231,13 @@
 
                     const serial = buffer.trim();
                     buffer = '';
-                    serialInput.value = '';
 
                     if (serial.length > 0) {
                         serialInput.removeAttribute('readonly');
                         serialInput.value = serial;
                         serialInput.setAttribute('readonly', 'readonly');
                         sessionStorage.setItem('serialConsultado', 'true');
+                        sessionStorage.setItem('ultimoSerialConsultado', serial);
 
                         const form = serialInput.closest('form');
                         const consultar = form.querySelector('button[name="buscar_dados"]');
@@ -259,8 +256,7 @@
         // Botão Limpar
         if (clearButton) {
             clearButton.addEventListener('click', () => {
-                sessionStorage.removeItem('serialConsultado');
-                sessionStorage.setItem('limparTudo', 'true');
+                sessionStorage.clear();
                 window.location.href = window.location.pathname;
             });
         }
@@ -272,7 +268,7 @@
             });
         }
 
-        // Campo modelo bloqueado se já preenchido
+        // Campo modelo bloqueado se preenchido
         if (modeloInput) {
             if (modeloInput.value.trim()) {
                 modeloInput.setAttribute('readonly', 'readonly');
@@ -284,11 +280,12 @@
             }
         }
 
-        // Lógica de foco
+        // Lógica de foco e restauração
         const focoDepoisInserir = sessionStorage.getItem('focoDepoisInserir');
         const focoSerialCookie = document.cookie.includes('foco_serial=true');
         const limparTudo = sessionStorage.getItem('limparTudo');
         const serialConsultado = sessionStorage.getItem('serialConsultado');
+        const ultimoSerial = sessionStorage.getItem('ultimoSerialConsultado');
 
         if (limparTudo === 'true') {
             sessionStorage.removeItem('limparTudo');
@@ -301,12 +298,28 @@
             serialInput?.focus();
         } else if (serialConsultado === 'true') {
             sessionStorage.removeItem('serialConsultado');
+
             if (modeloAuto === 'true') {
-                serialInput?.focus();
+                // Se o modelo foi preenchido automaticamente: limpa o serial e foca no botão inserir
+                serialInput.removeAttribute('readonly');
+                serialInput.value = '';
+                serialInput.setAttribute('readonly', 'readonly');
+                inserirBtn?.focus();
+                sessionStorage.removeItem('ultimoSerialConsultado');
             } else {
-                modeloInput?.focus();
+                // Modelo não encontrado: restaura o serial e foca no campo modelo
+                if (ultimoSerial) {
+                    serialInput.removeAttribute('readonly');
+                    serialInput.value = ultimoSerial;
+                    serialInput.setAttribute('readonly', 'readonly');
+                    sessionStorage.removeItem('ultimoSerialConsultado');
+
+                    modeloInput?.removeAttribute('readonly');
+                    setTimeout(() => modeloInput?.focus(), 100);
+                }
             }
         }
     });
 </script>
+
 {% endblock %}

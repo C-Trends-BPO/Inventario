@@ -58,14 +58,6 @@ class Bipagem(models.Model):
     ]
     estado = models.CharField(max_length=100, choices=ESTADO_CHOICES, null=True, blank=True)
 
-    # class Meta:
-    #     constraints = [
-    #         models.UniqueConstraint(
-    #             fields=['nrserie', 'group_user'],
-    #             name='unique_serial_por_pa'
-    #         )
-    #     ]
-
 class Serial(models.Model):
     codigo = models.CharField(max_length=100, unique=True)
     lote = models.ForeignKey(LoteBipagem, on_delete=models.CASCADE, related_name='seriais')
@@ -83,27 +75,11 @@ class PontoAtendimentoInfo(models.Model):
         return f"{self.group.name} - {self.endereco}"
     
 class InventarioDadosImportados(models.Model):
-    modalidade_comercial = models.CharField(max_length=100)
-    material = models.IntegerField()
     serial = models.CharField(max_length=100, primary_key=True)
     modelo = models.CharField(max_length=200)
-    status_sistema = models.CharField(max_length=50)
-    status_usuario = models.CharField(max_length=50)
-    opl = models.IntegerField()
     serial_fabricante = models.CharField(max_length=100)
-    equipamento = models.IntegerField()
-    centro = models.IntegerField()
-    deposito = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    modificado_por = models.CharField(max_length=100, null=True, blank=True)
-    modificado_em = models.DateField(null=True, blank=True)
-    ct = models.CharField(max_length=50, null=True, blank=True)
-    data_aquisicao = models.DateField(null=True, blank=True)
     nome_ct = models.CharField(max_length=100, null=True, blank=True)
-    nome_fornecedor = models.CharField(max_length=200, null=True, blank=True)
-    acao = models.CharField(max_length=50, null=True, blank=True)
     mensagem_ferramenta_inv = models.CharField(max_length=100, null=True, blank=True)
-    vl_aquisicao = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    vl_residual = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
     class Meta:
         db_table = 'inventario_dados_importados'
