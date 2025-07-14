@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
-from ..models import LoteBipagem, Caixa, Bipagem
+from ..models import LoteBipagem, Caixa, Bipagem, InventarioDadosImportados
 from ..forms import BipagemForm
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
@@ -46,13 +46,12 @@ def bipagem(request, lote_id, caixa_id):
     if request.method == 'POST':
         edit_id = request.POST.get('edit_id')
         form = BipagemForm(request.POST)
-        serial = form.data.get('serial', '').strip()
-        serial = serial[-18:]
+        serial = form.data.get('serial', '').strip().upper()[-18:]  # padroniza
 
         if edit_id:
             bipagem_edit = get_object_or_404(Bipagem, id=edit_id)
             if form.is_valid():
-                novo_serial = form.cleaned_data['serial'].strip()
+                novo_serial = form.cleaned_data['serial'].strip().upper()[-18:]
                 serial_em_uso = Bipagem.objects.filter(
                     nrserie__iexact=novo_serial
                 ).exclude(id=bipagem_edit.id).exclude(id_lote__status='invalidado').first()
@@ -67,15 +66,10 @@ def bipagem(request, lote_id, caixa_id):
                     bipagem_edit.save()
                     messages.success(request, "Serial editado com sucesso.")
                     return redirect('inventario:caixa', lote_id=lote.id, caixa_id=caixa.id)
-        else:
-            form = BipagemForm(request.POST)
-            serial = form.data.get('serial', '').strip()
-            serial = serial[-18:]
 
+        else:
             if 'buscar_dados' in request.POST and form.is_valid():
-                from ..models import InventarioDadosImportados
-                serial = form.cleaned_data.get('serial', '').strip()
-                serial = serial[-18:]
+                serial = form.cleaned_data.get('serial', '').strip().upper()[-18:]
                 dados = InventarioDadosImportados.objects.filter(serial_fabricante__iexact=serial).first()
 
                 if dados:
@@ -133,7 +127,6 @@ def bipagem(request, lote_id, caixa_id):
                     return redirect('inventario:lote', lote_id=lote.id)
 
             elif form.is_valid() and serial:
-                serial = serial[-18:]
                 if not form.cleaned_data.get('estado'):
                     messages.warning(request, "Preencha o campo Estado antes de inserir.")
                 elif not form.cleaned_data.get('modelo'):
@@ -192,7 +185,6 @@ def bipagem(request, lote_id, caixa_id):
     }
 
     return render(request, 'inventario/bipagem.html', context)
-
 
 @login_required
 def editar_serial(request, serial_id):
