@@ -13,7 +13,15 @@ def get_lotes_disponiveis_para_usuario(user):
     if 'INV_PA_VISUALIZADOR_MASTER' in grupos_usuario or 'ADM_TOTAL' in grupos_usuario:
         return LoteBipagem.objects.all()
 
-    return LoteBipagem.objects.filter(user_created=user)
+    pa_gerenciadas = [
+        nome_grupo.replace('INV_PA_GER_', '')
+        for nome_grupo in grupos_usuario if nome_grupo.startswith('INV_PA_GER_')
+    ]
+
+    return LoteBipagem.objects.filter(
+        Q(group_user__name__in=pa_gerenciadas) |
+        Q(group_user__in=user.groups.all())
+    )
 
 @login_required(login_url='inventario:login')
 def index(request):
