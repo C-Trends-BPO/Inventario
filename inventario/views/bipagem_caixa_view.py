@@ -10,6 +10,21 @@ from django.views.decorators.http import require_POST
 
 @login_required(login_url='inventario:login')
 def bipagem(request, lote_id, caixa_id):
+
+    PAs_COM_PERMISSAO_DIGITACAO = {
+    'AG_0019_RIBEIRAO_PRETO_SP_CORNER',
+    'AG_0189_CAXIAS_DO_SUL_RS_CORNER',
+    'AG_3153_GENERAL_OSORIO_RJ_CORNER',
+    'AG_3524_BELEM_PA_CORNER',
+    'AG_4017_CARUARU_PE_CORNER',
+    'AG_4036_JABOATAO_DOS_GUARARAPES_PE_CORNER',
+    'AG_4156_CABO_DE_SANTO_AGOSTINHO_PE_CORNE',
+    'AG_4375_SANTAREM_PA_CORNER',
+    'AG_0215_PETROPOLIS_RJ_CORNER',
+    'AG_3520_UBERABA_MG_CORNER',
+    'AG_2185_RONDONONOPOLIS_MT_CORNER',
+    }
+    
     lote = get_object_or_404(LoteBipagem, id=lote_id)
     caixa = get_object_or_404(Caixa, id=caixa_id, lote=lote)
 
@@ -168,6 +183,9 @@ def bipagem(request, lote_id, caixa_id):
         mensagem = {'mensagem': f'Esta caixa já possui o limite de {limite_por_pa} bipagens.', 'encerrar': True}
         messages.warning(request, f"Esta caixa já possui o limite de {limite_por_pa} bipagens.")
 
+    nome_grupo_pa = lote.group_user.name if lote.group_user else ''
+    pode_digitar = nome_grupo_pa in PAs_COM_PERMISSAO_DIGITACAO
+
     context = {
         'lote': lote,
         'caixa': caixa,
@@ -182,6 +200,7 @@ def bipagem(request, lote_id, caixa_id):
         'mensagem_ferramenta': mensagem_ferramenta,
         'modo_edicao': modo_edicao,
         'serial_editando': bipagem_edit.id if bipagem_edit else None,
+        'pode_digitar': pode_digitar,
     }
 
     return render(request, 'inventario/bipagem.html', context)

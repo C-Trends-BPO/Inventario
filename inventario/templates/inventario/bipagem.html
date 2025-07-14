@@ -193,6 +193,7 @@
 
 <script>
     const modoEdicao = JSON.parse("{{ modo_edicao|yesno:'true,false'|lower }}");
+    const podeDigitar = JSON.parse("{{ pode_digitar|yesno:'true,false'|lower }}");
 
     document.addEventListener('DOMContentLoaded', function () {
         const serialInput = document.getElementById('serial-input');
@@ -206,7 +207,7 @@
         let lastInputTime = Date.now();
         const INTERVALO_MAXIMO = 250;
 
-        if (serialInput && !modoEdicao) {
+        if (serialInput && !modoEdicao && !podeDigitar) {
             serialInput.setAttribute('readonly', 'readonly');
             serialInput.setAttribute('autocomplete', 'off');
             serialInput.value = '';
