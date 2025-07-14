@@ -13,15 +13,7 @@ def get_lotes_disponiveis_para_usuario(user):
     if 'INV_PA_VISUALIZADOR_MASTER' in grupos_usuario or 'ADM_TOTAL' in grupos_usuario:
         return LoteBipagem.objects.all()
 
-    pa_gerenciadas = [
-        nome_grupo.replace('INV_PA_GER_', '')
-        for nome_grupo in grupos_usuario if nome_grupo.startswith('INV_PA_GER_')
-    ]
-
-    return LoteBipagem.objects.filter(
-        Q(group_user__name__in=pa_gerenciadas) |
-        Q(group_user__in=user.groups.all())
-    )
+    return LoteBipagem.objects.filter(user_created=user)
 
 @login_required(login_url='inventario:login')
 def index(request):
@@ -45,7 +37,7 @@ def index(request):
     grupos_usuario = request.user.groups.values_list('name', flat=True)
 
     is_visualizador_master = any(g in ['INV_PA_VISUALIZADOR_MASTER', 'ADM_TOTAL'] for g in grupos_usuario)
-    is_gerente_total = 'INV_PA_GER_TOTAL' in grupos_usuario  # <- Adicionado aqui
+    is_gerente_total = 'INV_PA_GER_TOTAL' in grupos_usuario
 
     if request.method == 'POST' and is_visualizador_master:
         return HttpResponseForbidden("Você não tem permissão para bipar seriais.")
@@ -85,5 +77,5 @@ def index(request):
         'lotes': page_obj.object_list,
         'page_obj': page_obj,
         'is_visualizador_master': is_visualizador_master,
-        'is_gerente_total': is_gerente_total,  # <- Incluído no contexto
+        'is_gerente_total': is_gerente_total,
     })
