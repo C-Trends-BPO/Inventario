@@ -1,5 +1,5 @@
 from django.db import models # type: ignore
-from django.contrib.auth.models import Group # type: ignore
+from django.contrib.auth.models import Group, User# type: ignore
 from decimal import Decimal
 
 class LoteBipagem(models.Model):
@@ -40,7 +40,7 @@ class Bipagem(models.Model):
     id_caixa = models.ForeignKey(Caixa, on_delete=models.CASCADE, related_name='bipagem')
     id_lote = models.ForeignKey(LoteBipagem, on_delete=models.CASCADE, related_name='bipagem')
     group_user = models.ForeignKey(Group, on_delete=models.CASCADE, null=True)
-
+    user_created = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     unidade = models.IntegerField(null=True)
     nrserie = models.CharField(max_length=50)
     criado_em = models.DateTimeField(auto_now_add=True)

@@ -109,6 +109,7 @@ def bipagem(request, lote_id, caixa_id):
                         modelo=dados.modelo,
                         observacao=observacao,
                         mensagem_ferramenta_inv=dados.mensagem_ferramenta_inv,
+                        user_created=request.user,
                     )
                     request.session['estado_bipagem'] = form.cleaned_data['estado']
                     messages.success(request, "Serial inserido com sucesso!")

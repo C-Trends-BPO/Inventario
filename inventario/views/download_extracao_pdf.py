@@ -243,7 +243,7 @@ def download_extracao_csv(request):
         writer = csv.writer(response)
         writer.writerow([
             'PA', 'Lote', 'Serial', 'Modelo', 'Data', 'Status',
-            'Obs', 'Acao', 'Status Lote',
+            'Obs', 'Acao', 'Status Lote', 'Usuário Bipagem'
         ])
 
         if is_admin_total and pa_param and pa_param.upper() != "TODAS":
@@ -266,8 +266,8 @@ def download_extracao_csv(request):
                 bip.observacao,
                 bip.mensagem_ferramenta_inv,
                 bip.id_caixa.lote.status if bip.id_caixa and bip.id_caixa.lote else '',
+                bip.user_created.username if bip.user_created else '',
             ])
-
         return response
 
     context = {
