@@ -70,12 +70,16 @@ def index(request):
         except ValueError:
             busca_id = None
 
-        lotes_list = lotes_list.filter(
+        filtros = (
             Q(numero_lote__icontains=busca) |
-            Q(status__icontains=busca) |
             Q(user_created__username__icontains=busca) |
-            Q(id=busca_id) if busca_id else Q()
+            Q(group_user__name__icontains=busca)
         )
+
+        if busca_id is not None:
+            filtros |= Q(id=busca_id)
+
+        lotes_list = lotes_list.filter(filtros)
 
     paginator = Paginator(lotes_list, 10)
     page_number = request.GET.get('page')
