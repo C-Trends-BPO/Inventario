@@ -51,7 +51,7 @@ def validar_serial(request, lote_id):
             })
 
         lote = get_object_or_404(LoteBipagem, id=lote_id)
-        codigo = request.POST.get("codigo", "").strip().upper()
+        codigo = request.POST.get("codigo", "").strip().upper()[-18:]
 
         serial_valido = lote.bipagem.filter(nrserie=codigo).exists()
 
@@ -65,7 +65,6 @@ def validar_serial(request, lote_id):
             })
 
         if serial_valido:
-            # Valida quantos seriais únicos foram validados na sessão
             validos = request.session.get(f"seriais_validados_lote_{lote.id}", [])
             
             if codigo not in validos:
@@ -77,7 +76,7 @@ def validar_serial(request, lote_id):
             if len(validos) >= total_necessario:
                 lote.status = "fechado"
                 lote.save()
-                request.session.pop(f"seriais_validados_lote_{lote.id}", None)  # limpa sessão
+                request.session.pop(f"seriais_validados_lote_{lote.id}", None)
 
                 add_message(request, SUCCESS, "Lote validado com sucesso!", extra_tags='lote_validado')
                 return JsonResponse({

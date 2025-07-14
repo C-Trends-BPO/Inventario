@@ -237,9 +237,9 @@
                     serialInput.value = '';
 
                     if (serial.length > 0) {
-                        serialInput.removeAttribute('readonly'); // necessário para permitir inserir valor
-                        serialInput.value = serial;              // insere o valor lido no campo
-                        serialInput.setAttribute('readonly', 'readonly'); // volta a bloquear
+                        serialInput.removeAttribute('readonly');
+                        serialInput.value = serial;
+                        serialInput.setAttribute('readonly', 'readonly');
                         sessionStorage.setItem('serialConsultado', 'true');
 
                         const form = serialInput.closest('form');
