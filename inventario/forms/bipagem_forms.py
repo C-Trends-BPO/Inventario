@@ -6,7 +6,7 @@ class BipagemForm(forms.Form):
 
     estado = forms.ChoiceField(
         required=True,
-        choices=[('', ''), ('GOOD', 'GOOD'), ('BAD', 'BAD'), ('OBSOLETO', 'OBSOLETO'), ('TRIAGEM', 'TRIAGEM')],
+        choices=[('', ''), ('KIT GOOD', 'KIT GOOD'), ('GOOD', 'GOOD'), ('BAD', 'BAD'), ('OBSOLETO', 'OBSOLETO'), ('TRIAGEM', 'TRIAGEM')],
         label='Status'
     )
     serial = forms.CharField(
