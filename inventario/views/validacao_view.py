@@ -13,20 +13,36 @@ from django.contrib.messages import add_message, SUCCESS
 
 @login_required(login_url='inventario:login')
 def validar_lote_view(request, lote_id):
-    lote = get_object_or_404(LoteBipagem, id=lote_id)
-    qtd_caixas = Caixa.objects.filter(lote_id=lote_id).count()  
+    PAs_COM_PERMISSAO_DIGITACAO = {
+        'AG_0019_RIBEIRAO_PRETO_SP_CORNER',
+        'AG_0189_CAXIAS_DO_SUL_RS_CORNER',
+        'AG_3153_GENERAL_OSORIO_RJ_CORNER',
+        'AG_3524_BELEM_PA_CORNER',
+        'AG_4017_CARUARU_PE_CORNER',
+        'AG_4036_JABOATAO_GUARARAPES_PE_CORNER',
+        'AG_4156_CABO_DE_SANTO_AGOSTINHO_PE_CORNE',
+        'AG_4375_SANTAREM_PA_CORNER',
+        'AG_0215_PETROPOLIS_RJ_CORNER',
+        'AG_3520_UBERABA_MG_CORNER',
+        'AG_2185_RONDONOPOLIS_MT_CORNER',
+    }
 
-    if request.method == 'POST' and request.user.groups.filter(name='Visualizador Master').exists():
-        return HttpResponseForbidden("Você não tem permissão para validar lotes.")
-    
+    lote = get_object_or_404(LoteBipagem, id=lote_id)
+    nome_grupo_pa = lote.group_user.name if lote.group_user else ''
+
     if request.method == 'POST':
+        if request.user.groups.filter(name='INV_PA_VISUALIZADOR_MASTER').exists():
+            return JsonResponse({
+                "status": "erro",
+                "mensagem": " Você não tem permissão para validar seriais."
+            })
+
         qtd_caixas = Caixa.objects.filter(lote_id=lote_id).count()
         if qtd_caixas == 0:
-            messages.warning(request, "Não é possivel finalizar um lote sem bipagens.")
+            messages.warning(request, "Não é possível finalizar um lote sem bipagens.")
             return redirect('inventario:lote', lote_id=lote_id)
     else:
         return redirect('inventario:index')
-
 
     seriais = lote.bipagem.all()
     total_seriais = seriais.count()
@@ -44,15 +60,30 @@ def validar_lote_view(request, lote_id):
 @csrf_exempt
 def validar_serial(request, lote_id):
     if request.method == "POST":
+        PAs_COM_PERMISSAO_DIGITACAO = {
+            'AG_0019_RIBEIRAO_PRETO_SP_CORNER',
+            'AG_0189_CAXIAS_DO_SUL_RS_CORNER',
+            'AG_3153_GENERAL_OSORIO_RJ_CORNER',
+            'AG_3524_BELEM_PA_CORNER',
+            'AG_4017_CARUARU_PE_CORNER',
+            'AG_4036_JABOATAO_GUARARAPES_PE_CORNER',
+            'AG_4156_CABO_DE_SANTO_AGOSTINHO_PE_CORNE',
+            'AG_4375_SANTAREM_PA_CORNER',
+            'AG_0215_PETROPOLIS_RJ_CORNER',
+            'AG_3520_UBERABA_MG_CORNER',
+            'AG_2185_RONDONOPOLIS_MT_CORNER',
+        }
+
+        lote = get_object_or_404(LoteBipagem, id=lote_id)
+        nome_grupo_pa = lote.group_user.name if lote.group_user else ''
+
         if request.user.groups.filter(name='INV_PA_VISUALIZADOR_MASTER').exists():
             return JsonResponse({
                 "status": "erro",
                 "mensagem": " Você não tem permissão para validar seriais."
             })
 
-        lote = get_object_or_404(LoteBipagem, id=lote_id)
         codigo = request.POST.get("codigo", "").strip().upper()[-18:]
-
         serial_valido = lote.bipagem.filter(nrserie=codigo).exists()
 
         if not serial_valido:
@@ -64,32 +95,30 @@ def validar_serial(request, lote_id):
                 "redirect_url": reverse('inventario:index')
             })
 
-        if serial_valido:
-            validos = request.session.get(f"seriais_validados_lote_{lote.id}", [])
-            
-            if codigo not in validos:
-                validos.append(codigo)
-                request.session[f"seriais_validados_lote_{lote.id}"] = validos
+        validos = request.session.get(f"seriais_validados_lote_{lote.id}", [])
+        if codigo not in validos:
+            validos.append(codigo)
+            request.session[f"seriais_validados_lote_{lote.id}"] = validos
 
-            total_necessario = math.ceil(lote.bipagem.count() * 0.10)
+        total_necessario = math.ceil(lote.bipagem.count() * 0.10)
 
-            if len(validos) >= total_necessario:
-                lote.status = "fechado"
-                lote.save()
-                request.session.pop(f"seriais_validados_lote_{lote.id}", None)
+        if len(validos) >= total_necessario:
+            lote.status = "fechado"
+            lote.save()
+            request.session.pop(f"seriais_validados_lote_{lote.id}", None)
 
-                add_message(request, SUCCESS, "Lote validado com sucesso!", extra_tags='lote_validado')
-                return JsonResponse({
-                    "status": "ok",
-                    "mensagem": "Lote validado com sucesso!",
-                    "popup": True,
-                    "redirect_url": reverse('inventario:validar_lote', args=[lote.id])
-                })
-            else:
-                return JsonResponse({
-                    "status": "ok",
-                    "mensagem": f"Serial {codigo} validado com sucesso! ({len(validos)}/{total_necessario})"
-                })
+            add_message(request, SUCCESS, "Lote validado com sucesso!", extra_tags='lote_validado')
+            return JsonResponse({
+                "status": "ok",
+                "mensagem": "Lote validado com sucesso!",
+                "popup": True,
+                "redirect_url": reverse('inventario:validar_lote', args=[lote.id])
+            })
+        else:
+            return JsonResponse({
+                "status": "ok",
+                "mensagem": f"Serial {codigo} validado com sucesso! ({len(validos)}/{total_necessario})"
+            })
 
     return JsonResponse({"status": "erro", "mensagem": "Método não permitido"}, status=405)
 

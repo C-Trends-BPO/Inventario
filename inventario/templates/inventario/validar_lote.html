@@ -13,11 +13,11 @@
         </div>
 
         {% for message in messages %}
-            {% if 'lote_validado' in message.tags %}
-                <script type="text/javascript">
-                    alert("{{ message|escapejs }}");
-                </script>
-            {% endif %}
+        {% if 'lote_validado' in message.tags %}
+        <script type="text/javascript">
+            alert("{{ message|escapejs }}");
+        </script>
+        {% endif %}
         {% endfor %}
 
         {% if not is_visualizador_master %}
@@ -38,36 +38,19 @@
 
         {% if not is_visualizador_master %}
         <script>
-            let validados = 0;
-            const amostra = JSON.parse(document.getElementById("amostra-data").textContent);
-            const loteId = JSON.parse(document.getElementById("lote-id").textContent);
-            const validadosSet = new Set();
-
-            let buffer = '';
-            let lastTime = Date.now();
-
             document.addEventListener("DOMContentLoaded", () => {
                 const input = document.getElementById("codigo");
+                const amostra = JSON.parse(document.getElementById("amostra-data").textContent);
+                const loteId = JSON.parse(document.getElementById("lote-id").textContent);
+                const validadosSet = new Set();
+                let validados = 0;
+
                 input.focus();
 
                 input.addEventListener("keydown", (e) => {
-                    const now = Date.now();
-                    const timeDiff = now - lastTime;
-                    lastTime = now;
-
-                    if (timeDiff < 50) {
-                        if (e.key.length === 1) {
-                            buffer += e.key;
-                        }
-                    } else {
-                        buffer = e.key.length === 1 ? e.key : '';
-                    }
-
-                    if (e.key === 'Enter') {
+                    if (e.key === "Enter") {
                         e.preventDefault();
-                        const codigo = buffer.trim().toUpperCase();
-                        buffer = '';
-
+                        const codigo = input.value.trim().toUpperCase();
                         if (codigo === "" || validadosSet.has(codigo)) {
                             input.value = "";
                             return;
@@ -84,8 +67,10 @@
                             .then(res => res.json())
                             .then(data => {
                                 if (data.status === "erro") {
-                                    alert(" " + data.mensagem);
-                                    window.location.href = "/inventario";
+                                    alert(data.mensagem);
+                                    if (data.redirect_url) {
+                                        window.location.href = data.redirect_url;
+                                    }
                                 } else {
                                     validadosSet.add(codigo);
                                     validados += 1;
@@ -112,10 +97,6 @@
 
                         input.value = "";
                     }
-
-                    if (e.key !== 'Enter') {
-                        e.preventDefault();
-                    }
                 });
 
                 setInterval(() => {
@@ -129,6 +110,7 @@
                 );
             });
         </script>
+
         {% endif %}
 
     </div>
