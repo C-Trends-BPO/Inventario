@@ -61,7 +61,7 @@ def bipagem(request, lote_id, caixa_id):
     if request.method == 'POST':
         edit_id = request.POST.get('edit_id')
         form = BipagemForm(request.POST)
-        serial = form.data.get('serial', '').strip().upper()[-18:]  # padroniza
+        serial = form.data.get('serial', '').strip().upper()[-18:]
 
         if edit_id:
             bipagem_edit = get_object_or_404(Bipagem, id=edit_id)
@@ -118,16 +118,31 @@ def bipagem(request, lote_id, caixa_id):
                     return response
 
                 else:
-                    form = BipagemForm(initial={
-                        'serial': serial,
-                        'modelo': '',
-                        'estado': form.cleaned_data.get('estado', '')
-                    })
-                    exibir_consultar = False
                     modelo_autocompletado = False
+                    exibir_consultar = False
                     request.session.pop('modelo_autocompletado', None)
                     request.session.pop('mensagem_ferramenta', None)
-                    messages.warning(request, f"Serial '{serial}' não encontrado.")
+
+                    serial_ja_bipado = Bipagem.objects.filter(
+                        nrserie__iexact=serial
+                    ).exclude(id_lote__status='invalidado').exists()
+                    observacao = "Duplicidade" if serial_ja_bipado else ""
+
+                    Bipagem.objects.create(
+                        id_caixa=caixa,
+                        id_lote=lote,
+                        group_user=lote.group_user,
+                        nrserie=serial,
+                        unidade=caixa.bipagem.count() + 1,
+                        estado=form.cleaned_data.get('estado', ''),
+                        modelo='',
+                        observacao=observacao,
+                        mensagem_ferramenta_inv='',
+                        user_created=request.user,
+                    )
+                    request.session['estado_bipagem'] = form.cleaned_data.get('estado', '')
+                    messages.warning(request, f"Serial '{serial}' não encontrado!")
+                    return redirect(reverse('inventario:caixa', args=[lote.id, caixa.id]))
 
             elif 'encerrar_caixa' in request.POST:
                 qtd_seriais = Bipagem.objects.filter(id_caixa=caixa).count()
