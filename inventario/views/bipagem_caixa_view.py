@@ -142,7 +142,9 @@ def bipagem(request, lote_id, caixa_id):
                     )
                     request.session['estado_bipagem'] = form.cleaned_data.get('estado', '')
                     messages.warning(request, f"Serial '{serial}' não encontrado!")
-                    return redirect(reverse('inventario:caixa', args=[lote.id, caixa.id]))
+                    response = redirect(reverse('inventario:caixa', args=[lote.id, caixa.id]))
+                    response.set_cookie('foco_serial', 'true', max_age=10)
+                    return response
 
             elif 'encerrar_caixa' in request.POST:
                 qtd_seriais = Bipagem.objects.filter(id_caixa=caixa).count()
