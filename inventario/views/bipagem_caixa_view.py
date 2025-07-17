@@ -95,7 +95,12 @@ def bipagem(request, lote_id, caixa_id):
                     url=f'http://192.168.0.216/inventario-api/api/v1/dash/info-serial/{serial}',
                     headers={'Content-Type': 'application/json'},
                 )
-                dados = requestapi.send_api_request()
+                try:
+                    dados = requestapi.send_api_request()
+                except Exception as e:
+                    # messages.error(
+                    #     request, f"Erro ao buscar dados do serial: {e}")
+                    dados = None
                 # dados = InventarioDadosImportados.objects.filter(serial_fabricante__iexact=serial).first()
 
                 if dados:
