@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
+
+from setup.request import RequestClient
 from ..models import LoteBipagem, Caixa, Bipagem, InventarioDadosImportados
 from ..forms import BipagemForm
 from django.core.paginator import Paginator
@@ -85,11 +87,20 @@ def bipagem(request, lote_id, caixa_id):
         else:
             if 'buscar_dados' in request.POST and form.is_valid():
                 serial = form.cleaned_data.get('serial', '').strip().upper()[-18:]
-                dados = InventarioDadosImportados.objects.filter(serial_fabricante__iexact=serial).first()
+                serial = form.cleaned_data.get('serial', '').strip()
+                serial = serial[-18:]
+
+                requestapi = RequestClient(
+                    method='get',
+                    url=f'http://192.168.0.216/inventario-api/api/v1/dash/info-serial/{serial}',
+                    headers={'Content-Type': 'application/json'},
+                )
+                dados = requestapi.send_api_request()
+                # dados = InventarioDadosImportados.objects.filter(serial_fabricante__iexact=serial).first()
 
                 if dados:
                     modelo_autocompletado = True
-                    mensagem_ferramenta = dados.mensagem_ferramenta_inv
+                    mensagem_ferramenta =dados['mensagem_ferramenta_inv']
                     request.session['mensagem_ferramenta'] = mensagem_ferramenta
                     request.session['modelo_autocompletado'] = True
                     exibir_consultar = False
@@ -106,9 +117,9 @@ def bipagem(request, lote_id, caixa_id):
                         nrserie=serial,
                         unidade=caixa.bipagem.count() + 1,
                         estado=form.cleaned_data['estado'],
-                        modelo=dados.modelo,
+                        modelo=dados['modelo'],
                         observacao=observacao,
-                        mensagem_ferramenta_inv=dados.mensagem_ferramenta_inv,
+                        mensagem_ferramenta_inv=mensagem_ferramenta,
                         user_created=request.user,
                     )
                     request.session['estado_bipagem'] = form.cleaned_data['estado']
