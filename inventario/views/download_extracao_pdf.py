@@ -10,6 +10,7 @@ from django.contrib.auth.models import Group
 from django.contrib import messages
 import csv
 
+
 @login_required(login_url='inventario:login')
 def download_extracao_pdf(request):
     user = request.user
@@ -19,6 +20,9 @@ def download_extracao_pdf(request):
     is_admin_total = 'INV_PA_GER_TOTAL' in grupos
     seriais_base_por_pa = []
     seriais_bipados_por_pa = []
+
+    total_seriais_esperados = 0
+    total_seriais_bipados = 0
 
     if pa_param and pa_param.upper() != "TODAS":
         seriais_base = (
@@ -35,6 +39,8 @@ def download_extracao_pdf(request):
         )
         seriais_base_por_pa = list(seriais_base)
         seriais_bipados_por_pa = list(seriais_bipados)
+        total_seriais_esperados = InventarioDadosImportados.objects.filter(nome_ct=pa_param).count()
+        total_seriais_bipados = Bipagem.objects.filter(group_user__name=pa_param).count()
 
     if is_admin_total and pa_param and pa_param.upper() != "TODAS":
         lotes = LoteBipagem.objects.filter(group_user__name=pa_param)
@@ -53,6 +59,21 @@ def download_extracao_pdf(request):
         nome_pa = "TODAS AS PAs"
         endereco_pa = "Consolidado Geral"
 
+        seriais_base = (
+            InventarioDadosImportados.objects
+            .values('nome_ct')
+            .annotate(total=Count('serial'))
+        )
+        seriais_bipados = (
+            Bipagem.objects
+            .values('group_user__name')
+            .annotate(total=Count('nrserie'))
+        )
+        seriais_base_por_pa = list(seriais_base)
+        seriais_bipados_por_pa = list(seriais_bipados)
+        total_seriais_esperados = InventarioDadosImportados.objects.count()
+        total_seriais_bipados = Bipagem.objects.count()
+
     elif is_admin_total and not pa_param:
         lotes = LoteBipagem.objects.all()
         total_lotes = lotes.count()
@@ -60,6 +81,8 @@ def download_extracao_pdf(request):
         total_seriais = Bipagem.objects.count()
         nome_pa = "TODAS AS PAs"
         endereco_pa = "Consolidado Geral"
+        total_seriais_esperados = InventarioDadosImportados.objects.count()
+        total_seriais_bipados = Bipagem.objects.count()
 
     else:
         grupo = user.groups.first()
@@ -69,6 +92,8 @@ def download_extracao_pdf(request):
         total_lotes = lotes.count()
         total_caixas = Bipagem.objects.filter(id_caixa__lote__user_created=user).values('id_caixa').distinct().count()
         total_seriais = Bipagem.objects.filter(id_caixa__lote__user_created=user).count()
+        total_seriais_esperados = InventarioDadosImportados.objects.filter(nome_ct=nome_pa).count()
+        total_seriais_bipados = Bipagem.objects.filter(group_user__name=nome_pa).count()
 
     context = {
         "empresa": "Getnet",
@@ -86,6 +111,8 @@ def download_extracao_pdf(request):
         }],
         "total_caixas": total_caixas,
         "total_seriais": total_seriais,
+        "total_seriais_esperados": total_seriais_esperados,
+        "total_seriais_bipados": total_seriais_bipados,
     }
 
     template = get_template('inventario/extracao.html')
