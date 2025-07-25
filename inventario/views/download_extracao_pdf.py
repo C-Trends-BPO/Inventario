@@ -3,6 +3,7 @@ from django.template.loader import get_template
 from django.http import HttpResponse
 from xhtml2pdf import pisa
 from django.db.models import Count
+from django.utils.dateparse import parse_date
 from inventario.models import LoteBipagem, Bipagem, InventarioDadosImportados
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
@@ -17,12 +18,18 @@ def download_extracao_pdf(request):
     responsavel = user.get_full_name() or user.username
     grupos = user.groups.values_list('name', flat=True)
     pa_param = request.GET.get('pa')
+    data_param = request.GET.get('data')
+    data_convertida = parse_date(data_param) if data_param else None
+
     is_admin_total = 'INV_PA_GER_TOTAL' in grupos
     seriais_base_por_pa = []
     seriais_bipados_por_pa = []
-
     total_seriais_esperados = 0
     total_seriais_bipados = 0
+
+    filtro_data = {}
+    if data_convertida:
+        filtro_data = {"criado_em__date": data_convertida}
 
     if pa_param and pa_param.upper() != "TODAS":
         seriais_base = (
@@ -33,20 +40,20 @@ def download_extracao_pdf(request):
         )
         seriais_bipados = (
             Bipagem.objects
-            .filter(group_user__name=pa_param)
+            .filter(group_user__name=pa_param, **filtro_data)
             .values('group_user__name')
             .annotate(total=Count('nrserie'))
         )
         seriais_base_por_pa = list(seriais_base)
         seriais_bipados_por_pa = list(seriais_bipados)
         total_seriais_esperados = InventarioDadosImportados.objects.filter(nome_ct=pa_param).count()
-        total_seriais_bipados = Bipagem.objects.filter(group_user__name=pa_param).count()
+        total_seriais_bipados = Bipagem.objects.filter(group_user__name=pa_param, **filtro_data).count()
 
     if is_admin_total and pa_param and pa_param.upper() != "TODAS":
         lotes = LoteBipagem.objects.filter(group_user__name=pa_param)
         total_lotes = lotes.count()
-        total_caixas = Bipagem.objects.filter(id_caixa__lote__group_user__name=pa_param).values('id_caixa').distinct().count()
-        total_seriais = Bipagem.objects.filter(id_caixa__lote__group_user__name=pa_param).count()
+        total_caixas = Bipagem.objects.filter(id_caixa__lote__group_user__name=pa_param, **filtro_data).values('id_caixa').distinct().count()
+        total_seriais = Bipagem.objects.filter(id_caixa__lote__group_user__name=pa_param, **filtro_data).count()
         nome_pa = pa_param
         grupo = Group.objects.filter(name=pa_param).first()
         endereco_pa = getattr(grupo.informacoes, "endereco", "Não informado") if grupo else "Não informado"
@@ -54,11 +61,10 @@ def download_extracao_pdf(request):
     elif is_admin_total and pa_param and pa_param.upper() == "TODAS":
         lotes = LoteBipagem.objects.all()
         total_lotes = lotes.count()
-        total_caixas = Bipagem.objects.values('id_caixa').distinct().count()
-        total_seriais = Bipagem.objects.count()
+        total_caixas = Bipagem.objects.filter(**filtro_data).values('id_caixa').distinct().count()
+        total_seriais = Bipagem.objects.filter(**filtro_data).count()
         nome_pa = "TODAS AS PAs"
         endereco_pa = "Consolidado Geral"
-
         seriais_base = (
             InventarioDadosImportados.objects
             .values('nome_ct')
@@ -66,23 +72,24 @@ def download_extracao_pdf(request):
         )
         seriais_bipados = (
             Bipagem.objects
+            .filter(**filtro_data)
             .values('group_user__name')
             .annotate(total=Count('nrserie'))
         )
         seriais_base_por_pa = list(seriais_base)
         seriais_bipados_por_pa = list(seriais_bipados)
         total_seriais_esperados = InventarioDadosImportados.objects.count()
-        total_seriais_bipados = Bipagem.objects.count()
+        total_seriais_bipados = Bipagem.objects.filter(**filtro_data).count()
 
     elif is_admin_total and not pa_param:
         lotes = LoteBipagem.objects.all()
         total_lotes = lotes.count()
-        total_caixas = Bipagem.objects.values('id_caixa').distinct().count()
-        total_seriais = Bipagem.objects.count()
+        total_caixas = Bipagem.objects.filter(**filtro_data).values('id_caixa').distinct().count()
+        total_seriais = Bipagem.objects.filter(**filtro_data).count()
         nome_pa = "TODAS AS PAs"
         endereco_pa = "Consolidado Geral"
         total_seriais_esperados = InventarioDadosImportados.objects.count()
-        total_seriais_bipados = Bipagem.objects.count()
+        total_seriais_bipados = Bipagem.objects.filter(**filtro_data).count()
 
     else:
         grupo = user.groups.first()
@@ -90,11 +97,16 @@ def download_extracao_pdf(request):
         endereco_pa = getattr(grupo.informacoes, "endereco", "Não informado") if grupo else "Não informado"
         lotes = LoteBipagem.objects.filter(user_created=user)
         total_lotes = lotes.count()
-        total_caixas = Bipagem.objects.filter(id_caixa__lote__user_created=user).values('id_caixa').distinct().count()
-        total_seriais = Bipagem.objects.filter(id_caixa__lote__user_created=user).count()
+        total_caixas = Bipagem.objects.filter(id_caixa__lote__user_created=user, **filtro_data).values('id_caixa').distinct().count()
+        total_seriais = Bipagem.objects.filter(id_caixa__lote__user_created=user, **filtro_data).count()
         total_seriais_esperados = InventarioDadosImportados.objects.filter(nome_ct=nome_pa).count()
-        total_seriais_bipados = Bipagem.objects.filter(group_user__name=nome_pa).count()
+        total_seriais_bipados = Bipagem.objects.filter(group_user__name=nome_pa, **filtro_data).count()
 
+    if data_param and total_seriais == 0:
+        return HttpResponse(f"Nenhum dado encontrado para a data {data_param}.", status=404)
+
+    data_param_br = data_convertida.strftime('%d/%m/%Y') if data_param else None
+    
     context = {
         "empresa": "Getnet",
         "cnpj": "12.345.678/0001-99",
@@ -113,6 +125,7 @@ def download_extracao_pdf(request):
         "total_seriais": total_seriais,
         "total_seriais_esperados": total_seriais_esperados,
         "total_seriais_bipados": total_seriais_bipados,
+        "data_filtro": data_param_br or "Todas",
     }
 
     template = get_template('inventario/extracao.html')
@@ -124,6 +137,7 @@ def download_extracao_pdf(request):
     if pisa_status.err:
         return HttpResponse('Erro ao gerar PDF', status=500)
     return response
+
 
 
 @login_required(login_url='inventario:login')
@@ -227,13 +241,20 @@ def download_extracao_csv(request):
     grupos = user.groups.values_list('name', flat=True)
     pa_param = request.GET.get('pa')
     formato = request.GET.get('formato')
+    data_param = request.GET.get('data')
+    data_convertida = parse_date(data_param) if data_param else None
     is_admin_total = 'INV_PA_GER_TOTAL' in grupos
 
+    filtro_data = {}
+    if data_convertida:
+        filtro_data = {"criado_em__date": data_convertida}
+
+    # Dados gerais para exibição
     if is_admin_total and pa_param and pa_param.upper() != "TODAS":
         lotes = LoteBipagem.objects.filter(group_user__name=pa_param)
         total_lotes = lotes.count()
-        total_caixas = Bipagem.objects.filter(id_caixa__lote__group_user__name=pa_param).values('id_caixa').distinct().count()
-        total_seriais = Bipagem.objects.filter(id_caixa__lote__group_user__name=pa_param).count()
+        total_caixas = Bipagem.objects.filter(id_caixa__lote__group_user__name=pa_param, **filtro_data).values('id_caixa').distinct().count()
+        total_seriais = Bipagem.objects.filter(id_caixa__lote__group_user__name=pa_param, **filtro_data).count()
         nome_pa = pa_param
         grupo = Group.objects.filter(name=pa_param).first()
         endereco_pa = getattr(grupo.informacoes, "endereco", "Não informado") if grupo else "Não informado"
@@ -241,16 +262,16 @@ def download_extracao_csv(request):
     elif is_admin_total and pa_param and pa_param.upper() == "TODAS":
         lotes = LoteBipagem.objects.all()
         total_lotes = lotes.count()
-        total_caixas = Bipagem.objects.values('id_caixa').distinct().count()
-        total_seriais = Bipagem.objects.count()
+        total_caixas = Bipagem.objects.filter(**filtro_data).values('id_caixa').distinct().count()
+        total_seriais = Bipagem.objects.filter(**filtro_data).count()
         nome_pa = "TODAS AS PAs"
         endereco_pa = "Consolidado Geral"
 
     elif is_admin_total and not pa_param:
         lotes = LoteBipagem.objects.all()
         total_lotes = lotes.count()
-        total_caixas = Bipagem.objects.values('id_caixa').distinct().count()
-        total_seriais = Bipagem.objects.count()
+        total_caixas = Bipagem.objects.filter(**filtro_data).values('id_caixa').distinct().count()
+        total_seriais = Bipagem.objects.filter(**filtro_data).count()
         nome_pa = "TODAS AS PAs"
         endereco_pa = "Consolidado Geral"
 
@@ -260,10 +281,24 @@ def download_extracao_csv(request):
         endereco_pa = getattr(grupo.informacoes, "endereco", "Não informado") if grupo else "Não informado"
         lotes = LoteBipagem.objects.filter(user_created=user)
         total_lotes = lotes.count()
-        total_caixas = Bipagem.objects.filter(id_caixa__lote__user_created=user).values('id_caixa').distinct().count()
-        total_seriais = Bipagem.objects.filter(id_caixa__lote__user_created=user).count()
+        total_caixas = Bipagem.objects.filter(id_caixa__lote__user_created=user, **filtro_data).values('id_caixa').distinct().count()
+        total_seriais = Bipagem.objects.filter(id_caixa__lote__user_created=user, **filtro_data).count()
 
+    # Exportar CSV
     if formato == "csv":
+        # Filtro final das bipagens
+        if is_admin_total and pa_param and pa_param.upper() != "TODAS":
+            bipagens = Bipagem.objects.filter(id_caixa__lote__group_user__name=pa_param, **filtro_data)
+        elif is_admin_total and pa_param and pa_param.upper() == "TODAS":
+            bipagens = Bipagem.objects.filter(**filtro_data)
+        elif is_admin_total and not pa_param:
+            bipagens = Bipagem.objects.filter(**filtro_data)
+        else:
+            bipagens = Bipagem.objects.filter(id_caixa__lote__user_created=user, **filtro_data)
+
+        if not bipagens.exists():
+            return HttpResponse("Nenhum dado encontrado para a data selecionada.", status=404)
+
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = f'attachment; filename="extracao_bipagens_{nome_pa}.csv"'
 
@@ -272,15 +307,6 @@ def download_extracao_csv(request):
             'PA', 'Lote', 'Serial', 'Modelo', 'Data', 'Status',
             'Obs', 'Acao', 'Status Lote', 'Usuário Bipagem'
         ])
-
-        if is_admin_total and pa_param and pa_param.upper() != "TODAS":
-            bipagens = Bipagem.objects.filter(id_caixa__lote__group_user__name=pa_param)
-        elif is_admin_total and pa_param and pa_param.upper() == "TODAS":
-            bipagens = Bipagem.objects.all()
-        elif is_admin_total and not pa_param:
-            bipagens = Bipagem.objects.all()
-        else:
-            bipagens = Bipagem.objects.filter(id_caixa__lote__user_created=user)
 
         for bip in bipagens.select_related('id_caixa', 'id_caixa__lote', 'id_caixa__lote__group_user'):
             writer.writerow([
@@ -297,6 +323,7 @@ def download_extracao_csv(request):
             ])
         return response
 
+    # Fallback PDF (não alterado)
     context = {
         "empresa": "Getnet",
         "cnpj": "12.345.678/0001-99",

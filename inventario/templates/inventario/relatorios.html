@@ -175,6 +175,9 @@
                     <option value="TODAS" {% if pa_selecionada == "TODAS" %}selected{% endif %}>TODAS AS PAs</option>
                 </select>
 
+                <label for="data">Selecione a Data de Extração:</label>
+                <input type="date" name="data" id="data" value="{{ data_selecionada|date:'Y-m-d' }}">
+
                 <div class="button-group">
                     <button type="button" class="bipagem-button" onclick="definirAcaoEEnviar('visualizar')">Consultar</button>
                     <button type="button" class="bipagem-button" onclick="definirAcaoEEnviar('pdf')">Extrair PDF</button>
